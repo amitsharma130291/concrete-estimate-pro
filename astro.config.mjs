@@ -6,9 +6,7 @@ import tailwindcss from '@tailwindcss/vite';
 
 import sitemap from '@astrojs/sitemap';
 
-// TODO: update once the real domain is registered — this drives every canonical URL
-// and the sitemap, so it must match the live domain exactly (protocol + host, no path).
-const SITE_URL = 'https://concreteestimatepro.com';
+const SITE_URL = 'https://concretecostpro.com';
 
 // https://astro.build/config
 export default defineConfig({

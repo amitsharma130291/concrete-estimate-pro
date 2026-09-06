@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /app/
 
-Sitemap: https://concreteestimatepro.com/sitemap-index.xml
+Sitemap: https://concretecostpro.com/sitemap-index.xml
