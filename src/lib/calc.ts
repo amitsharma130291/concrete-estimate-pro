@@ -1,4 +1,4 @@
-// Pure, unit-tested calculation engine for Concrete Estimate Pro.
+// Pure, unit-tested calculation engine for Concrete Cost Pro.
 // No structural/engineering logic lives here — only quantity, cost and pricing math
 // from user-supplied dimensions and rates.
 

@@ -45,7 +45,7 @@ export default function OverviewTab() {
       <div className="flex flex-col gap-6">
         <PageHeader />
         <EmptyState
-          title="Welcome to Concrete Estimate Pro"
+          title="Welcome to Concrete Cost Pro"
           desc="Load sample data to explore Rate Health, estimates and job costing — or start fresh with your own project."
           action={
             <div className="flex flex-wrap justify-center gap-2">

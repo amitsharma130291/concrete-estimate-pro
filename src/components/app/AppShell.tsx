@@ -88,7 +88,7 @@ export default function AppShell({ activeTab }: { activeTab: AppTab }) {
             >
               <Menu size={20} />
             </button>
-            <span className="text-sm font-semibold text-ink">{NAV.find((n) => n.key === activeTab)?.label ?? "Concrete Estimate Pro"}</span>
+            <span className="text-sm font-semibold text-ink">{NAV.find((n) => n.key === activeTab)?.label ?? "Concrete Cost Pro"}</span>
             <a href="/" className="text-xs font-medium text-orange">
               Site
             </a>
@@ -106,15 +106,12 @@ export default function AppShell({ activeTab }: { activeTab: AppTab }) {
 function SidebarContent({ activeTab, onNavigate }: { activeTab: AppTab; onNavigate?: () => void }) {
   return (
     <>
-      <a href="/" className="flex items-center gap-2 px-5 py-5" onClick={onNavigate}>
-        <svg width="24" height="24" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <path
-            d="M20 2C9.9 2 2 9.9 2 20s7.9 18 18 18 18-7.9 18-18S30.1 2 20 2zm0 6.5c6.4 0 11.5 5.1 11.5 11.5S26.4 31.5 20 31.5c-3 0-5.7-1.1-7.8-3l4.6-4.6c.9.6 2 1 3.2 1 3.3 0 6-2.7 6-6s-2.7-6-6-6c-1.2 0-2.3.4-3.2 1l-4.6-4.6c2.1-1.9 4.8-3 7.8-3z"
-            fill="#FF5A1F"
-          />
-        </svg>
+      <a href="/" className="flex items-center gap-2.5 px-5 py-5" onClick={onNavigate}>
+        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-white p-1">
+          <img src="/icon-192.png" alt="" className="h-full w-full object-contain" width="192" height="192" />
+        </span>
         <span className="text-sm font-bold">
-          Concrete Estimate <span className="text-orange">Pro</span>
+          Concrete Cost <span className="text-orange">Pro</span>
         </span>
       </a>
       <nav aria-label="Application" className="flex-1 space-y-0.5 px-3">

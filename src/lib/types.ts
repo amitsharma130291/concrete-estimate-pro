@@ -1,4 +1,4 @@
-// Local-first data model for Concrete Estimate Pro.
+// Local-first data model for Concrete Cost Pro.
 // Everything here is stored client-side (localStorage). No backend, no accounts.
 
 export const SCHEMA_VERSION = 1;

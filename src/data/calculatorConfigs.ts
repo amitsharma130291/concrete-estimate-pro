@@ -253,7 +253,7 @@ export const CALCULATOR_CONFIGS: Record<string, CalculatorConfig> = {
     faqs: [
       {
         q: "What project types can I use this for?",
-        a: "Any rectangular concrete pour — slabs, driveways, patios, sidewalks, pads or custom flatwork. For multi-section projects (like an L-shaped driveway), Concrete Estimate Pro lets you add multiple sections to one project.",
+        a: "Any rectangular concrete pour — slabs, driveways, patios, sidewalks, pads or custom flatwork. For multi-section projects (like an L-shaped driveway), Concrete Cost Pro lets you add multiple sections to one project.",
       },
       {
         q: "How much does ready-mix concrete cost per yard?",
@@ -265,7 +265,7 @@ export const CALCULATOR_CONFIGS: Record<string, CalculatorConfig> = {
       },
       {
         q: "Is this the same as concrete estimating software?",
-        a: "This free calculator handles one-off quantity and cost math. Concrete Estimate Pro (sometimes searched as concrete estimator software) adds saved rates, job costing, rate-health tracking, branded estimates and estimate-vs-actual reporting for running an ongoing concrete business.",
+        a: "This free calculator handles one-off quantity and cost math. Concrete Cost Pro (sometimes searched as concrete estimator software) adds saved rates, job costing, rate-health tracking, branded estimates and estimate-vs-actual reporting for running an ongoing concrete business.",
       },
     ],
   },

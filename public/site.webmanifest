@@ -1,0 +1,13 @@
+{
+  "name": "Concrete Cost Pro",
+  "short_name": "Concrete Cost Pro",
+  "description": "Calculate costs. Protect profits.",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ],
+  "theme_color": "#20252B",
+  "background_color": "#F7F5F1",
+  "display": "standalone",
+  "start_url": "/"
+}

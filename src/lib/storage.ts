@@ -150,7 +150,7 @@ export function validateImport(json: string): ImportValidation {
   }
   const obj = parsed as Record<string, unknown>;
   if (typeof obj.schemaVersion !== "number") {
-    errors.push("Missing schemaVersion — this may not be a Concrete Estimate Pro backup file.");
+    errors.push("Missing schemaVersion — this may not be a Concrete Cost Pro backup file.");
   }
   const requiredArrays = ["catalog", "laborRates", "equipment", "templates", "projects", "estimates", "actuals"];
   for (const key of requiredArrays) {

@@ -10,7 +10,7 @@ export default function PurchaseButton() {
   return (
     <div>
       <Button size="lg" className="w-full" onClick={() => setClicked(true)}>
-        Get Concrete Estimate Pro — $79 Launch Price
+        Get Concrete Cost Pro — $79 Launch Price
       </Button>
       {clicked && (
         <p role="status" className="mt-3 rounded-lg border border-border bg-warm-white p-3 text-center text-sm text-muted">
