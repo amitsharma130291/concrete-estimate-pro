@@ -1,0 +1,46 @@
+
+> concreteestimatepro@0.0.1 build
+> astro build
+
+[2m00:05:36[22m [34m[types][39m Generated [2m1.12s[22m
+[2m00:05:36[22m [34m[build][39m output: [34m"static"[39m
+[2m00:05:36[22m [34m[build][39m mode: [34m"static"[39m
+[2m00:05:36[22m [34m[build][39m directory: [34mC:\Users\amits\SEOSites\concreteestimatepro\dist\[39m
+[2m00:05:36[22m [34m[build][39m Collecting build info...
+[2m00:05:36[22m [34m[build][39m [32m✓ Completed in 1.65s.[39m
+[2m00:05:36[22m [34m[build][39m Building static entrypoints...
+[2m00:05:41[22m [34m[vite][39m [32m✓ built in 5.00s[39m
+[2m00:05:46[22m [34m[vite][39m [32m✓ built in 4.26s[39m
+[2m00:05:46[22m [34m[build][39m Rearranging server assets...
+
+[42m[30m generating static routes [39m[49m
+[2m00:05:46[22m   [34m├─[39m [2m/app/actuals/index.html[22m [2m(+115ms)[22m 
+[2m00:05:46[22m   [34m├─[39m [2m/app/catalog/index.html[22m [2m(+19ms)[22m 
+[2m00:05:46[22m   [34m├─[39m [2m/app/estimates/index.html[22m [2m(+30ms)[22m 
+[2m00:05:46[22m   [34m├─[39m [2m/app/projects/index.html[22m [2m(+44ms)[22m 
+[2m00:05:46[22m   [34m├─[39m [2m/app/rate-health/index.html[22m [2m(+33ms)[22m 
+[2m00:05:46[22m   [34m├─[39m [2m/app/settings/index.html[22m [2m(+26ms)[22m 
+[2m00:05:46[22m   [34m├─[39m [2m/app/templates/index.html[22m [2m(+10ms)[22m 
+[2m00:05:46[22m   [34m├─[39m [2m/app/index.html[22m [2m(+32ms)[22m 
+[2m00:05:46[22m   [34m├─[39m [2m/calculators/index.html[22m [2m(+132ms)[22m 
+[2m00:05:46[22m   [34m├─[39m [2m/concrete-cost-calculator/index.html[22m [31m(+565ms)[39m 
+[2m00:05:47[22m   [34m├─[39m [2m/concrete-driveway-cost-calculator/index.html[22m [2m(+50ms)[22m 
+[2m00:05:47[22m   [34m├─[39m [2m/concrete-estimate-template/index.html[22m [2m(+77ms)[22m 
+[2m00:05:47[22m   [34m├─[39m [2m/concrete-estimating-software/index.html[22m [2m(+39ms)[22m 
+[2m00:05:47[22m   [34m├─[39m [2m/concrete-footing-cost-calculator/index.html[22m [2m(+124ms)[22m 
+[2m00:05:47[22m   [34m├─[39m [2m/concrete-job-cost-calculator/index.html[22m [2m(+59ms)[22m 
+[2m00:05:47[22m   [34m├─[39m [2m/concrete-patio-cost-calculator/index.html[22m [2m(+78ms)[22m 
+[2m00:05:47[22m   [34m├─[39m [2m/concrete-sidewalk-cost-calculator/index.html[22m [2m(+45ms)[22m 
+[2m00:05:47[22m   [34m├─[39m [2m/concrete-slab-cost-calculator/index.html[22m [2m(+98ms)[22m 
+[2m00:05:48[22m   [34m├─[39m [2m/pricing/index.html[22m [2m(+40ms)[22m 
+[2m00:05:48[22m   [34m├─[39m [2m/privacy/index.html[22m [2m(+31ms)[22m 
+[2m00:05:48[22m   [34m├─[39m [2m/refund/index.html[22m [2m(+31ms)[22m 
+[2m00:05:48[22m   [34m├─[39m [2m/terms/index.html[22m [2m(+20ms)[22m 
+[2m00:05:48[22m   [34m├─[39m [2m/index.html[22m [2m(+60ms)[22m 
+[2m00:05:48[22m [32m✓ Completed in 1.95s.
+[39m
+[2m00:05:48[22m [34m[build][39m [32m✓ Completed in 11.89s.[39m
+[2m00:05:48[22m [34m[@astrojs/sitemap][39m `sitemap-index.xml` created at `dist`
+[2m00:05:48[22m [34m[build][39m 23 page(s) built in [1m13.83s[22m
+[2m00:05:48[22m [34m[build][39m [1mComplete![22m
+EXIT:0
