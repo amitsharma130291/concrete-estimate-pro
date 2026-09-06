@@ -1,0 +1,92 @@
+---
+import Layout from "../layouts/Layout.astro";
+import PublicHeader from "../components/PublicHeader.astro";
+import PublicFooter from "../components/PublicFooter.astro";
+import Breadcrumbs from "../components/Breadcrumbs.astro";
+import { CALCULATOR_CONFIGS } from "../data/calculatorConfigs";
+
+const tools = [
+  ...Object.values(CALCULATOR_CONFIGS)
+    .sort((a, b) => (a.projectType === "general" ? -1 : b.projectType === "general" ? 1 : 0))
+    .map((c) => ({ title: c.h1, desc: c.intro, href: `/${c.slug}` })),
+  {
+    title: "Concrete Job Cost Calculator",
+    desc: "Already know your costs? Enter them directly to see true job cost, current margin and the price you need to charge.",
+    href: "/concrete-job-cost-calculator",
+  },
+  {
+    title: "Concrete Estimate Template",
+    desc: "An interactive concrete estimate and quote template — fill it in and print a customer-ready estimate in minutes.",
+    href: "/concrete-estimate-template",
+  },
+];
+
+const site = Astro.site ?? new URL("https://concreteestimatepro.com");
+const itemListSchema = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  itemListElement: tools.map((t, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: t.title,
+    url: new URL(t.href, site).toString(),
+  })),
+};
+---
+
+<Layout
+  title="Free Concrete Calculators | Concrete Estimate Pro"
+  description="Every free concrete calculator in one place — cost, quantity and job-cost calculators for driveways, slabs, patios, footings and sidewalks, plus an interactive estimate template."
+>
+  <Fragment slot="head">
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(itemListSchema)} />
+  </Fragment>
+  <PublicHeader />
+  <main>
+    <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Calculators", href: "/calculators" }]} />
+    <section class="border-b border-border bg-white">
+      <div class="mx-auto max-w-4xl px-4 py-12 text-center sm:px-6">
+        <h1 class="text-3xl font-extrabold tracking-tight text-ink sm:text-4xl">Free Concrete Calculators</h1>
+        <p class="mx-auto mt-3 max-w-2xl text-lg text-muted">
+          Every free calculator we build, in one place. Pick the project type below — each one calculates concrete
+          quantity, total cost and, with Contractor Pricing, the price you need to hit your target margin.
+        </p>
+      </div>
+    </section>
+
+    <section class="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {tools.map((t) => (
+          <a href={t.href} class="group rounded-xl border border-border bg-white p-5 shadow-sm transition hover:border-orange hover:shadow-md">
+            <h2 class="font-semibold text-ink group-hover:text-orange">{t.title}</h2>
+            <p class="mt-1.5 text-sm text-muted">{t.desc}</p>
+            <span class="mt-3 inline-flex items-center gap-1 text-sm font-medium text-orange">
+              Open calculator
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                <path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <section class="border-t border-border bg-white">
+      <div class="mx-auto max-w-3xl px-4 py-12 text-center sm:px-6">
+        <h2 class="text-xl font-bold text-ink">Running an ongoing concrete business?</h2>
+        <p class="mt-2 text-muted">
+          <a href="/concrete-estimating-software" class="font-medium text-orange hover:underline">Concrete Estimate Pro</a>
+          {" "}saves your rates, prices full jobs, tracks rate health and compares estimates to actual job results —
+          for a single $99 lifetime payment.
+        </p>
+        <a
+          href="/pricing"
+          class="mt-5 inline-flex items-center justify-center rounded-lg bg-orange px-6 py-3 text-sm font-semibold text-white transition hover:bg-orange-dark"
+        >
+          See Concrete Estimate Pro
+        </a>
+      </div>
+    </section>
+  </main>
+  <PublicFooter />
+</Layout>

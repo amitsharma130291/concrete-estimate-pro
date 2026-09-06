@@ -3,6 +3,7 @@ import Layout from "../layouts/Layout.astro";
 import PublicHeader from "../components/PublicHeader.astro";
 import PublicFooter from "../components/PublicFooter.astro";
 import FaqAccordion from "../components/FaqAccordion.astro";
+import Breadcrumbs from "../components/Breadcrumbs.astro";
 
 const workflow = [
   "Project", "Dimensions", "Concrete quantity", "Purchase allowance", "Materials",
@@ -53,15 +54,40 @@ const faqs = [
     q: "Is there a monthly fee?",
     a: "No. Concrete Estimate Pro is a single $99 lifetime purchase with no subscription.",
   },
+  {
+    q: "Is this the same as concrete contractor software or bidding software?",
+    a: "Concrete Estimate Pro covers the estimating and bidding side of running a concrete contracting business — sometimes searched as concrete estimator software, concrete contractor software or concrete bidding software. It doesn't include scheduling, invoicing/accounting integrations or crew management.",
+  },
 ];
+
+const softwareApplicationSchema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "Concrete Estimate Pro",
+  applicationCategory: "BusinessApplication",
+  operatingSystem: "Any (web browser)",
+  url: "https://concreteestimatepro.com/concrete-estimating-software",
+  offers: {
+    "@type": "Offer",
+    price: "99",
+    priceCurrency: "USD",
+    availability: "https://schema.org/InStock",
+  },
+  description:
+    "Concrete estimating and job-profitability software: quantities, true job costs, target-margin pricing, rate health and estimate-vs-actual reporting for concrete contractors. $99 lifetime, no subscription.",
+};
 ---
 
 <Layout
   title="Concrete Estimating Software | Concrete Estimate Pro"
   description="Concrete estimating software without another monthly subscription. Calculate quantities, true job costs, target-margin pricing, and estimate-vs-actual profitability. $99 lifetime."
 >
+  <Fragment slot="head">
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(softwareApplicationSchema)} />
+  </Fragment>
   <PublicHeader />
   <main>
+    <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Concrete Estimating Software", href: "/concrete-estimating-software" }]} />
     <section class="border-b border-border bg-white">
       <div class="mx-auto max-w-4xl px-4 py-14 text-center sm:px-6">
         <h1 class="text-3xl font-extrabold tracking-tight text-ink sm:text-5xl">
@@ -69,7 +95,7 @@ const faqs = [
         </h1>
         <p class="mx-auto mt-4 max-w-2xl text-lg text-muted">
           Calculate quantities, true job costs, target-margin pricing, and estimate-vs-actual profitability — all in
-          one local-first tool built for concrete contractors.
+          one local-first concrete estimator software built for concrete contractors.
         </p>
         <a
           href="/pricing"
@@ -128,6 +154,18 @@ const faqs = [
 
     <section id="faq" class="mx-auto max-w-3xl px-4 py-14 sm:px-6">
       <FaqAccordion faqs={faqs} />
+    </section>
+
+    <section class="border-t border-border bg-white">
+      <div class="mx-auto max-w-3xl px-4 py-10 text-center sm:px-6">
+        <p class="text-sm text-muted">
+          Not ready to buy? Try a free calculator first:{" "}
+          <a href="/concrete-driveway-cost-calculator" class="font-medium text-orange hover:underline">driveway</a>,{" "}
+          <a href="/concrete-slab-cost-calculator" class="font-medium text-orange hover:underline">slab</a>,{" "}
+          <a href="/concrete-job-cost-calculator" class="font-medium text-orange hover:underline">job cost</a>, or{" "}
+          <a href="/calculators" class="font-medium text-orange hover:underline">see all free calculators</a>.
+        </p>
+      </div>
     </section>
 
     <section class="bg-charcoal">

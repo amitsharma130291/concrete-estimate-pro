@@ -3,12 +3,18 @@ import Layout from "../layouts/Layout.astro";
 import PublicHeader from "../components/PublicHeader.astro";
 import PublicFooter from "../components/PublicFooter.astro";
 import FaqAccordion from "../components/FaqAccordion.astro";
+import Breadcrumbs from "../components/Breadcrumbs.astro";
 import JobCostCalculatorIsland from "../components/calculator/JobCostCalculatorIsland";
+import { CALCULATOR_CONFIGS } from "../data/calculatorConfigs";
 
 const faqs = [
   {
     q: "How is this different from the cost calculators?",
     a: "The cost calculators start from dimensions (length, width, thickness) and compute concrete quantity for you. This job cost calculator is for when you already know your total costs — enter them directly to see true cost, margin and the price you need to charge.",
+  },
+  {
+    q: "Can I use this as a concrete labor cost calculator?",
+    a: "Yes — enter your labor cost on its own to see how it factors into direct cost, overhead and true cost, then see the margin impact of a labor-only change.",
   },
   {
     q: "What's the difference between margin and markup?",
@@ -19,14 +25,35 @@ const faqs = [
     a: "Overhead covers costs that aren't tied to one job — insurance, office costs, vehicle costs, admin time. Many contractors express it as a percentage of direct job cost; set whatever percentage reflects your business.",
   },
 ];
+
+const webApplicationSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: "Concrete Job Cost Calculator",
+  url: "https://concreteestimatepro.com/concrete-job-cost-calculator",
+  applicationCategory: "BusinessApplication",
+  operatingSystem: "Any (web browser)",
+  offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+  description: "Enter your known concrete job costs to calculate true cost, overhead, target-margin pricing and required selling price.",
+};
 ---
 
 <Layout
   title="Concrete Job Cost Calculator | Concrete Estimate Pro"
   description="Enter your known concrete job costs to calculate true cost, overhead, target-margin pricing and required selling price."
 >
+  <Fragment slot="head">
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(webApplicationSchema)} />
+  </Fragment>
   <PublicHeader />
   <main>
+    <Breadcrumbs
+      items={[
+        { label: "Home", href: "/" },
+        { label: "Calculators", href: "/calculators" },
+        { label: "Job Cost Calculator", href: "/concrete-job-cost-calculator" },
+      ]}
+    />
     <section class="border-b border-border bg-white">
       <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12">
         <div class="max-w-2xl">
@@ -45,6 +72,28 @@ const faqs = [
 
     <section class="mx-auto max-w-7xl px-4 py-14 sm:px-6">
       <FaqAccordion faqs={faqs} />
+    </section>
+
+    <section class="border-t border-border bg-white">
+      <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6">
+        <h2 class="text-xl font-bold text-ink">Related concrete calculators</h2>
+        <div class="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {Object.values(CALCULATOR_CONFIGS).map((c) => (
+            <a
+              href={`/${c.slug}`}
+              class="rounded-lg border border-border bg-warm-white px-4 py-3 text-sm font-medium text-ink transition hover:border-orange hover:text-orange"
+            >
+              {c.h1}
+            </a>
+          ))}
+          <a
+            href="/concrete-estimate-template"
+            class="rounded-lg border border-border bg-warm-white px-4 py-3 text-sm font-medium text-ink transition hover:border-orange hover:text-orange"
+          >
+            Concrete Estimate Template
+          </a>
+        </div>
+      </div>
     </section>
 
     <section class="bg-charcoal">

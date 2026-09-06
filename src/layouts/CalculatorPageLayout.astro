@@ -3,8 +3,9 @@ import Layout from "./Layout.astro";
 import PublicHeader from "../components/PublicHeader.astro";
 import PublicFooter from "../components/PublicFooter.astro";
 import FaqAccordion from "../components/FaqAccordion.astro";
+import Breadcrumbs from "../components/Breadcrumbs.astro";
 import ProjectCalculatorIsland from "../components/calculator/ProjectCalculatorIsland";
-import type { CalculatorConfig } from "../data/calculatorConfigs";
+import { CALCULATOR_CONFIGS, type CalculatorConfig } from "../data/calculatorConfigs";
 
 export interface Props {
   config: CalculatorConfig;
@@ -28,11 +29,38 @@ const features = [
     path: "M3 12l2-2 4 4L19 4l2 2-12 12z",
   },
 ];
+
+// Every calculator links to the other project-type calculators and to the general
+// calculator + job cost calculator, per the internal-linking pattern in the launch plan.
+const relatedCalculators = Object.values(CALCULATOR_CONFIGS)
+  .filter((c) => c.slug !== config.slug)
+  .sort((a, b) => (a.projectType === "general" ? -1 : b.projectType === "general" ? 1 : 0));
+
+const webApplicationSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: config.h1,
+  url: `https://concreteestimatepro.com/${config.slug}`,
+  applicationCategory: "BusinessApplication",
+  operatingSystem: "Any (web browser)",
+  offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+  description: config.metaDescription,
+};
 ---
 
 <Layout title={`${config.h1} | Concrete Estimate Pro`} description={config.metaDescription}>
+  <Fragment slot="head">
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(webApplicationSchema)} />
+  </Fragment>
   <PublicHeader />
   <main>
+    <Breadcrumbs
+      items={[
+        { label: "Home", href: "/" },
+        { label: "Calculators", href: "/calculators" },
+        { label: config.h1, href: `/${config.slug}` },
+      ]}
+    />
     <section class="border-b border-border bg-white">
       <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12">
         <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -73,6 +101,28 @@ const features = [
 
     <section class="mx-auto max-w-7xl px-4 py-14 sm:px-6">
       <FaqAccordion faqs={config.faqs} />
+    </section>
+
+    <section class="border-t border-border bg-white">
+      <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6">
+        <h2 class="text-xl font-bold text-ink">Related concrete calculators</h2>
+        <div class="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {relatedCalculators.map((c) => (
+            <a
+              href={`/${c.slug}`}
+              class="rounded-lg border border-border bg-warm-white px-4 py-3 text-sm font-medium text-ink transition hover:border-orange hover:text-orange"
+            >
+              {c.h1}
+            </a>
+          ))}
+          <a
+            href="/concrete-job-cost-calculator"
+            class="rounded-lg border border-border bg-warm-white px-4 py-3 text-sm font-medium text-ink transition hover:border-orange hover:text-orange"
+          >
+            Concrete Job Cost Calculator
+          </a>
+        </div>
+      </div>
     </section>
 
     <section class="bg-charcoal">

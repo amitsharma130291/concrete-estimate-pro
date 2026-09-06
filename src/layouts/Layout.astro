@@ -8,7 +8,28 @@ export interface Props {
 }
 
 const { title, description, noIndex = false } = Astro.props;
-const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? "https://concreteestimatepro.com");
+const site = Astro.site ?? new URL("https://concreteestimatepro.com");
+const canonicalURL = new URL(Astro.url.pathname, site);
+
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Concrete Estimate Pro",
+  url: site.toString(),
+  potentialAction: {
+    "@type": "SearchAction",
+    target: `${site.toString().replace(/\/$/, "")}/?q={search_term_string}`,
+    "query-input": "required name=search_term_string",
+  },
+};
+
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Concrete Estimate Pro",
+  url: site.toString(),
+  logo: `${site.toString().replace(/\/$/, "")}/favicon.svg`,
+};
 ---
 
 <!doctype html>
@@ -24,6 +45,8 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? "https://concrete
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:site_name" content="Concrete Estimate Pro" />
     <meta name="twitter:card" content="summary" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -31,6 +54,13 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? "https://concrete
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
+    {!noIndex && (
+      <>
+        <script type="application/ld+json" is:inline set:html={JSON.stringify(websiteSchema)} />
+        <script type="application/ld+json" is:inline set:html={JSON.stringify(organizationSchema)} />
+      </>
+    )}
+    <slot name="head" />
   </head>
   <body class="bg-warm-white text-ink antialiased">
     <slot />

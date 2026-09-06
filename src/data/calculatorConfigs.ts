@@ -230,9 +230,9 @@ export const CALCULATOR_CONFIGS: Record<string, CalculatorConfig> = {
     slug: "concrete-cost-calculator",
     h1: "Concrete Cost Calculator",
     intro:
-      "A flexible concrete cost calculator for any rectangular pour — slabs, driveways, patios, sidewalks or custom flatwork. Enter your dimensions and costs to get quantity, total cost and required selling price.",
+      "A flexible concrete cost calculator and concrete estimate calculator for any rectangular pour — slabs, driveways, patios, sidewalks or custom flatwork. Enter your dimensions and your ready-mix price per yard to get quantity, total cost and required selling price.",
     metaDescription:
-      "Free concrete cost calculator for any project type. Enter dimensions and your costs to get concrete quantity, total project cost and a target-margin price.",
+      "Free concrete cost calculator and estimate calculator for any project type. Enter dimensions and your ready-mix cost per yard to get concrete quantity, total project cost and a target-margin price.",
     length: { label: "Length", hint: "Project length", defaultUnit: "ft", allowUnitToggle: false },
     width: { label: "Width", hint: "Project width", defaultUnit: "ft", allowUnitToggle: false },
     thickness: { label: "Thickness", hint: "Concrete thickness", defaultUnit: "in", allowUnitToggle: false },
@@ -256,8 +256,16 @@ export const CALCULATOR_CONFIGS: Record<string, CalculatorConfig> = {
         a: "Any rectangular concrete pour — slabs, driveways, patios, sidewalks, pads or custom flatwork. For multi-section projects (like an L-shaped driveway), Concrete Estimate Pro lets you add multiple sections to one project.",
       },
       {
+        q: "How much does ready-mix concrete cost per yard?",
+        a: "Ready-mix pricing varies by region, mix strength and delivery distance — commonly somewhere in the $130–$200 per cubic yard range in the US, though local suppliers may quote higher or lower. Enter your own supplier's price per yard in the calculator above; this tool never assumes a national average for your estimate.",
+      },
+      {
+        q: "Is this a concrete estimate calculator or just a quantity calculator?",
+        a: "Both — enter dimensions to get concrete quantity, then add your material, labor and equipment costs to turn that quantity into a full project cost estimate and, with Contractor Pricing, a target-margin selling price.",
+      },
+      {
         q: "Is this the same as concrete estimating software?",
-        a: "This free calculator handles one-off quantity and cost math. Concrete Estimate Pro adds saved rates, job costing, rate-health tracking, branded estimates and estimate-vs-actual reporting for running an ongoing concrete business.",
+        a: "This free calculator handles one-off quantity and cost math. Concrete Estimate Pro (sometimes searched as concrete estimator software) adds saved rates, job costing, rate-health tracking, branded estimates and estimate-vs-actual reporting for running an ongoing concrete business.",
       },
     ],
   },

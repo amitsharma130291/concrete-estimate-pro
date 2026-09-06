@@ -3,9 +3,15 @@ import Layout from "../layouts/Layout.astro";
 import PublicHeader from "../components/PublicHeader.astro";
 import PublicFooter from "../components/PublicFooter.astro";
 import FaqAccordion from "../components/FaqAccordion.astro";
+import Breadcrumbs from "../components/Breadcrumbs.astro";
 import EstimateTemplateIsland from "../components/calculator/EstimateTemplateIsland";
+import { CALCULATOR_CONFIGS } from "../data/calculatorConfigs";
 
 const faqs = [
+  {
+    q: "Is this an estimate template, a quote template or an invoice template?",
+    a: "It works as all three — the same line-item builder produces an estimate, a quote or, once the job is complete and you change the heading, an invoice. Fill in the fields once and print or save whichever document you need.",
+  },
   {
     q: "Can I print or save this as a PDF?",
     a: "Yes — the Print / Save as PDF button opens your browser's print dialog with a clean, customer-ready layout. Choose \"Save as PDF\" as the destination to download it.",
@@ -19,21 +25,43 @@ const faqs = [
     a: "It's built for concrete flatwork, but the line-item format works for any straightforward estimate — add or remove lines as needed.",
   },
 ];
+
+const webApplicationSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: "Concrete Estimate Template",
+  url: "https://concreteestimatepro.com/concrete-estimate-template",
+  applicationCategory: "BusinessApplication",
+  operatingSystem: "Any (web browser)",
+  offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+  description: "Free interactive concrete estimate, quote and invoice template. Fill in your project and line items and print a customer-ready document in minutes.",
+};
 ---
 
 <Layout
   title="Concrete Estimate Template | Concrete Estimate Pro"
-  description="Free interactive concrete estimate template. Fill in your project and line items and print a customer-ready estimate in minutes."
+  description="Free interactive concrete estimate template — also works as a concrete quote template or invoice template. Fill in your project and line items and print a customer-ready document in minutes."
 >
+  <Fragment slot="head">
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(webApplicationSchema)} />
+  </Fragment>
   <PublicHeader />
   <main>
+    <Breadcrumbs
+      items={[
+        { label: "Home", href: "/" },
+        { label: "Calculators", href: "/calculators" },
+        { label: "Estimate Template", href: "/concrete-estimate-template" },
+      ]}
+    />
     <section class="border-b border-border bg-white">
       <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12">
         <div class="max-w-2xl">
           <h1 class="text-3xl font-extrabold tracking-tight text-ink sm:text-4xl">Concrete Estimate Template</h1>
           <p class="mt-3 text-lg text-muted">
-            Fill in your project details and line items on the left — a customer-ready estimate builds itself on the
-            right, ready to print or save as a PDF.
+            An interactive concrete estimate template that doubles as a quote template or invoice template. Fill in
+            your project details and line items on the left — a customer-ready document builds itself on the right,
+            ready to print or save as a PDF.
           </p>
         </div>
       </div>
@@ -45,6 +73,28 @@ const faqs = [
 
     <section class="mx-auto max-w-7xl px-4 py-14 sm:px-6">
       <FaqAccordion faqs={faqs} />
+    </section>
+
+    <section class="border-t border-border bg-white no-print">
+      <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6">
+        <h2 class="text-xl font-bold text-ink">Related concrete calculators</h2>
+        <div class="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {Object.values(CALCULATOR_CONFIGS).map((c) => (
+            <a
+              href={`/${c.slug}`}
+              class="rounded-lg border border-border bg-warm-white px-4 py-3 text-sm font-medium text-ink transition hover:border-orange hover:text-orange"
+            >
+              {c.h1}
+            </a>
+          ))}
+          <a
+            href="/concrete-job-cost-calculator"
+            class="rounded-lg border border-border bg-warm-white px-4 py-3 text-sm font-medium text-ink transition hover:border-orange hover:text-orange"
+          >
+            Concrete Job Cost Calculator
+          </a>
+        </div>
+      </div>
     </section>
 
     <section class="bg-charcoal no-print">
