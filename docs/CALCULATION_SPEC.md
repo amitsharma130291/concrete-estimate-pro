@@ -9,9 +9,11 @@ production files — it is a from-scratch re-implementation of the formulas belo
 defect, subject to the ambiguity/tolerance rules in §7.
 
 All angle brackets `⟨x⟩` denote a named input. All money/quantity values are plain
-JavaScript `number` (IEEE-754 double) in production code — **there is no decimal-safe
-arithmetic library used in `calc.ts`/`estimateMath.ts`**. This is a deliberate fact to be
-verified for real-world impact in Phase 4 (property tests), not an assumption.
+JavaScript `number` at the public function boundary (inputs and return values), but as of
+the decimal-safe migration (see §7.4 and `docs/TEST_REPORT.md` §4.2), every internal
+calculation in `calc.ts`/`estimateMath.ts` runs through Decimal.js — `number` is only used
+for the external API, not for the arithmetic itself. The formulas below are unchanged;
+only the arithmetic precision performing them changed.
 
 ---
 
@@ -257,11 +259,12 @@ treated as defects, each with rationale:
 3. **`calculateMargin` returns `null`, and `isBelowTarget` is `false`, when selling price is
    unset/zero.** Rationale: "no price entered" must not visually read as "underpriced."
    Confirmed intentional; test coverage added to lock this behavior in (§7 property suite).
-4. **IEEE-754 double arithmetic throughout, no decimal library in production code.** This is
-   **not** ratified as risk-free — it is the single most safety-relevant fact in this
-   spec and is tested exhaustively by the independent Decimal.js oracle in Phase 4/5 rather
-   than assumed safe or assumed broken. See `docs/TEST_REPORT.md` §4 (Calculation Testing)
-   for the measured result.
+4. **RESOLVED — decimal-safe arithmetic migration.** This spec originally flagged (§4.2 of
+   `docs/TEST_REPORT.md`, first pass) that production used raw IEEE-754 doubles throughout,
+   tested exhaustively against the independent Decimal.js oracle but not fixed. A later pass
+   migrated all internal arithmetic in `calc.ts`/`estimateMath.ts` to Decimal.js, with 5,070
+   before/after cases proving zero behavior change in the realistic domain. See
+   `docs/TEST_REPORT.md` §4.2 for the full before/after evidence.
 
 ---
 

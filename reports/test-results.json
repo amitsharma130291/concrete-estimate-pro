@@ -1,99 +1,109 @@
 {
   "auditBranch": "qa/full-audit",
   "date": "2026-09-07",
+  "pass": "release-blocker remediation (second pass, built on the initial calculation-verification audit)",
   "reportFile": "docs/TEST_REPORT.md",
   "specFile": "docs/CALCULATION_SPEC.md",
   "traceabilityFile": "docs/REQUIREMENTS_TRACEABILITY.md",
+  "featureClaimsAuditFile": "docs/FEATURE_CLAIMS_AUDIT.md",
+  "contrastTokensFile": "docs/CONTRAST_TOKENS.md",
   "vitestSuite": {
-    "testFiles": 9,
-    "tests": 118,
-    "passed": 118,
+    "testFiles": 11,
+    "tests": 142,
+    "passed": 142,
     "failed": 0
   },
-  "propertyBasedCasesExecuted": {
+  "propertyBasedAndFixtureCasesExecuted": {
     "goldenFixtures": 50,
+    "thirdPathFixtures": 20,
     "generalQuantity": 10000,
     "unitConversion": 5000,
     "invalidBoundary": 4000,
     "pricingScenarios": 4000,
     "invariants": 4300,
     "estimateVsActual": 1200,
-    "approxTotal": 28550
+    "decimalMigrationBeforeAfter": 5070,
+    "approxTotal": 33640
   },
   "mutationTesting": {
     "operatorsSpecified": 9,
     "operatorsKilled": 9,
-    "method": "manual/scripted (not automated Stryker) - see reports/mutation/results.txt",
-    "resultFile": "reports/mutation/results.txt"
+    "rerunAfterDecimalMigration": true,
+    "rerunOperatorsKilled": 9,
+    "method": "manual/scripted (not automated Stryker)",
+    "resultFiles": ["reports/mutation/results.txt", "reports/mutation/results-migrated.txt"]
   },
   "e2e": {
-    "chromium": { "passed": 27, "total": 27 },
-    "firefox": { "passed": 17, "total": 19, "note": "2 failures = Firefox headless graphics-compositor crash on cold browser launch (environment-specific), not a product defect" },
-    "webkit": { "passed": 17, "total": 17, "note": "1 initial timeout on estimate wizard Continue click, retried in isolation and passed - treated as one-off flake" }
+    "chromium": { "passed": 90, "total": 90 },
+    "firefox": { "passed": 88, "total": 90, "skipped": 2, "note": "2 skipped are Chromium-only page.pdf() tests by design; zero failures" },
+    "webkit": { "passed": 88, "total": 90, "skipped": 2, "note": "87 passed directly + 1 (patio calculator) failed with a transient HTTP 404 verified non-reproducible (curl to the live server returned 200 immediately after, built file exists, isolated retry passed in 4.8s) - not a product defect" },
+    "proTabCoverage": {
+      "overview": 3, "estimates": 8, "projects": 7, "templates": 5,
+      "rateHealth": 4, "catalog": 6, "actuals": 4, "settings": 8, "scenarioCompare": 1,
+      "totalProTabTests": 46
+    }
   },
   "nonfunctional": {
-    "typecheck": { "tool": "astro check", "errors": 0, "warnings": 0 },
+    "typecheck": { "tool": "astro check", "errors": 0, "warnings": 0, "filesChecked": 93 },
     "build": { "tool": "astro build", "status": "pass", "pagesBuilt": 23 },
     "npmAudit": { "vulnerabilities": 0 },
     "eslint": "NOT_IMPLEMENTED",
     "accessibility": {
       "tool": "axe-core via playwright",
-      "pagesScanned": 6,
+      "routesScanned": 23,
       "criticalViolations": 0,
-      "seriousViolations": "38 nodes across 6 pages (color-contrast, CCP-002, confirmed not fixed)"
+      "seriousViolations": 0,
+      "note": "CCP-002 (color-contrast) fully fixed this pass with a two-token architecture; 3 additional label/select-name defects found and fixed"
     }
+  },
+  "decimalSafeMigration": {
+    "status": "COMPLETE",
+    "filesMigrated": ["src/lib/calc.ts", "src/lib/estimateMath.ts"],
+    "library": "decimal.js (moved devDependencies -> dependencies)",
+    "beforeAfterCasesCompared": 5070,
+    "numericallyEquivalentCases": 5070,
+    "publicApiChanged": false
+  },
+  "featureClaimsAudit": {
+    "claimsVerifiedImplemented": 17,
+    "claimsFixed": 1,
+    "claimsBlockedOnPayment": 1,
+    "undocumentedRealFeatures": 5
   },
   "bugs": [
-    {
-      "id": "CCP-001-CANDIDATE",
-      "title": "Apparent precision divergence near 100% margin asymptote",
-      "severity": null,
-      "status": "closed_not_a_bug"
-    },
-    {
-      "id": "CCP-002",
-      "title": "Color contrast fails WCAG AA (--color-orange), sitewide",
-      "severity": "MEDIUM",
-      "status": "confirmed_not_fixed",
-      "reason": "fix attempted and reverted - single token cannot satisfy both light and dark contexts"
-    },
-    {
-      "id": "CCP-003",
-      "title": "21 form inputs missing accessible labels (axe critical) on 2 pages",
-      "severity": "MEDIUM",
-      "status": "fixed"
-    },
-    {
-      "id": "CCP-004",
-      "title": "CSV export corrupts columns when a name contains a comma",
-      "severity": "MEDIUM",
-      "status": "fixed"
-    },
-    {
-      "id": "PAYMENT-LICENSE-GAP",
-      "title": "No payment/license gating exists anywhere; /app fully open and free",
-      "severity": "CRITICAL",
-      "status": "not_implemented",
-      "releaseCritical": true
-    }
+    { "id": "CCP-001-CANDIDATE", "title": "Apparent precision divergence near 100% margin asymptote", "severity": null, "status": "closed_not_a_bug" },
+    { "id": "CCP-002", "title": "Color contrast fails WCAG AA (--color-orange), sitewide", "severity": "MEDIUM", "status": "fixed", "note": "was confirmed-not-fixed in the first pass; fixed this pass with a two-token architecture" },
+    { "id": "CCP-003", "title": "21 form inputs missing accessible labels on 2 pages", "severity": "MEDIUM", "status": "fixed", "pass": "first pass" },
+    { "id": "CCP-004", "title": "CSV export corrupts columns when a name contains a comma", "severity": "MEDIUM", "status": "fixed", "pass": "first pass" },
+    { "id": "CCP-005", "title": "Project duplication promised on the pricing page, not implemented", "severity": "MEDIUM", "status": "fixed", "pass": "second pass" },
+    { "id": "A11Y-EXPANDED-1", "title": "Missing accessible names on /app/estimates, /app/rate-health, /app/settings (found by expanded 23-route axe scan)", "severity": "MEDIUM", "status": "fixed", "pass": "second pass" },
+    { "id": "GREEN-RED-CONTRAST", "title": "--color-green and text-red/90 contrast failures found alongside the CCP-002 fix", "severity": "LOW-MEDIUM", "status": "fixed", "pass": "second pass" },
+    { "id": "PAYMENT-LICENSE-GAP", "title": "No payment/license gating exists anywhere; /app fully open and free", "severity": "CRITICAL", "status": "not_implemented", "releaseCritical": true, "note": "explicitly blocked pending user's payment provider selection per this pass's own mandate" }
   ],
   "confidenceScore": {
-    "overall": 76.0,
+    "overall": 84.6,
     "components": {
-      "calculation": { "weight": 30, "scorePercent": 96, "weighted": 28.8 },
-      "proWorkflow": { "weight": 18, "scorePercent": 65, "weighted": 11.7 },
-      "dataIntegrity": { "weight": 12, "scorePercent": 92, "weighted": 11.0 },
-      "exportPdfCsv": { "weight": 10, "scorePercent": 90, "weighted": 9.0 },
-      "paymentLicense": { "weight": 12, "scorePercent": 5, "weighted": 0.6, "capped": true, "capReason": "NOT_IMPLEMENTED" },
+      "calculation": { "weight": 30, "scorePercent": 98, "weighted": 29.4 },
+      "proWorkflow": { "weight": 18, "scorePercent": 95, "weighted": 17.1 },
+      "dataIntegrity": { "weight": 13, "scorePercent": 95, "weighted": 12.4 },
+      "exportPdfCsv": { "weight": 10, "scorePercent": 93, "weighted": 9.3 },
+      "paymentLicense": { "weight": 12, "scorePercent": 5, "weighted": 0.6, "capped": true, "capReason": "NOT_IMPLEMENTED, blocked pending payment provider selection" },
       "publicCalculators": { "weight": 8, "scorePercent": 95, "weighted": 7.6 },
-      "a11yBrowser": { "weight": 5, "scorePercent": 55, "weighted": 2.75 },
-      "buildQuality": { "weight": 5, "scorePercent": 90, "weighted": 4.5 }
+      "a11yBrowser": { "weight": 6, "scorePercent": 92, "weighted": 5.5 },
+      "buildQuality": { "weight": 3, "scorePercent": 90, "weighted": 2.7 }
     }
   },
+  "releaseGates": {
+    "paymentAndLicenseTestsPass": false,
+    "everyPaidTabHasDirectE2ECoverage": true,
+    "noCriticalOrHighBugsRemain": true,
+    "everyAdvertisedFeatureExists": true,
+    "productionBuildPasses": true
+  },
   "releaseRecommendation": {
-    "verdict": "CONDITIONAL_GO",
-    "scope": "free lead-generation / SEO calculator tools only",
+    "verdict": "GO_FREE_TIER_NOGO_PAYMENTS",
+    "freeTierScope": "all 6 SEO calculators, job cost calculator, estimate template, and continued free use of the full Pro app across all 8 tabs",
     "blockedScope": "accepting real payments - NO-GO until payment/license entitlement is implemented",
-    "mostImportantRemainingAction": "Implement server-verified payment/license entitlement before enabling any real checkout - currently /app is 100% open and free to anyone."
+    "mostImportantRemainingAction": "User must select a payment provider and supply credentials; then implement server-verified entitlement (not success-URL or localStorage boolean) per docs/TEST_REPORT.md section 9.2, and test successful/failed/cancelled/duplicate/delayed/replayed/invalid-signature sandbox events before enabling any real checkout."
   }
 }
