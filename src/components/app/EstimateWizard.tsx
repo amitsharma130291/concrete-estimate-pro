@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, Check, Printer, SplitSquareHorizontal } from "lucide-react";
 import { useWorkspace } from "../../lib/workspaceContext";
 import { newId, upsertBy } from "../../lib/storage";
@@ -10,6 +10,7 @@ import SectionsEditor from "./SectionsEditor";
 import EstimateDocument from "./EstimateDocument";
 import LaborCostInput, { DEFAULT_LABOR_INPUT } from "./LaborCostInput";
 import ScenarioCompareModal from "./ScenarioCompareModal";
+import { track } from "../../lib/analytics";
 
 const STEPS = ["Project", "Dimensions", "Costs", "Price", "Customer"] as const;
 type Step = (typeof STEPS)[number];
@@ -95,6 +96,7 @@ export default function EstimateWizard({
   });
   const [saved, setSaved] = useState(false);
   const [comparingScenarios, setComparingScenarios] = useState(false);
+  const hasTrackedCreate = useRef(false);
 
   const result = useMemo(
     () =>
@@ -116,6 +118,10 @@ export default function EstimateWizard({
   function persist(status?: Estimate["status"]) {
     const toSave: Estimate = { ...draft, status: status ?? draft.status, updatedAt: new Date().toISOString() };
     update((ws) => ({ ...ws, estimates: upsertBy(ws.estimates, toSave) }));
+    if (!existing && !hasTrackedCreate.current) {
+      hasTrackedCreate.current = true;
+      track("estimate_created", { projectType: toSave.projectType, fromTemplate: !!fromTemplate });
+    }
     setDraft(toSave);
     setSaved(true);
     setTimeout(() => setSaved(false), 1500);
@@ -288,7 +294,7 @@ export default function EstimateWizard({
             <div>
               <div className="mb-2 flex items-center justify-between">
                 <span className="text-sm font-semibold text-ink">Document preview</span>
-                <Button size="sm" variant="ghost" onClick={() => window.print()}>
+                <Button size="sm" variant="ghost" onClick={() => { track("pdf_generated", { source: "wizard" }); window.print(); }}>
                   <Printer size={14} /> Print
                 </Button>
               </div>

@@ -1,7 +1,8 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Coins, Calculator, TriangleAlert, ArrowRight } from "lucide-react";
 import { Card, Field, NumberInput, Button, Badge } from "../ui/primitives";
 import { calculateCost, calculateMargin, calculateRequiredSellingPrice, formatCurrency, formatPercent } from "../../lib/calc";
+import { track } from "../../lib/analytics";
 
 const emptyQty = { areaSqFt: 0, netCubicFeet: 0, netCubicYards: 0, orderQuantityYd3: 0 };
 
@@ -41,6 +42,14 @@ export default function JobCostCalculatorIsland() {
   const requiredSellingPrice = calculateRequiredSellingPrice(trueCost, targetMarginPercent);
   const currentMargin = calculateMargin(sellingPrice, trueCost);
   const isBelowTarget = currentMargin !== null && currentMargin < targetMarginPercent / 100;
+
+  const wasBelowTarget = useRef(false);
+  useEffect(() => {
+    if (isBelowTarget && !wasBelowTarget.current) {
+      track("margin_warning_viewed", { calculator: "job-cost" });
+    }
+    wasBelowTarget.current = isBelowTarget;
+  }, [isBelowTarget]);
 
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-[60%_40%] lg:items-start">

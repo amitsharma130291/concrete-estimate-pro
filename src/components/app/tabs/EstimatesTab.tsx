@@ -9,6 +9,7 @@ import { Button, Card, ConfirmDialog, EmptyState, Select, TextInput } from "../.
 import { StatusBadge } from "./OverviewTab";
 import EstimateWizard from "../EstimateWizard";
 import EstimateDocument from "../EstimateDocument";
+import { track } from "../../../lib/analytics";
 
 function getParams(): URLSearchParams {
   if (typeof window === "undefined") return new URLSearchParams();
@@ -151,7 +152,7 @@ export default function EstimatesTab() {
               <Button size="sm" onClick={() => navigate({ edit: activeEstimate.id, id: undefined })}>
                 Edit
               </Button>
-              <Button size="sm" variant="ghost" onClick={() => window.print()}>
+              <Button size="sm" variant="ghost" onClick={() => { track("pdf_generated", { source: "estimate_detail" }); window.print(); }}>
                 <Printer size={14} /> Print
               </Button>
               <Button size="sm" variant="ghost" onClick={() => duplicate(activeEstimate)}>

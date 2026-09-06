@@ -69,6 +69,28 @@ export default function ActualsTab() {
     return groups;
   }, [rows]);
 
+  // Estimated person-hours are only meaningful for projects whose labor was entered in
+  // hourly mode (crew size x hours) — flat or unit-rate labor has no hours estimate to compare.
+  const varianceByType = useMemo(() => {
+    const groups: Record<
+      string,
+      { count: number; estQtySum: number; actQtySum: number; hoursCount: number; estHoursSum: number; actHoursSum: number }
+    > = {};
+    for (const r of rows) {
+      const key = r.project.projectType;
+      groups[key] ??= { count: 0, estQtySum: 0, actQtySum: 0, hoursCount: 0, estHoursSum: 0, actHoursSum: 0 };
+      groups[key].count += 1;
+      groups[key].estQtySum += r.est.orderQuantityYd3;
+      groups[key].actQtySum += r.actual.actualQuantityYd3;
+      if (r.project.labor?.mode === "hourly") {
+        groups[key].hoursCount += 1;
+        groups[key].estHoursSum += r.project.labor.crewSize * r.project.labor.hours;
+        groups[key].actHoursSum += r.actual.actualLaborHours;
+      }
+    }
+    return groups;
+  }, [rows]);
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -80,6 +102,58 @@ export default function ActualsTab() {
           <PlusCircle size={16} /> Log actual result
         </Button>
       </div>
+
+      {Object.keys(varianceByType).length > 0 && (
+        <Card title="Historical quantity & labor variance" subtitle={rows.length < 5 ? "Small sample — treat as directional, not statistically reliable" : undefined}>
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[640px] text-left text-sm">
+              <thead>
+                <tr className="text-xs uppercase text-muted">
+                  <th className="pb-2 font-medium">Type</th>
+                  <th className="pb-2 font-medium">Jobs</th>
+                  <th className="pb-2 font-medium">Avg. est. quantity</th>
+                  <th className="pb-2 font-medium">Avg. actual quantity</th>
+                  <th className="pb-2 font-medium">Quantity variance</th>
+                  <th className="pb-2 font-medium">Avg. est. labor hrs</th>
+                  <th className="pb-2 font-medium">Avg. actual labor hrs</th>
+                  <th className="pb-2 font-medium">Labor variance</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {Object.entries(varianceByType).map(([type, g]) => {
+                  const avgEstQty = g.estQtySum / g.count;
+                  const avgActQty = g.actQtySum / g.count;
+                  const qtyVariance = avgEstQty > 0 ? (avgActQty - avgEstQty) / avgEstQty : null;
+                  const hasHours = g.hoursCount > 0;
+                  const avgEstHours = hasHours ? g.estHoursSum / g.hoursCount : null;
+                  const avgActHours = hasHours ? g.actHoursSum / g.hoursCount : null;
+                  const hoursVariance = hasHours && avgEstHours! > 0 ? (avgActHours! - avgEstHours!) / avgEstHours! : null;
+                  return (
+                    <tr key={type}>
+                      <td className="py-2 capitalize text-ink">{type}</td>
+                      <td className="py-2 text-ink">{g.count}</td>
+                      <td className="py-2 text-ink">{formatYd3(avgEstQty)}</td>
+                      <td className="py-2 text-ink">{formatYd3(avgActQty)}</td>
+                      <td className={`py-2 font-medium ${qtyVariance !== null && qtyVariance > 0 ? "text-red" : "text-green"}`}>
+                        {qtyVariance !== null ? `${qtyVariance >= 0 ? "+" : ""}${(qtyVariance * 100).toFixed(1)}%` : "—"}
+                      </td>
+                      <td className="py-2 text-ink">{avgEstHours !== null ? `${avgEstHours.toFixed(1)} hrs` : "—"}</td>
+                      <td className="py-2 text-ink">{avgActHours !== null ? `${avgActHours.toFixed(1)} hrs` : "—"}</td>
+                      <td className={`py-2 font-medium ${hoursVariance !== null && hoursVariance > 0 ? "text-red" : "text-green"}`}>
+                        {hoursVariance !== null ? `${hoursVariance >= 0 ? "+" : ""}${(hoursVariance * 100).toFixed(1)}%` : `— ${g.hoursCount === 0 ? "(no hourly-mode jobs)" : ""}`}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+          <p className="mt-3 text-xs text-muted">
+            Labor variance only includes jobs whose labor was entered in hourly mode (crew size × hours) — flat or
+            $/ft² labor has no hours estimate to compare against.
+          </p>
+        </Card>
+      )}
 
       {Object.keys(byType).length > 0 && (
         <Card title="Historical profitability by project type" subtitle={rows.length < 5 ? "Small sample — treat as directional, not statistically reliable" : undefined}>

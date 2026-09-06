@@ -1,8 +1,9 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Ruler, Coins, Calculator, TriangleAlert, ArrowRight } from "lucide-react";
 import { Card, Field, NumberInput, Select, Button, Badge } from "../ui/primitives";
 import { calculateEstimate, formatCurrency, formatPercent, formatYd3, type Rounding } from "../../lib/calc";
 import type { CalculatorConfig } from "../../data/calculatorConfigs";
+import { track } from "../../lib/analytics";
 
 const OVERHEAD_DEFAULT = 15;
 const TARGET_MARGIN_DEFAULT = 30;
@@ -59,6 +60,14 @@ export default function ProjectCalculatorIsland({ config }: { config: Calculator
       }),
     [lengthFt, widthFt, thicknessIn, allowancePercent, rounding, readyMixRate, laborCost, formsCost, reinforcementCost, equipmentCost, otherCost, overheadPercent, targetMarginPercent, sellingPrice],
   );
+
+  const wasBelowTarget = useRef(false);
+  useEffect(() => {
+    if (result.pricing.isBelowTarget && !wasBelowTarget.current) {
+      track("margin_warning_viewed", { calculator: config.slug });
+    }
+    wasBelowTarget.current = result.pricing.isBelowTarget;
+  }, [result.pricing.isBelowTarget, config.slug]);
 
   const marginTone = result.pricing.isBelowTarget ? "text-red" : "text-green";
 

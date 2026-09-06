@@ -1,15 +1,19 @@
 import { useMemo, useState } from "react";
+import { CheckCircle2 } from "lucide-react";
 import { useWorkspace } from "../../../lib/workspaceContext";
+import { upsertBy } from "../../../lib/storage";
 import { evaluateEntity } from "../../../lib/estimateMath";
 import { formatCurrency, formatPercent } from "../../../lib/calc";
-import { Badge, Card, EmptyState, NumberInput } from "../../ui/primitives";
+import { Badge, Button, Card, ConfirmDialog, EmptyState, NumberInput } from "../../ui/primitives";
 
 export default function RateHealthTab() {
-  const { workspace } = useWorkspace();
+  const { workspace, update } = useWorkspace();
   const [readyMixChangePercent, setReadyMixChangePercent] = useState(0);
   const [laborChangePercent, setLaborChangePercent] = useState(0);
   const [equipmentChangePercent, setEquipmentChangePercent] = useState(0);
   const [targetMarginOverride, setTargetMarginOverride] = useState(workspace.settings.defaultTargetMarginPercent);
+  const [confirmingApply, setConfirmingApply] = useState(false);
+  const [appliedFlash, setAppliedFlash] = useState(false);
 
   const rows = useMemo(
     () =>
@@ -40,13 +44,29 @@ export default function RateHealthTab() {
           targetMarginPercent: targetMarginOverride,
           sellingPrice: t.currentSellingPrice,
         });
-        return { template: t, base, scenario };
+        return { template: t, scenarioCosts, base, scenario };
       }),
     [workspace.templates, workspace.settings.defaultOverheadPercent, targetMarginOverride, readyMixChangePercent, laborChangePercent, equipmentChangePercent],
   );
 
   const scenarioActive = readyMixChangePercent !== 0 || laborChangePercent !== 0 || equipmentChangePercent !== 0;
   const belowTargetCount = rows.filter((r) => r.scenario.isBelowTarget).length;
+
+  function applyScenario() {
+    update((ws) => ({
+      ...ws,
+      templates: rows.reduce(
+        (templates, r) => upsertBy(templates, { ...r.template, defaultCosts: r.scenarioCosts }),
+        ws.templates,
+      ),
+    }));
+    setReadyMixChangePercent(0);
+    setLaborChangePercent(0);
+    setEquipmentChangePercent(0);
+    setConfirmingApply(false);
+    setAppliedFlash(true);
+    setTimeout(() => setAppliedFlash(false), 2500);
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -71,8 +91,23 @@ export default function RateHealthTab() {
           </div>
         </div>
         {scenarioActive && (
-          <p className="mt-4 rounded-lg bg-amber-light px-3 py-2 text-sm text-amber">
-            {belowTargetCount} of {rows.length} standard rates would fall below target under this scenario.
+          <>
+            <p className="mt-4 rounded-lg bg-amber-light px-3 py-2 text-sm text-amber">
+              {belowTargetCount} of {rows.length} standard rates would fall below target under this scenario.
+            </p>
+            <div className="mt-3 flex items-center gap-3">
+              <Button size="sm" onClick={() => setConfirmingApply(true)}>
+                Apply to templates
+              </Button>
+              <span className="text-xs text-muted">
+                Updates every template's saved costs permanently. Open estimates and projects are not affected.
+              </span>
+            </div>
+          </>
+        )}
+        {appliedFlash && (
+          <p className="mt-3 flex items-center gap-1.5 text-sm font-medium text-green">
+            <CheckCircle2 size={15} /> Applied — template costs updated.
           </p>
         )}
       </Card>
@@ -112,6 +147,16 @@ export default function RateHealthTab() {
             </table>
           </div>
         </Card>
+      )}
+
+      {confirmingApply && (
+        <ConfirmDialog
+          title="Apply cost changes to templates"
+          message={`This permanently updates the saved ready-mix, labor and equipment costs on all ${rows.length} template${rows.length === 1 ? "" : "s"} to reflect this scenario. It does not change any already-saved estimates or projects.`}
+          confirmLabel="Apply"
+          onConfirm={applyScenario}
+          onCancel={() => setConfirmingApply(false)}
+        />
       )}
     </div>
   );

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Plus, Trash2, Printer, ArrowRight } from "lucide-react";
 import { Button, Card, Field, NumberInput, TextInput } from "../ui/primitives";
 import { formatCurrency } from "../../lib/calc";
+import { track } from "../../lib/analytics";
 
 interface LineItem {
   id: string;
@@ -155,7 +156,7 @@ export default function EstimateTemplateIsland() {
           {notes && <p className="mt-4 text-xs text-muted">{notes}</p>}
 
           <div className="mt-6 flex flex-col gap-2 no-print">
-            <Button size="md" onClick={() => window.print()}>
+            <Button size="md" onClick={() => { track("pdf_generated", { source: "free_estimate_template" }); window.print(); }}>
               <Printer size={16} /> Print / Save as PDF
             </Button>
             <a href="/pricing">

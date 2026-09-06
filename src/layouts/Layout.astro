@@ -32,6 +32,11 @@ const organizationSchema = {
   url: site.toString(),
   logo: absoluteUrl("/icon-512.png"),
 };
+
+// Inert until a real GA4 property is created and its ID set as PUBLIC_GA_MEASUREMENT_ID —
+// see .env.example. With no ID, no analytics script loads and every track() call in
+// src/lib/analytics.ts is a silent no-op.
+const GA_MEASUREMENT_ID = import.meta.env.PUBLIC_GA_MEASUREMENT_ID as string | undefined;
 ---
 
 <!doctype html>
@@ -68,9 +73,26 @@ const organizationSchema = {
         <script type="application/ld+json" is:inline set:html={JSON.stringify(organizationSchema)} />
       </>
     )}
+    {GA_MEASUREMENT_ID && (
+      <>
+        <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}></script>
+        <script is:inline define:vars={{ GA_MEASUREMENT_ID }}>
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag("js", new Date());
+          gtag("config", GA_MEASUREMENT_ID);
+        </script>
+      </>
+    )}
     <slot name="head" />
   </head>
   <body class="bg-warm-white text-ink antialiased">
     <slot />
+    <script>
+      import { initAnalyticsDelegation } from "../lib/analytics";
+      initAnalyticsDelegation();
+    </script>
   </body>
 </html>
