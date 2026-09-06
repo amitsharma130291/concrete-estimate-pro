@@ -4,6 +4,7 @@ import { useWorkspace } from "../../../lib/workspaceContext";
 import { newId, removeBy, upsertBy } from "../../../lib/storage";
 import { evaluateEstimate } from "../../../lib/estimateMath";
 import { formatCurrency, formatPercent } from "../../../lib/calc";
+import { toCsv } from "../../../lib/csv";
 import type { Estimate, EstimateStatus, Project } from "../../../lib/types";
 import { Button, Card, ConfirmDialog, EmptyState, Select, TextInput } from "../../ui/primitives";
 import { StatusBadge } from "./OverviewTab";
@@ -94,7 +95,7 @@ export default function EstimatesTab() {
       ["estimateNumber", "projectName", "customerName", "status", "sellingPrice"],
       ...workspace.estimates.map((e) => [e.estimateNumber, e.projectName, e.customerName, e.status, String(e.sellingPrice)]),
     ];
-    const csv = rows.map((r) => r.join(",")).join("\n");
+    const csv = toCsv(rows);
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
