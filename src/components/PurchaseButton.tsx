@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Button } from "./ui/primitives";
 
 // TODO: wire this button to a real checkout provider (e.g. Dodo Payments or Stripe) once

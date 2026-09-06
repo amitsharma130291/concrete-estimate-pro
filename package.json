@@ -28,6 +28,8 @@
     "esbuild": true
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "typescript": "^6.0.3",
     "vitest": "^5.0.0"
   }
 }

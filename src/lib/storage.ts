@@ -159,7 +159,7 @@ export function validateImport(json: string): ImportValidation {
     }
   }
   if (errors.length) return { ok: false, errors };
-  return { ok: true, errors: [], workspace: migrateWorkspace(obj as Workspace) };
+  return { ok: true, errors: [], workspace: migrateWorkspace(obj as unknown as Workspace) };
 }
 
 // ---- Generic id helper ----

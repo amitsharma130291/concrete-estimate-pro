@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Plus, Trash2, Printer, ArrowRight } from "lucide-react";
 import { Button, Card, Field, NumberInput, TextInput } from "../ui/primitives";
 import { formatCurrency } from "../../lib/calc";

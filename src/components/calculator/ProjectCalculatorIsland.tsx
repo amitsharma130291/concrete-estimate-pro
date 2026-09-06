@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Ruler, Coins, Calculator, TriangleAlert, ArrowRight } from "lucide-react";
 import { Card, Field, NumberInput, Select, Button, Badge } from "../ui/primitives";
 import { calculateEstimate, formatCurrency, formatPercent, formatYd3, type Rounding } from "../../lib/calc";

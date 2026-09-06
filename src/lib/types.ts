@@ -82,6 +82,8 @@ export interface ProjectTemplate {
     equipmentCost: number;
     otherCost: number;
   };
+  /** What you currently charge customers for this standard job type — drives Rate Health. */
+  currentSellingPrice: number;
   createdAt: string;
   isSample?: boolean;
 }

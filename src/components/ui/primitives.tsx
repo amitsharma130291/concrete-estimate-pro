@@ -1,4 +1,4 @@
-import React, { type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes } from "react";
+import { type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes } from "react";
 
 export function Card({
   title,
@@ -204,6 +204,116 @@ export function StatTile({ label, value, sub, tone = "neutral" }: { label: strin
       <div className="text-xs font-medium uppercase tracking-wide text-muted">{label}</div>
       <div className={`mt-1.5 text-2xl font-bold ${valueColor}`}>{value}</div>
       {sub && <div className="mt-0.5 text-xs text-muted">{sub}</div>}
+    </div>
+  );
+}
+
+export function Modal({
+  title,
+  onClose,
+  children,
+  wide = false,
+}: {
+  title: string;
+  onClose: () => void;
+  children: ReactNode;
+  wide?: boolean;
+}) {
+  return (
+    <div className="fixed inset-0 z-[60] flex items-start justify-center overflow-y-auto bg-black/40 p-4 py-8 sm:items-center">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={title}
+        className={`w-full ${wide ? "max-w-2xl" : "max-w-md"} rounded-xl bg-white shadow-xl`}
+      >
+        <div className="flex items-center justify-between border-b border-border px-5 py-4">
+          <h3 className="font-semibold text-ink">{title}</h3>
+          <button type="button" onClick={onClose} aria-label="Close" className="rounded-lg p-1.5 text-muted hover:bg-warm-white hover:text-ink">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+              <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" />
+            </svg>
+          </button>
+        </div>
+        <div className="max-h-[75vh] overflow-y-auto p-5">{children}</div>
+      </div>
+    </div>
+  );
+}
+
+export function ConfirmDialog({
+  title,
+  message,
+  confirmLabel = "Confirm",
+  danger = false,
+  onConfirm,
+  onCancel,
+}: {
+  title: string;
+  message: string;
+  confirmLabel?: string;
+  danger?: boolean;
+  onConfirm: () => void;
+  onCancel: () => void;
+}) {
+  return (
+    <Modal title={title} onClose={onCancel}>
+      <p className="text-sm text-muted">{message}</p>
+      <div className="mt-5 flex justify-end gap-2">
+        <Button variant="ghost" onClick={onCancel}>
+          Cancel
+        </Button>
+        <Button variant={danger ? "danger" : "primary"} onClick={onConfirm}>
+          {confirmLabel}
+        </Button>
+      </div>
+    </Modal>
+  );
+}
+
+export function Tabs({
+  tabs,
+  active,
+  onChange,
+}: {
+  tabs: { key: string; label: string }[];
+  active: string;
+  onChange: (key: string) => void;
+}) {
+  return (
+    <div role="tablist" aria-label="Catalog sections" className="flex flex-wrap gap-1 rounded-lg border border-border bg-warm-white p-1">
+      {tabs.map((t) => (
+        <button
+          key={t.key}
+          type="button"
+          role="tab"
+          aria-selected={active === t.key}
+          onClick={() => onChange(t.key)}
+          className={`rounded-md px-3.5 py-1.5 text-sm font-medium transition ${
+            active === t.key ? "bg-white text-ink shadow-sm" : "text-muted hover:text-ink"
+          }`}
+        >
+          {t.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+export function EmptyState({
+  title,
+  desc,
+  action,
+}: {
+  title: string;
+  desc: string;
+  action?: ReactNode;
+}) {
+  return (
+    <div className="rounded-xl border border-dashed border-border bg-white p-10 text-center">
+      <h3 className="font-semibold text-ink">{title}</h3>
+      <p className="mx-auto mt-1.5 max-w-sm text-sm text-muted">{desc}</p>
+      {action && <div className="mt-4 flex justify-center">{action}</div>}
     </div>
   );
 }
