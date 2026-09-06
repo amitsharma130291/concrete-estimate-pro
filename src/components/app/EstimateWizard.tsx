@@ -4,7 +4,7 @@ import { useWorkspace } from "../../lib/workspaceContext";
 import { newId, upsertBy } from "../../lib/storage";
 import { evaluateEntity, combinedAreaSqFt } from "../../lib/estimateMath";
 import { formatCurrency, formatPercent, formatYd3 } from "../../lib/calc";
-import type { Estimate, ProjectType } from "../../lib/types";
+import type { Estimate, ProjectTemplate, ProjectType } from "../../lib/types";
 import { Button, Card, Field, NumberInput, Select, TextInput } from "../ui/primitives";
 import SectionsEditor from "./SectionsEditor";
 import EstimateDocument from "./EstimateDocument";
@@ -36,26 +36,62 @@ function blankEstimate(defaults: { overheadPercent: number; targetMarginPercent:
   };
 }
 
-export default function EstimateWizard({ existing, onDone }: { existing?: Estimate; onDone: (savedId: string) => void }) {
+function estimateFromTemplate(template: ProjectTemplate, nextNumber: string): Estimate {
+  return {
+    id: newId("est"),
+    estimateNumber: nextNumber,
+    projectType: template.projectType,
+    projectName: template.name,
+    customerName: "",
+    sections: template.sections.map((s) => ({ ...s, id: newId("sec") })),
+    allowancePercent: template.allowancePercent,
+    rounding: template.rounding,
+    costs: { ...template.defaultCosts },
+    labor: template.labor,
+    overheadPercent: 15,
+    targetMarginPercent: 30,
+    sellingPrice: 0,
+    status: "draft",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+export default function EstimateWizard({
+  existing,
+  fromTemplate,
+  onDone,
+}: {
+  existing?: Estimate;
+  fromTemplate?: ProjectTemplate;
+  onDone: (savedId: string) => void;
+}) {
   const { workspace, update } = useWorkspace();
   const [stepIndex, setStepIndex] = useState(0);
-  const [draft, setDraft] = useState<Estimate>(
-    () =>
-      existing ?? {
-        ...blankEstimate(
-          {
-            overheadPercent: workspace.settings.defaultOverheadPercent,
-            targetMarginPercent: workspace.settings.defaultTargetMarginPercent,
-            allowancePercent: workspace.settings.defaultAllowancePercent,
-            rounding: workspace.settings.defaultRounding,
-            notes: workspace.settings.defaultNotes,
-            readyMixRate: workspace.catalog.find((c) => c.kind === "readyMix")?.unitCost ?? 165,
-            laborRate: workspace.settings.defaultLoadedLaborRate,
-          },
-          `EST-${1000 + workspace.estimates.length + 1}`,
-        ),
+  const [draft, setDraft] = useState<Estimate>(() => {
+    if (existing) return existing;
+    const nextNumber = `EST-${1000 + workspace.estimates.length + 1}`;
+    if (fromTemplate) {
+      return {
+        ...estimateFromTemplate(fromTemplate, nextNumber),
+        overheadPercent: workspace.settings.defaultOverheadPercent,
+        targetMarginPercent: workspace.settings.defaultTargetMarginPercent,
+        notes: workspace.settings.defaultNotes,
+      };
+    }
+    return blankEstimate(
+      {
+        overheadPercent: workspace.settings.defaultOverheadPercent,
+        targetMarginPercent: workspace.settings.defaultTargetMarginPercent,
+        allowancePercent: workspace.settings.defaultAllowancePercent,
+        rounding: workspace.settings.defaultRounding,
+        notes: workspace.settings.defaultNotes,
+        readyMixRate: workspace.catalog.find((c) => c.kind === "readyMix")?.unitCost ?? 165,
+        laborRate: workspace.settings.defaultLoadedLaborRate,
       },
-  );
+      nextNumber,
+    );
+  });
   const [saved, setSaved] = useState(false);
 
   const result = useMemo(
@@ -87,6 +123,11 @@ export default function EstimateWizard({ existing, onDone }: { existing?: Estima
   return (
     <div className="flex flex-col gap-6">
       <ProgressBar steps={STEPS as unknown as string[]} activeIndex={stepIndex} />
+      {fromTemplate && !existing && (
+        <p className="rounded-lg border border-orange/20 bg-orange/5 px-4 py-2.5 text-sm text-ink no-print">
+          Started from template <strong>{fromTemplate.name}</strong> — dimensions and costs are pre-filled, edit anything below.
+        </p>
+      )}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[58%_42%] lg:items-start">
         <Card title={step}>

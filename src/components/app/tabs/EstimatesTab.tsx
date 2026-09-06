@@ -31,6 +31,8 @@ export default function EstimatesTab() {
   const mode = params.get("new") ? "new" : params.has("edit") ? "edit" : params.has("id") ? "view" : "list";
   const activeId = params.get("id") ?? params.get("edit") ?? undefined;
   const activeEstimate = activeId ? workspace.estimates.find((e) => e.id === activeId) : undefined;
+  const templateId = params.get("templateId") ?? undefined;
+  const fromTemplate = templateId ? workspace.templates.find((t) => t.id === templateId) : undefined;
 
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<EstimateStatus | "all">("all");
@@ -90,7 +92,11 @@ export default function EstimatesTab() {
         <button onClick={() => navigate({ new: undefined, edit: undefined, id: undefined })} className="w-fit text-sm font-medium text-orange no-print">
           &larr; Back to estimates
         </button>
-        <EstimateWizard existing={mode === "edit" ? activeEstimate : undefined} onDone={(id) => navigate({ new: undefined, edit: undefined, id })} />
+        <EstimateWizard
+          existing={mode === "edit" ? activeEstimate : undefined}
+          fromTemplate={mode === "new" ? fromTemplate : undefined}
+          onDone={(id) => navigate({ new: undefined, edit: undefined, templateId: undefined, id })}
+        />
       </div>
     );
   }

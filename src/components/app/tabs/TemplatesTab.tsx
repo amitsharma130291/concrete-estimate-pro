@@ -106,7 +106,10 @@ export default function TemplatesTab() {
                     <dd className={`font-medium ${result.isBelowTarget ? "text-red" : "text-green"}`}>{formatPercent(result.currentMargin, 0)}</dd>
                   </div>
                 </dl>
-                <div className="mt-4 flex gap-2">
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <a href={`/app/estimates?new=1&templateId=${t.id}`}>
+                    <Button size="sm">Start estimate</Button>
+                  </a>
                   <Button size="sm" variant="ghost" onClick={() => setEditing(t)}>
                     Edit
                   </Button>
