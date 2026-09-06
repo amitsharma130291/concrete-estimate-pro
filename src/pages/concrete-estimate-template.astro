@@ -1,0 +1,67 @@
+---
+import Layout from "../layouts/Layout.astro";
+import PublicHeader from "../components/PublicHeader.astro";
+import PublicFooter from "../components/PublicFooter.astro";
+import FaqAccordion from "../components/FaqAccordion.astro";
+import EstimateTemplateIsland from "../components/calculator/EstimateTemplateIsland";
+
+const faqs = [
+  {
+    q: "Can I print or save this as a PDF?",
+    a: "Yes — the Print / Save as PDF button opens your browser's print dialog with a clean, customer-ready layout. Choose \"Save as PDF\" as the destination to download it.",
+  },
+  {
+    q: "Does this save my estimate?",
+    a: "This free template doesn't save data between visits. Concrete Estimate Pro saves every estimate, lets you duplicate past projects, and generates line items automatically from your saved rates and dimensions.",
+  },
+  {
+    q: "Can I use this for other trades?",
+    a: "It's built for concrete flatwork, but the line-item format works for any straightforward estimate — add or remove lines as needed.",
+  },
+];
+---
+
+<Layout
+  title="Concrete Estimate Template | Concrete Estimate Pro"
+  description="Free interactive concrete estimate template. Fill in your project and line items and print a customer-ready estimate in minutes."
+>
+  <PublicHeader />
+  <main>
+    <section class="border-b border-border bg-white">
+      <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12">
+        <div class="max-w-2xl">
+          <h1 class="text-3xl font-extrabold tracking-tight text-ink sm:text-4xl">Concrete Estimate Template</h1>
+          <p class="mt-3 text-lg text-muted">
+            Fill in your project details and line items on the left — a customer-ready estimate builds itself on the
+            right, ready to print or save as a PDF.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
+      <EstimateTemplateIsland client:load />
+    </section>
+
+    <section class="mx-auto max-w-7xl px-4 py-14 sm:px-6">
+      <FaqAccordion faqs={faqs} />
+    </section>
+
+    <section class="bg-charcoal no-print">
+      <div class="mx-auto max-w-4xl px-4 py-14 text-center sm:px-6">
+        <h2 class="text-2xl font-bold text-white sm:text-3xl">Stop building estimates from scratch</h2>
+        <p class="mx-auto mt-3 max-w-xl text-white/70">
+          Concrete Estimate Pro fills in line items automatically from your dimensions and saved rates — and keeps
+          every estimate for next time.
+        </p>
+        <a
+          href="/pricing"
+          class="mt-6 inline-flex items-center justify-center rounded-lg bg-orange px-6 py-3.5 text-base font-semibold text-white transition hover:bg-orange-dark"
+        >
+          Get Concrete Estimate Pro — $99 Lifetime
+        </a>
+      </div>
+    </section>
+  </main>
+  <PublicFooter />
+</Layout>

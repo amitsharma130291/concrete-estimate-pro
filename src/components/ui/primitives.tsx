@@ -1,0 +1,209 @@
+import React, { type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes } from "react";
+
+export function Card({
+  title,
+  icon,
+  subtitle,
+  children,
+  className = "",
+}: {
+  title?: string;
+  icon?: ReactNode;
+  subtitle?: string;
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <div className={`rounded-xl border border-border bg-white shadow-sm ${className}`}>
+      {title && (
+        <div className="flex items-center justify-between gap-3 border-b border-border px-5 py-4">
+          <div className="flex items-center gap-2.5">
+            {icon && <span className="text-orange" aria-hidden="true">{icon}</span>}
+            <h3 className="font-semibold text-ink">{title}</h3>
+          </div>
+          {subtitle && <span className="text-sm text-muted">{subtitle}</span>}
+        </div>
+      )}
+      <div className="p-5">{children}</div>
+    </div>
+  );
+}
+
+export function Field({
+  label,
+  hint,
+  htmlFor,
+  children,
+}: {
+  label: string;
+  hint?: string;
+  htmlFor?: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className="grid grid-cols-1 items-center gap-1 py-2.5 sm:grid-cols-[minmax(0,110px)_minmax(0,140px)_1fr] sm:gap-3">
+      <label htmlFor={htmlFor} className="text-sm font-medium text-ink">
+        {label}
+      </label>
+      <div>{children}</div>
+      {hint && <span className="text-xs text-muted sm:text-sm">{hint}</span>}
+    </div>
+  );
+}
+
+export function NumberInput({
+  className = "",
+  ...props
+}: InputHTMLAttributes<HTMLInputElement>) {
+  return (
+    <input
+      type="number"
+      inputMode="decimal"
+      className={`w-full rounded-lg border border-border bg-white px-3 py-2 text-sm text-ink shadow-sm transition focus:border-orange ${className}`}
+      {...props}
+    />
+  );
+}
+
+export function TextInput({
+  className = "",
+  ...props
+}: InputHTMLAttributes<HTMLInputElement>) {
+  return (
+    <input
+      type="text"
+      className={`w-full rounded-lg border border-border bg-white px-3 py-2 text-sm text-ink shadow-sm transition focus:border-orange ${className}`}
+      {...props}
+    />
+  );
+}
+
+export function Select({
+  className = "",
+  children,
+  ...props
+}: SelectHTMLAttributes<HTMLSelectElement>) {
+  return (
+    <select
+      className={`w-full rounded-lg border border-border bg-white px-3 py-2 text-sm text-ink shadow-sm transition focus:border-orange ${className}`}
+      {...props}
+    >
+      {children}
+    </select>
+  );
+}
+
+export function UnitInput({
+  value,
+  onChange,
+  unit,
+  onUnitChange,
+  units,
+  id,
+  min = 0,
+  step = "any",
+}: {
+  value: number;
+  onChange: (v: number) => void;
+  unit: string;
+  onUnitChange?: (u: string) => void;
+  units?: string[];
+  id?: string;
+  min?: number;
+  step?: string | number;
+}) {
+  return (
+    <div className="flex overflow-hidden rounded-lg border border-border shadow-sm focus-within:border-orange">
+      <input
+        id={id}
+        type="number"
+        inputMode="decimal"
+        min={min}
+        step={step}
+        value={Number.isFinite(value) ? value : ""}
+        onChange={(e) => onChange(e.target.value === "" ? 0 : parseFloat(e.target.value))}
+        className="w-full min-w-0 flex-1 border-0 px-3 py-2 text-sm text-ink focus:outline-none focus:ring-0"
+      />
+      {units && onUnitChange ? (
+        <select
+          value={unit}
+          onChange={(e) => onUnitChange(e.target.value)}
+          aria-label="Unit"
+          className="border-l border-border bg-warm-white px-2 text-sm text-muted focus:outline-none"
+        >
+          {units.map((u) => (
+            <option key={u} value={u}>
+              {u}
+            </option>
+          ))}
+        </select>
+      ) : (
+        <span className="flex items-center border-l border-border bg-warm-white px-2.5 text-sm text-muted">
+          {unit}
+        </span>
+      )}
+    </div>
+  );
+}
+
+export function Button({
+  variant = "primary",
+  size = "md",
+  className = "",
+  children,
+  ...props
+}: ButtonHTMLAttributes<HTMLButtonElement> & {
+  variant?: "primary" | "secondary" | "ghost" | "danger";
+  size?: "sm" | "md" | "lg";
+}) {
+  const base =
+    "inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition disabled:cursor-not-allowed disabled:opacity-50";
+  const sizes = {
+    sm: "px-3 py-1.5 text-sm",
+    md: "px-4 py-2.5 text-sm",
+    lg: "px-6 py-3.5 text-base",
+  };
+  const variants = {
+    primary: "bg-orange text-white hover:bg-orange-dark",
+    secondary: "bg-charcoal text-white hover:bg-charcoal-light",
+    ghost: "bg-transparent text-ink border border-border hover:bg-warm-white",
+    danger: "bg-red text-white hover:brightness-95",
+  };
+  return (
+    <button className={`${base} ${sizes[size]} ${variants[variant]} ${className}`} {...props}>
+      {children}
+    </button>
+  );
+}
+
+export function Badge({
+  tone = "neutral",
+  children,
+}: {
+  tone?: "neutral" | "green" | "amber" | "red" | "orange";
+  children: ReactNode;
+}) {
+  const tones: Record<string, string> = {
+    neutral: "bg-warm-white text-muted border border-border",
+    green: "bg-green-light text-green",
+    amber: "bg-amber-light text-amber",
+    red: "bg-red-light text-red",
+    orange: "bg-orange/10 text-orange-dark",
+  };
+  return (
+    <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${tones[tone]}`}>
+      {children}
+    </span>
+  );
+}
+
+export function StatTile({ label, value, sub, tone = "neutral" }: { label: string; value: string; sub?: string; tone?: "neutral" | "green" | "red" }) {
+  const valueColor = tone === "green" ? "text-green" : tone === "red" ? "text-red" : "text-ink";
+  return (
+    <div className="rounded-xl border border-border bg-white p-4 shadow-sm">
+      <div className="text-xs font-medium uppercase tracking-wide text-muted">{label}</div>
+      <div className={`mt-1.5 text-2xl font-bold ${valueColor}`}>{value}</div>
+      {sub && <div className="mt-0.5 text-xs text-muted">{sub}</div>}
+    </div>
+  );
+}

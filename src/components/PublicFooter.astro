@@ -1,0 +1,66 @@
+---
+const calcLinks = [
+  { label: "Driveway Cost Calculator", href: "/concrete-driveway-cost-calculator" },
+  { label: "Slab Cost Calculator", href: "/concrete-slab-cost-calculator" },
+  { label: "Patio Cost Calculator", href: "/concrete-patio-cost-calculator" },
+  { label: "Footing Cost Calculator", href: "/concrete-footing-cost-calculator" },
+  { label: "Sidewalk Cost Calculator", href: "/concrete-sidewalk-cost-calculator" },
+  { label: "General Cost Calculator", href: "/concrete-cost-calculator" },
+];
+const otherLinks = [
+  { label: "Job Cost Calculator", href: "/concrete-job-cost-calculator" },
+  { label: "Estimate Template", href: "/concrete-estimate-template" },
+  { label: "Estimating Software", href: "/concrete-estimating-software" },
+  { label: "Pricing", href: "/pricing" },
+];
+---
+
+<footer class="border-t border-border bg-white no-print">
+  <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6">
+    <div class="grid grid-cols-2 gap-8 sm:grid-cols-4">
+      <div class="col-span-2 sm:col-span-1">
+        <span class="inline-flex items-center gap-2 font-bold text-charcoal">
+          <svg width="24" height="24" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path
+              d="M20 2C9.9 2 2 9.9 2 20s7.9 18 18 18 18-7.9 18-18S30.1 2 20 2zm0 6.5c6.4 0 11.5 5.1 11.5 11.5S26.4 31.5 20 31.5c-3 0-5.7-1.1-7.8-3l4.6-4.6c.9.6 2 1 3.2 1 3.3 0 6-2.7 6-6s-2.7-6-6-6c-1.2 0-2.3.4-3.2 1l-4.6-4.6c2.1-1.9 4.8-3 7.8-3z"
+              fill="#FF5A1F"></path>
+          </svg>
+          Concrete Estimate Pro
+        </span>
+        <p class="mt-3 max-w-[220px] text-sm text-muted">Built for real work. Priced for a better tomorrow.</p>
+      </div>
+      <div>
+        <h3 class="text-sm font-semibold text-ink">Calculators</h3>
+        <ul class="mt-3 space-y-2">
+          {calcLinks.map((l) => (
+            <li><a href={l.href} class="text-sm text-muted hover:text-orange">{l.label}</a></li>
+          ))}
+        </ul>
+      </div>
+      <div>
+        <h3 class="text-sm font-semibold text-ink">Product</h3>
+        <ul class="mt-3 space-y-2">
+          {otherLinks.map((l) => (
+            <li><a href={l.href} class="text-sm text-muted hover:text-orange">{l.label}</a></li>
+          ))}
+        </ul>
+      </div>
+      <div>
+        <h3 class="text-sm font-semibold text-ink">Concrete Estimate Pro</h3>
+        <ul class="mt-3 space-y-2 text-sm text-muted">
+          <li>No account required</li>
+          <li>Data stays on your device</li>
+          <li>$99 lifetime, no subscription</li>
+        </ul>
+      </div>
+    </div>
+    <div class="mt-10 border-t border-border pt-6 text-xs text-muted">
+      <p>
+        Concrete Estimate Pro calculates quantities, costs and pricing from the dimensions and specifications you
+        provide. It does not determine slab thickness, footing size, reinforcement, concrete strength, load capacity
+        or building-code compliance — those come from your own project specifications, engineer or local code.
+      </p>
+      <p class="mt-3">&copy; {new Date().getFullYear()} Concrete Estimate Pro. All rights reserved.</p>
+    </div>
+  </div>
+</footer>

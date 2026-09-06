@@ -1,0 +1,179 @@
+---
+import Layout from "../layouts/Layout.astro";
+import PublicHeader from "../components/PublicHeader.astro";
+import PublicFooter from "../components/PublicFooter.astro";
+import FaqAccordion from "../components/FaqAccordion.astro";
+
+const calculators = [
+  { title: "Driveway Cost Calculator", desc: "Length, width, thickness → cost and pricing.", href: "/concrete-driveway-cost-calculator" },
+  { title: "Slab Cost Calculator", desc: "Garage floors, pads, foundations and more.", href: "/concrete-slab-cost-calculator" },
+  { title: "Patio Cost Calculator", desc: "Includes forming and finish cost inputs.", href: "/concrete-patio-cost-calculator" },
+  { title: "Footing Cost Calculator", desc: "From your specified footing dimensions.", href: "/concrete-footing-cost-calculator" },
+  { title: "Sidewalk Cost Calculator", desc: "Walkways and municipal sidewalk work.", href: "/concrete-sidewalk-cost-calculator" },
+  { title: "General Cost Calculator", desc: "Any rectangular pour, your own inputs.", href: "/concrete-cost-calculator" },
+];
+
+const steps = [
+  { title: "Enter dimensions", desc: "Length, width and thickness for any pour." },
+  { title: "See true cost", desc: "Materials, labor, equipment and overhead, totaled." },
+  { title: "Price for margin", desc: "Get the price you need to hit your target margin — every time." },
+];
+
+const faqs = [
+  {
+    q: "Is the calculator really free?",
+    a: "Yes. Every calculator on this site is free to use, with no account or sign-up required. Concrete Estimate Pro ($99 lifetime) adds saved rates, job costing, rate-health tracking and estimate history for contractors running an ongoing concrete business.",
+  },
+  {
+    q: "Does this replace an engineer?",
+    a: "No. This tool calculates quantity, cost and pricing from dimensions and rates you provide — it never determines slab thickness, footing size, reinforcement, concrete strength or code compliance.",
+  },
+  {
+    q: "Do I need to create an account?",
+    a: "No account is required for the free calculators or for Concrete Estimate Pro. Pro data is stored locally in your browser with JSON export for backup.",
+  },
+];
+---
+
+<Layout
+  title="Concrete Cost & Estimating Calculators | Concrete Estimate Pro"
+  description="Free concrete cost and quantity calculators for driveways, slabs, patios, footings and sidewalks — plus Concrete Estimate Pro, contractor estimating software for $99 lifetime."
+>
+  <PublicHeader />
+  <main>
+    <section class="border-b border-border bg-white">
+      <div class="mx-auto max-w-5xl px-4 py-16 text-center sm:px-6 sm:py-24">
+        <p class="text-sm font-semibold uppercase tracking-wide text-orange">Free concrete calculators</p>
+        <h1 class="mt-3 text-4xl font-extrabold tracking-tight text-ink sm:text-5xl">
+          Know what every concrete job really costs — before you quote it.
+        </h1>
+        <p class="mx-auto mt-4 max-w-2xl text-lg text-muted">
+          Calculate concrete quantity, true project cost and the price you need to charge to hit your margin.
+          Free for one-off jobs. Built into Concrete Estimate Pro for running your business.
+        </p>
+        <div class="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <a
+            href="/concrete-driveway-cost-calculator"
+            class="inline-flex items-center justify-center rounded-lg bg-orange px-6 py-3.5 text-base font-semibold text-white transition hover:bg-orange-dark"
+          >
+            Try the Driveway Calculator
+          </a>
+          <a
+            href="/pricing"
+            class="inline-flex items-center justify-center rounded-lg border border-border bg-white px-6 py-3.5 text-base font-semibold text-ink transition hover:bg-warm-white"
+          >
+            See Concrete Estimate Pro
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="border-b border-border bg-white">
+      <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+        <div class="grid grid-cols-1 gap-8 sm:grid-cols-3">
+          {steps.map((s, i) => (
+            <div class="flex gap-4">
+              <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-orange text-sm font-bold text-white">{i + 1}</span>
+              <div>
+                <h3 class="font-semibold text-ink">{s.title}</h3>
+                <p class="mt-1 text-sm text-muted">{s.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section id="calculators" class="mx-auto max-w-6xl px-4 py-14 sm:px-6">
+      <div class="text-center">
+        <h2 class="text-2xl font-bold text-ink sm:text-3xl">Choose your calculator</h2>
+        <p class="mt-2 text-muted">Pick the project type — or use the general calculator for anything rectangular.</p>
+      </div>
+      <div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {calculators.map((c) => (
+          <a href={c.href} class="group rounded-xl border border-border bg-white p-5 shadow-sm transition hover:border-orange hover:shadow-md">
+            <h3 class="font-semibold text-ink group-hover:text-orange">{c.title}</h3>
+            <p class="mt-1.5 text-sm text-muted">{c.desc}</p>
+            <span class="mt-3 inline-flex items-center gap-1 text-sm font-medium text-orange">
+              Open calculator
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                <path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <section class="border-y border-border bg-white">
+      <div class="mx-auto max-w-6xl px-4 py-14 sm:px-6">
+        <div class="grid grid-cols-1 items-center gap-10 lg:grid-cols-2">
+          <div>
+            <p class="text-sm font-semibold uppercase tracking-wide text-orange">For contractors running the business</p>
+            <h2 class="mt-2 text-3xl font-bold text-ink">Concrete Estimate Pro</h2>
+            <p class="mt-3 text-muted">
+              Save your rates once. Estimate full jobs in minutes. See true cost and margin on everything you quote —
+              and catch underpriced standard rates before they cost you money.
+            </p>
+            <ul class="mt-5 space-y-2.5">
+              {["Rate Health audit for your standard prices", "Multi-section project estimating", "Branded, customer-ready PDFs", "Estimate vs. actual on every job"].map((f) => (
+                <li class="flex items-start gap-2 text-sm text-ink">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="mt-0.5 shrink-0 text-green" aria-hidden="true">
+                    <path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                  {f}
+                </li>
+              ))}
+            </ul>
+            <a
+              href="/pricing"
+              class="mt-6 inline-flex items-center justify-center rounded-lg bg-orange px-6 py-3.5 text-base font-semibold text-white transition hover:bg-orange-dark"
+            >
+              Get Concrete Estimate Pro — $99 Lifetime
+            </a>
+          </div>
+          <div class="rounded-2xl border border-border bg-warm-white p-6">
+            <div class="rounded-xl border border-border bg-white p-5 shadow-sm">
+              <div class="text-xs font-semibold uppercase tracking-wide text-muted">Rate Health</div>
+              <table class="mt-3 w-full text-left text-sm">
+                <thead>
+                  <tr class="text-xs text-muted">
+                    <th class="pb-2 font-medium">Type</th>
+                    <th class="pb-2 font-medium">Rate</th>
+                    <th class="pb-2 font-medium">Margin</th>
+                    <th class="pb-2 font-medium">Status</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-border">
+                  <tr>
+                    <td class="py-2 text-ink">Basic slab</td>
+                    <td class="py-2 text-ink">$9.50</td>
+                    <td class="py-2 text-green">38.9%</td>
+                    <td class="py-2 text-green">On target</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2 text-ink">Stamped</td>
+                    <td class="py-2 text-ink">$15.00</td>
+                    <td class="py-2 text-red">25.3%</td>
+                    <td class="py-2 text-red">Needs review</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2 text-ink">Driveway</td>
+                    <td class="py-2 text-ink">$11.00</td>
+                    <td class="py-2 text-green">36.4%</td>
+                    <td class="py-2 text-green">On target</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="mx-auto max-w-3xl px-4 py-14 sm:px-6">
+      <FaqAccordion faqs={faqs} title="Common questions" />
+    </section>
+  </main>
+  <PublicFooter />
+</Layout>
