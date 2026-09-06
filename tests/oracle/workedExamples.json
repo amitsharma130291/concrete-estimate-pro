@@ -1,0 +1,763 @@
+{
+  "A_freeCalculators": [
+    {
+      "name": "Driveway, normal case",
+      "input": {
+        "lengthFt": 60,
+        "widthFt": 16,
+        "thicknessIn": 4,
+        "allowancePercent": 10,
+        "rounding": "quarter",
+        "readyMixRatePerYd3": 165,
+        "laborCost": 1800,
+        "formsCost": 250,
+        "reinforcementCost": 300,
+        "equipmentCost": 200,
+        "otherCost": 100,
+        "overheadPercent": 15,
+        "targetMarginPercent": 30,
+        "sellingPrice": 5200
+      },
+      "output": {
+        "quantity": {
+          "areaSqFt": 960,
+          "netCubicFeet": 320,
+          "netCubicYards": 11.851851851851851,
+          "orderQuantityYd3": 13.25
+        },
+        "cost": {
+          "readyMixCost": 2186.25,
+          "directCost": 4836.25,
+          "overheadAmount": 725.4375,
+          "trueCost": 5561.6875
+        },
+        "pricing": {
+          "currentMargin": -0.06955528846153847,
+          "currentMarkup": -0.06503197096205064,
+          "requiredSellingPrice": 7945.267857142858,
+          "isBelowTarget": true,
+          "profitAtCurrentPrice": -361.6875
+        }
+      }
+    },
+    {
+      "name": "Patio, no rounding",
+      "input": {
+        "lengthFt": 20,
+        "widthFt": 20,
+        "thicknessIn": 4,
+        "allowancePercent": 5,
+        "rounding": "none",
+        "readyMixRatePerYd3": 175,
+        "laborCost": 900,
+        "formsCost": 100,
+        "reinforcementCost": 0,
+        "equipmentCost": 80,
+        "otherCost": 0,
+        "overheadPercent": 12,
+        "targetMarginPercent": 25,
+        "sellingPrice": 3200
+      },
+      "output": {
+        "quantity": {
+          "areaSqFt": 400,
+          "netCubicFeet": 133.33333333333331,
+          "netCubicYards": 4.938271604938271,
+          "orderQuantityYd3": 5.185185185185185
+        },
+        "cost": {
+          "readyMixCost": 907.4074074074074,
+          "directCost": 1987.4074074074074,
+          "overheadAmount": 238.48888888888888,
+          "trueCost": 2225.8962962962964
+        },
+        "pricing": {
+          "currentMargin": 0.30440740740740735,
+          "currentMarkup": 0.4376231297587987,
+          "requiredSellingPrice": 2967.861728395062,
+          "isBelowTarget": false,
+          "profitAtCurrentPrice": 974.1037037037036
+        }
+      }
+    },
+    {
+      "name": "EDGE: zero thickness -> zero volume/cost",
+      "input": {
+        "lengthFt": 30,
+        "widthFt": 12,
+        "thicknessIn": 0,
+        "allowancePercent": 10,
+        "rounding": "none",
+        "readyMixRatePerYd3": 165,
+        "laborCost": 500,
+        "formsCost": 0,
+        "reinforcementCost": 0,
+        "equipmentCost": 0,
+        "otherCost": 0,
+        "overheadPercent": 10,
+        "targetMarginPercent": 25,
+        "sellingPrice": 800
+      },
+      "output": {
+        "quantity": {
+          "areaSqFt": 360,
+          "netCubicFeet": 0,
+          "netCubicYards": 0,
+          "orderQuantityYd3": 0
+        },
+        "cost": {
+          "readyMixCost": 0,
+          "directCost": 500,
+          "overheadAmount": 50,
+          "trueCost": 550
+        },
+        "pricing": {
+          "currentMargin": 0.3125,
+          "currentMarkup": 0.45454545454545453,
+          "requiredSellingPrice": 733.3333333333334,
+          "isBelowTarget": false,
+          "profitAtCurrentPrice": 250
+        }
+      }
+    },
+    {
+      "name": "EDGE: negative length clamps to 0",
+      "input": {
+        "lengthFt": -20,
+        "widthFt": 10,
+        "thicknessIn": 4,
+        "allowancePercent": 10,
+        "rounding": "none",
+        "readyMixRatePerYd3": 165,
+        "laborCost": 0,
+        "formsCost": 0,
+        "reinforcementCost": 0,
+        "equipmentCost": 0,
+        "otherCost": 0,
+        "overheadPercent": 10,
+        "targetMarginPercent": 25,
+        "sellingPrice": 100
+      },
+      "output": {
+        "quantity": {
+          "areaSqFt": 0,
+          "netCubicFeet": 0,
+          "netCubicYards": 0,
+          "orderQuantityYd3": 0
+        },
+        "cost": {
+          "readyMixCost": 0,
+          "directCost": 0,
+          "overheadAmount": 0,
+          "trueCost": 0
+        },
+        "pricing": {
+          "currentMargin": 1,
+          "currentMarkup": null,
+          "requiredSellingPrice": 0,
+          "isBelowTarget": false,
+          "profitAtCurrentPrice": 100
+        }
+      }
+    },
+    {
+      "name": "EDGE: selling price = 0 -> margin is null",
+      "input": {
+        "lengthFt": 20,
+        "widthFt": 10,
+        "thicknessIn": 4,
+        "allowancePercent": 10,
+        "rounding": "none",
+        "readyMixRatePerYd3": 165,
+        "laborCost": 500,
+        "formsCost": 0,
+        "reinforcementCost": 0,
+        "equipmentCost": 0,
+        "otherCost": 0,
+        "overheadPercent": 10,
+        "targetMarginPercent": 25,
+        "sellingPrice": 0
+      },
+      "output": {
+        "quantity": {
+          "areaSqFt": 200,
+          "netCubicFeet": 66.66666666666666,
+          "netCubicYards": 2.4691358024691357,
+          "orderQuantityYd3": 2.7160493827160495
+        },
+        "cost": {
+          "readyMixCost": 448.14814814814815,
+          "directCost": 948.1481481481482,
+          "overheadAmount": 94.81481481481482,
+          "trueCost": 1042.962962962963
+        },
+        "pricing": {
+          "currentMargin": null,
+          "currentMarkup": -1,
+          "requiredSellingPrice": 1390.6172839506173,
+          "isBelowTarget": false,
+          "profitAtCurrentPrice": -1042.962962962963
+        }
+      }
+    },
+    {
+      "name": "EDGE: whole-yard rounding boundary (exactly 2.0 before rounding)",
+      "input": {
+        "lengthFt": 27,
+        "widthFt": 4,
+        "thicknessIn": 6,
+        "allowancePercent": 0,
+        "rounding": "whole",
+        "readyMixRatePerYd3": 150,
+        "laborCost": 0,
+        "formsCost": 0,
+        "reinforcementCost": 0,
+        "equipmentCost": 0,
+        "otherCost": 0,
+        "overheadPercent": 0,
+        "targetMarginPercent": 0,
+        "sellingPrice": 0
+      },
+      "output": {
+        "quantity": {
+          "areaSqFt": 108,
+          "netCubicFeet": 54,
+          "netCubicYards": 2,
+          "orderQuantityYd3": 2
+        },
+        "cost": {
+          "readyMixCost": 300,
+          "directCost": 300,
+          "overheadAmount": 0,
+          "trueCost": 300
+        },
+        "pricing": {
+          "currentMargin": null,
+          "currentMarkup": -1,
+          "requiredSellingPrice": 300,
+          "isBelowTarget": false,
+          "profitAtCurrentPrice": -300
+        }
+      }
+    },
+    {
+      "name": "EDGE: target margin = 100% -> required price is Infinity",
+      "input": {
+        "lengthFt": 20,
+        "widthFt": 10,
+        "thicknessIn": 4,
+        "allowancePercent": 10,
+        "rounding": "none",
+        "readyMixRatePerYd3": 165,
+        "laborCost": 500,
+        "formsCost": 0,
+        "reinforcementCost": 0,
+        "equipmentCost": 0,
+        "otherCost": 0,
+        "overheadPercent": 10,
+        "targetMarginPercent": 100,
+        "sellingPrice": 5000
+      },
+      "output": {
+        "quantity": {
+          "areaSqFt": 200,
+          "netCubicFeet": 66.66666666666666,
+          "netCubicYards": 2.4691358024691357,
+          "orderQuantityYd3": 2.7160493827160495
+        },
+        "cost": {
+          "readyMixCost": 448.14814814814815,
+          "directCost": 948.1481481481482,
+          "overheadAmount": 94.81481481481482,
+          "trueCost": 1042.962962962963
+        },
+        "pricing": {
+          "currentMargin": 0.7914074074074073,
+          "currentMarkup": 3.7940340909090904,
+          "requiredSellingPrice": null,
+          "isBelowTarget": true,
+          "profitAtCurrentPrice": 3957.037037037037
+        }
+      }
+    }
+  ],
+  "B_jobCostCalculator": [
+    {
+      "name": "Normal case",
+      "input": {
+        "readyMixCost": 2640,
+        "laborCost": 2100,
+        "formsCost": 480,
+        "reinforcementCost": 920,
+        "pumpCost": 750,
+        "equipmentCost": 300,
+        "otherCost": 150,
+        "overheadPercent": 15,
+        "targetMarginPercent": 30,
+        "sellingPrice": 9800
+      },
+      "output": {
+        "directCost": 7340,
+        "overheadAmount": 1101,
+        "trueCost": 8441,
+        "requiredSellingPrice": 12058.57142857143,
+        "currentMargin": 0.1386734693877551
+      }
+    },
+    {
+      "name": "EDGE: all costs zero",
+      "input": {
+        "readyMixCost": 0,
+        "laborCost": 0,
+        "formsCost": 0,
+        "reinforcementCost": 0,
+        "pumpCost": 0,
+        "equipmentCost": 0,
+        "otherCost": 0,
+        "overheadPercent": 15,
+        "targetMarginPercent": 30,
+        "sellingPrice": 0
+      },
+      "output": {
+        "directCost": 0,
+        "overheadAmount": 0,
+        "trueCost": 0,
+        "requiredSellingPrice": 0,
+        "currentMargin": null
+      }
+    },
+    {
+      "name": "EDGE: selling price below true cost (underpriced)",
+      "input": {
+        "readyMixCost": 2640,
+        "laborCost": 2100,
+        "formsCost": 480,
+        "reinforcementCost": 920,
+        "pumpCost": 750,
+        "equipmentCost": 300,
+        "otherCost": 150,
+        "overheadPercent": 15,
+        "targetMarginPercent": 30,
+        "sellingPrice": 4000
+      },
+      "output": {
+        "directCost": 7340,
+        "overheadAmount": 1101,
+        "trueCost": 8441,
+        "requiredSellingPrice": 12058.57142857143,
+        "currentMargin": -1.11025
+      }
+    }
+  ],
+  "D_proMultiSection": [
+    {
+      "name": "Two-section estimate (driveway + walkway)",
+      "input": {
+        "sections": [
+          {
+            "lengthFt": 50,
+            "widthFt": 14,
+            "thicknessIn": 4
+          },
+          {
+            "lengthFt": 20,
+            "widthFt": 4,
+            "thicknessIn": 4
+          }
+        ],
+        "allowancePercent": 10,
+        "rounding": "quarter",
+        "costs": {
+          "readyMixRatePerYd3": 165,
+          "laborCost": 1600,
+          "formsCost": 220,
+          "reinforcementCost": 280,
+          "equipmentCost": 150,
+          "otherCost": 60
+        },
+        "overheadPercent": 15,
+        "targetMarginPercent": 30,
+        "sellingPrice": 5600
+      },
+      "output": {
+        "netCubicYards": 9.62962962962963,
+        "orderQuantityYd3": 10.75,
+        "directCost": 4083.75,
+        "overheadAmount": 612.5625,
+        "trueCost": 4696.3125,
+        "requiredSellingPrice": 6709.017857142858,
+        "currentMargin": 0.16137276785714286,
+        "isBelowTarget": true
+      },
+      "combinedArea": 780,
+      "combinedNetYd3": 9.62962962962963
+    },
+    {
+      "name": "EDGE: one of three sections is zero-area",
+      "input": {
+        "sections": [
+          {
+            "lengthFt": 30,
+            "widthFt": 10,
+            "thicknessIn": 4
+          },
+          {
+            "lengthFt": 0,
+            "widthFt": 10,
+            "thicknessIn": 4
+          },
+          {
+            "lengthFt": 15,
+            "widthFt": 8,
+            "thicknessIn": 4
+          }
+        ],
+        "allowancePercent": 10,
+        "rounding": "none",
+        "costs": {
+          "readyMixRatePerYd3": 165,
+          "laborCost": 1000,
+          "formsCost": 0,
+          "reinforcementCost": 0,
+          "equipmentCost": 0,
+          "otherCost": 0
+        },
+        "overheadPercent": 15,
+        "targetMarginPercent": 25,
+        "sellingPrice": 3000
+      },
+      "output": {
+        "netCubicYards": 5.185185185185185,
+        "orderQuantityYd3": 5.703703703703704,
+        "directCost": 1941.1111111111113,
+        "overheadAmount": 291.1666666666667,
+        "trueCost": 2232.277777777778,
+        "requiredSellingPrice": 2976.3703703703704,
+        "currentMargin": 0.2559074074074074,
+        "isBelowTarget": false
+      }
+    },
+    {
+      "name": "EDGE: single section identical to free-calculator equivalent (cross-check)",
+      "input": {
+        "sections": [
+          {
+            "lengthFt": 60,
+            "widthFt": 16,
+            "thicknessIn": 4
+          }
+        ],
+        "allowancePercent": 10,
+        "rounding": "quarter",
+        "costs": {
+          "readyMixRatePerYd3": 165,
+          "laborCost": 1800,
+          "formsCost": 250,
+          "reinforcementCost": 300,
+          "equipmentCost": 200,
+          "otherCost": 100
+        },
+        "overheadPercent": 15,
+        "targetMarginPercent": 30,
+        "sellingPrice": 5200
+      },
+      "output": {
+        "netCubicYards": 11.851851851851851,
+        "orderQuantityYd3": 13.25,
+        "directCost": 4836.25,
+        "overheadAmount": 725.4375,
+        "trueCost": 5561.6875,
+        "requiredSellingPrice": 7945.267857142858,
+        "currentMargin": -0.06955528846153847,
+        "isBelowTarget": true
+      }
+    }
+  ],
+  "E_laborModes": [
+    {
+      "name": "Hourly mode",
+      "input": {
+        "mode": "hourly",
+        "crewSize": 3,
+        "hours": 8,
+        "ratePerHour": 28,
+        "unitRatePerSqft": 0,
+        "totalAreaSqFt": 0
+      },
+      "output": 672
+    },
+    {
+      "name": "Unit mode ($/sqft)",
+      "input": {
+        "mode": "unit",
+        "crewSize": 0,
+        "hours": 0,
+        "ratePerHour": 0,
+        "unitRatePerSqft": 1.75,
+        "totalAreaSqFt": 960
+      },
+      "output": 1680
+    },
+    {
+      "name": "Flat mode (function returns 0; caller uses raw entered number)",
+      "input": {
+        "mode": "flat",
+        "crewSize": 0,
+        "hours": 0,
+        "ratePerHour": 0,
+        "unitRatePerSqft": 0,
+        "totalAreaSqFt": 0
+      },
+      "output": 0
+    },
+    {
+      "name": "EDGE: negative crew size clamps to 0",
+      "input": {
+        "mode": "hourly",
+        "crewSize": -2,
+        "hours": 8,
+        "ratePerHour": 28,
+        "unitRatePerSqft": 0,
+        "totalAreaSqFt": 0
+      },
+      "output": 0
+    }
+  ],
+  "F_rateHealth": [
+    {
+      "name": "Ready-mix price +12% scenario",
+      "input": {
+        "baseCosts": {
+          "readyMixRatePerYd3": 165,
+          "laborCost": 1600,
+          "formsCost": 200,
+          "reinforcementCost": 250,
+          "equipmentCost": 150,
+          "otherCost": 50
+        },
+        "readyMixChangePercent": 12,
+        "laborChangePercent": 0,
+        "equipmentChangePercent": 0,
+        "sellingPrice": 3800
+      },
+      "output": {
+        "scenarioCosts": {
+          "readyMixRatePerYd3": 184.8,
+          "laborCost": 1600,
+          "formsCost": 200,
+          "reinforcementCost": 250,
+          "equipmentCost": 150,
+          "otherCost": 50
+        },
+        "base": {
+          "netCubicYards": 9.876543209876543,
+          "orderQuantityYd3": 11,
+          "directCost": 4065,
+          "overheadAmount": 609.75,
+          "trueCost": 4674.75,
+          "requiredSellingPrice": 6678.214285714286,
+          "currentMargin": -0.23019736842105262,
+          "isBelowTarget": true
+        },
+        "scenario": {
+          "netCubicYards": 9.876543209876543,
+          "orderQuantityYd3": 11,
+          "directCost": 4282.8,
+          "overheadAmount": 642.42,
+          "trueCost": 4925.22,
+          "requiredSellingPrice": 7036.028571428572,
+          "currentMargin": -0.29611052631578955,
+          "isBelowTarget": true
+        }
+      }
+    },
+    {
+      "name": "EDGE: -100% cost change zeroes that cost line",
+      "input": {
+        "baseCosts": {
+          "readyMixRatePerYd3": 165,
+          "laborCost": 1600,
+          "formsCost": 200,
+          "reinforcementCost": 250,
+          "equipmentCost": 150,
+          "otherCost": 50
+        },
+        "readyMixChangePercent": -100,
+        "laborChangePercent": 0,
+        "equipmentChangePercent": 0,
+        "sellingPrice": 3800
+      },
+      "output": {
+        "scenarioCosts": {
+          "readyMixRatePerYd3": 0,
+          "laborCost": 1600,
+          "formsCost": 200,
+          "reinforcementCost": 250,
+          "equipmentCost": 150,
+          "otherCost": 50
+        },
+        "base": {
+          "netCubicYards": 9.876543209876543,
+          "orderQuantityYd3": 11,
+          "directCost": 4065,
+          "overheadAmount": 609.75,
+          "trueCost": 4674.75,
+          "requiredSellingPrice": 6678.214285714286,
+          "currentMargin": -0.23019736842105262,
+          "isBelowTarget": true
+        },
+        "scenario": {
+          "netCubicYards": 9.876543209876543,
+          "orderQuantityYd3": 11,
+          "directCost": 2250,
+          "overheadAmount": 337.5,
+          "trueCost": 2587.5,
+          "requiredSellingPrice": 3696.4285714285716,
+          "currentMargin": 0.3190789473684211,
+          "isBelowTarget": false
+        }
+      }
+    },
+    {
+      "name": "Combined multi-cost scenario (ready-mix +8%, labor +15%, equipment -5%)",
+      "input": {
+        "baseCosts": {
+          "readyMixRatePerYd3": 165,
+          "laborCost": 1600,
+          "formsCost": 200,
+          "reinforcementCost": 250,
+          "equipmentCost": 150,
+          "otherCost": 50
+        },
+        "readyMixChangePercent": 8,
+        "laborChangePercent": 15,
+        "equipmentChangePercent": -5,
+        "sellingPrice": 3800
+      },
+      "output": {
+        "scenarioCosts": {
+          "readyMixRatePerYd3": 178.20000000000002,
+          "laborCost": 1839.9999999999998,
+          "formsCost": 200,
+          "reinforcementCost": 250,
+          "equipmentCost": 142.5,
+          "otherCost": 50
+        },
+        "base": {
+          "netCubicYards": 9.876543209876543,
+          "orderQuantityYd3": 11,
+          "directCost": 4065,
+          "overheadAmount": 609.75,
+          "trueCost": 4674.75,
+          "requiredSellingPrice": 6678.214285714286,
+          "currentMargin": -0.23019736842105262,
+          "isBelowTarget": true
+        },
+        "scenario": {
+          "netCubicYards": 9.876543209876543,
+          "orderQuantityYd3": 11,
+          "directCost": 4442.7,
+          "overheadAmount": 666.405,
+          "trueCost": 5109.105,
+          "requiredSellingPrice": 7298.721428571428,
+          "currentMargin": -0.3445013157894736,
+          "isBelowTarget": true
+        }
+      }
+    }
+  ],
+  "G_scenarioCompare": [
+    {
+      "name": "Standard finish (A) vs stamped/decorative finish (B)",
+      "input": {
+        "A": {
+          "readyMixRatePerYd3": 160,
+          "laborCost": 1500,
+          "formsCost": 200,
+          "reinforcementCost": 250,
+          "equipmentCost": 100,
+          "otherCost": 0,
+          "allowancePercent": 10,
+          "rounding": "quarter",
+          "overheadPercent": 15,
+          "targetMarginPercent": 30,
+          "sellingPrice": 4800
+        },
+        "B": {
+          "readyMixRatePerYd3": 160,
+          "laborCost": 2600,
+          "formsCost": 200,
+          "reinforcementCost": 250,
+          "equipmentCost": 350,
+          "otherCost": 150,
+          "allowancePercent": 10,
+          "rounding": "quarter",
+          "overheadPercent": 15,
+          "targetMarginPercent": 30,
+          "sellingPrice": 6400
+        }
+      },
+      "output": {
+        "A": {
+          "orderQuantityYd3": 11,
+          "trueCost": 4381.5,
+          "profit": 418.5,
+          "margin": 0.0871875
+        },
+        "B": {
+          "orderQuantityYd3": 11,
+          "trueCost": 6106.5,
+          "profit": 293.5,
+          "margin": 0.045859375
+        },
+        "diff": {
+          "trueCost": 1725,
+          "sellingPrice": 1600,
+          "profit": -125
+        }
+      }
+    }
+  ],
+  "H_estimateVsActual": [
+    {
+      "name": "Actual ran over estimate",
+      "input": {
+        "estimatedQty": 18.5,
+        "actualQty": 20.25
+      },
+      "output": {
+        "quantityVariance": 0.0945945945945946
+      }
+    },
+    {
+      "name": "Actual came in under estimate",
+      "input": {
+        "estimatedQty": 18.5,
+        "actualQty": 16
+      },
+      "output": {
+        "quantityVariance": -0.13513513513513514
+      }
+    },
+    {
+      "name": "EDGE: estimate is 0 -> variance is null (no division by zero)",
+      "input": {
+        "estimatedQty": 0,
+        "actualQty": 5
+      },
+      "output": {
+        "quantityVariance": null
+      }
+    },
+    {
+      "name": "EDGE: actual exactly equals estimate",
+      "input": {
+        "estimatedQty": 12,
+        "actualQty": 12
+      },
+      "output": {
+        "quantityVariance": 0
+      }
+    }
+  ]
+}
