@@ -32,6 +32,8 @@ export interface CalculatorConfig {
   marketRatePerSqft: number;
   faqs: { q: string; a: string }[];
   safetyNote?: string;
+  /** What actually moves the price — rendered as a content section below the calculator. */
+  costFactors: { title: string; body: string }[];
 }
 
 export const CALCULATOR_CONFIGS: Record<string, CalculatorConfig> = {
@@ -78,6 +80,32 @@ export const CALCULATOR_CONFIGS: Record<string, CalculatorConfig> = {
         a: "No — it calculates concrete quantity, materials, labor and equipment costs you enter. Add excavation, gravel base or removal costs to Labor, Equipment or Other as needed.",
       },
     ],
+    costFactors: [
+      {
+        title: "Thickness and vehicle load",
+        body: "A driveway that only sees cars can often be thinner than one that regularly takes a truck, RV or trailer. More thickness means more concrete — and more cost — so this is usually the single biggest lever on price.",
+      },
+      {
+        title: "Base preparation and excavation",
+        body: "Removing old asphalt or concrete, grading, and compacting a gravel base all add labor and equipment time before the pour even starts. A driveway on soft or uneven soil typically needs more base work than one on solid, level ground.",
+      },
+      {
+        title: "Finish",
+        body: "A broom finish is the standard, most affordable option. Stamped patterns, exposed aggregate, or colored/stained concrete all add material and labor cost on top of the base pour.",
+      },
+      {
+        title: "Reinforcement",
+        body: "Wire mesh is the common baseline; rebar grids cost more in material and placement time but hold up better under heavier loads or unstable soil.",
+      },
+      {
+        title: "Site access",
+        body: "A long driveway, a tight approach, or a truck that can't reach the pour site (requiring a pump) all add cost. Steep or sloped sites can also add forming complexity.",
+      },
+      {
+        title: "Local ready-mix and labor rates",
+        body: "Concrete pricing per yard and crew labor rates vary significantly by region and even by supplier — enter your own numbers above rather than relying on a national average.",
+      },
+    ],
   },
   slab: {
     projectType: "slab",
@@ -118,6 +146,32 @@ export const CALCULATOR_CONFIGS: Record<string, CalculatorConfig> = {
         a: "True cost is your direct costs (ready mix, labor, forms, reinforcement, equipment, other) plus your overhead percentage. It's the number your selling price needs to beat to hit your target margin.",
       },
     ],
+    costFactors: [
+      {
+        title: "Intended use",
+        body: "A shed pad, a garage floor and a structural foundation slab all carry different load requirements, which drive thickness and reinforcement — and therefore concrete volume and cost.",
+      },
+      {
+        title: "Base preparation",
+        body: "Vapor barriers, gravel base depth, and grading/compaction all add labor before the pour. Slabs over poor-draining soil often need more base work than slabs on well-drained ground.",
+      },
+      {
+        title: "Finish",
+        body: "A basic broom or trowel finish is the cheapest option. Sealed, polished, or decorative finishes add material and labor time.",
+      },
+      {
+        title: "Reinforcement",
+        body: "Wire mesh, rebar, or fiber-reinforced mix are common options, each with a different material and placement cost — and each suited to different load and crack-control needs.",
+      },
+      {
+        title: "Site access",
+        body: "Slabs that need a pump truck (due to distance from the street, obstacles, or grade) cost more than a direct chute pour.",
+      },
+      {
+        title: "Local ready-mix and labor rates",
+        body: "Ready-mix pricing and crew rates vary by region and supplier — always price with your own current numbers rather than a rule of thumb.",
+      },
+    ],
   },
   patio: {
     projectType: "patio",
@@ -152,6 +206,28 @@ export const CALCULATOR_CONFIGS: Record<string, CalculatorConfig> = {
       {
         q: "How much extra should I order for a patio pour?",
         a: "Patios often have curves, steps or cutouts that increase waste versus a simple rectangle. Many contractors bump the order allowance up from a typical 5–8% for irregular shapes.",
+      },
+    ],
+    costFactors: [
+      {
+        title: "Shape complexity",
+        body: "A simple rectangle is the cheapest to form and pour. Curves, cutouts for planters or steps, and multi-level patios all add forming labor and material waste.",
+      },
+      {
+        title: "Finish",
+        body: "This is usually the biggest cost swing on a patio. Stamped patterns, integral color, exposed aggregate or acid staining can add substantially more in material and labor than a plain broom finish.",
+      },
+      {
+        title: "Base prep and drainage",
+        body: "Patios need a slight slope away from the house and a compacted base — poor drainage planning now often means costly repairs later, so this is worth pricing properly rather than rushing.",
+      },
+      {
+        title: "Reinforcement",
+        body: "Wire mesh is common for standard patios; thicker or larger patios may call for rebar.",
+      },
+      {
+        title: "Site access",
+        body: "Backyard patios often can't be reached by a direct chute, so pump rental or wheelbarrow labor is a common added cost.",
       },
     ],
   },
@@ -192,6 +268,28 @@ export const CALCULATOR_CONFIGS: Record<string, CalculatorConfig> = {
         a: "Volume = length × width × depth (all converted to feet), divided by 27 for cubic yards. Because footing width and depth are usually specified in inches, this calculator lets you enter those fields in inches directly.",
       },
     ],
+    costFactors: [
+      {
+        title: "Depth and width, as specified",
+        body: "Footing size is set by load, soil bearing capacity, frost line and local code — never by this tool. Larger specified dimensions mean more concrete volume and cost, straightforwardly.",
+      },
+      {
+        title: "Reinforcement",
+        body: "Rebar size, spacing and the number of horizontal bars are typically specified by an engineer or code; more/larger rebar means more material and placement labor.",
+      },
+      {
+        title: "Formwork complexity",
+        body: "Straight, continuous footing runs are the cheapest to form. Corners, stepped footings (for sloped sites) and isolated pier footings all add forming labor.",
+      },
+      {
+        title: "Excavation and soil conditions",
+        body: "Rocky, wet, or unstable soil can significantly increase excavation time and may require additional site work before the pour.",
+      },
+      {
+        title: "Concrete mix design",
+        body: "Higher-strength mixes specified for structural footings typically cost more per yard than standard mixes.",
+      },
+    ],
   },
   sidewalk: {
     projectType: "sidewalk",
@@ -222,6 +320,28 @@ export const CALCULATOR_CONFIGS: Record<string, CalculatorConfig> = {
       {
         q: "Do municipal sidewalk jobs need different allowances?",
         a: "Public right-of-way work often has stricter finish and joint requirements. Adjust labor and other costs to reflect inspection, traffic control or permit costs specific to the job.",
+      },
+    ],
+    costFactors: [
+      {
+        title: "Length and required width",
+        body: "Municipal specs often set a minimum sidewalk width — check local requirements before pricing, since a wider strip directly increases concrete volume.",
+      },
+      {
+        title: "Control joints and finish",
+        body: "Sidewalks need regular control joints to manage cracking, which adds labor time versus a single continuous slab.",
+      },
+      {
+        title: "ADA ramps and crossings",
+        body: "Curb ramps and street crossings usually require detectable warning surfaces and tighter slope tolerances, both of which add labor and material cost over a plain flat run.",
+      },
+      {
+        title: "Base preparation",
+        body: "Public sidewalks typically need a compacted gravel base to meet inspection standards, adding site work before the pour.",
+      },
+      {
+        title: "Permitting and inspection",
+        body: "Work in the public right-of-way often requires permits, traffic control, and inspection sign-off — real costs that belong in your estimate.",
       },
     ],
   },
@@ -266,6 +386,28 @@ export const CALCULATOR_CONFIGS: Record<string, CalculatorConfig> = {
       {
         q: "Is this the same as concrete estimating software?",
         a: "This free calculator handles one-off quantity and cost math. Concrete Cost Pro (sometimes searched as concrete estimator software) adds saved rates, job costing, rate-health tracking, branded estimates and estimate-vs-actual reporting for running an ongoing concrete business.",
+      },
+    ],
+    costFactors: [
+      {
+        title: "Project type and use",
+        body: "Structural slabs, driveways, patios and sidewalks all carry different thickness and reinforcement needs, which is the main driver of concrete volume and cost.",
+      },
+      {
+        title: "Thickness and reinforcement",
+        body: "Both are set by the project's structural requirements (load, soil, code) — never guessed by this tool. More of either means more material and labor cost.",
+      },
+      {
+        title: "Finish",
+        body: "A basic broom or trowel finish is the cheapest baseline. Stamped, colored, exposed-aggregate or polished finishes add material and labor.",
+      },
+      {
+        title: "Site access",
+        body: "Pours that need a pump truck, or that involve difficult access for delivery trucks, cost more than a straightforward direct-chute pour.",
+      },
+      {
+        title: "Regional material and labor rates",
+        body: "Ready-mix pricing per yard and crew labor rates vary widely by region — always price with your own current supplier and labor numbers.",
       },
     ],
   },

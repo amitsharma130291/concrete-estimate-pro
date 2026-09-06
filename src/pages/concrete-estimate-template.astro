@@ -27,6 +27,29 @@ const faqs = [
   },
 ];
 
+const goodEstimateFactors = [
+  {
+    title: "Specific scope, not vague scope",
+    body: "\"80 ft × 18 ft driveway, 4in thick, broom finish\" leaves far less room for dispute later than \"driveway replacement.\" Specificity protects you as much as it informs the customer.",
+  },
+  {
+    title: "Line-item clarity",
+    body: "Breaking out materials, labor and equipment (even at a summary level) builds more trust than a single lump-sum number — customers are less likely to push back on a total they can see the shape of.",
+  },
+  {
+    title: "Explicit exclusions",
+    body: "State what's not included — permits, excess spoil removal, landscaping repair — in writing, before the job starts. This is the single easiest way to avoid a scope argument mid-project.",
+  },
+  {
+    title: "A validity period",
+    body: "Material prices move. An estimate that's good for 30 days protects you from a customer accepting three months later at a price that no longer covers your costs.",
+  },
+  {
+    title: "Consistent numbering",
+    body: "A simple estimate number (EST-1001, EST-1002...) makes it trivial to track which quote turned into which job, especially once you're running more than a handful at a time.",
+  },
+];
+
 const webApplicationSchema = {
   "@context": "https://schema.org",
   "@type": "WebApplication",
@@ -55,25 +78,44 @@ const webApplicationSchema = {
         { label: "Estimate Template", href: "/concrete-estimate-template" },
       ]}
     />
-    <section class="border-b border-border bg-white">
-      <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12">
-        <div class="max-w-2xl">
-          <h1 class="text-3xl font-extrabold tracking-tight text-ink sm:text-4xl">Concrete Estimate Template</h1>
-          <p class="mt-3 text-lg text-muted">
-            An interactive concrete estimate template that doubles as a quote template or invoice template. Fill in
-            your project details and line items on the left — a customer-ready document builds itself on the right,
-            ready to print or save as a PDF.
-          </p>
-        </div>
-        <TrustBadges align="left" class="mt-6" />
+
+    <section class="border-b border-border bg-white no-print">
+      <div class="mx-auto max-w-7xl px-4 pb-5 pt-5 sm:px-6 sm:pb-6 sm:pt-6">
+        <h1 class="text-2xl font-extrabold tracking-tight text-ink sm:text-3xl">Concrete Estimate Template</h1>
+        <p class="mt-1.5 max-w-2xl text-base text-muted">
+          An interactive concrete estimate template that doubles as a quote template or invoice template. Fill in
+          your project details and line items on the left — a customer-ready document builds itself on the right.
+        </p>
       </div>
     </section>
 
-    <section class="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
+    <section class="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
       <EstimateTemplateIsland client:load />
     </section>
 
-    <section class="mx-auto max-w-7xl px-4 py-14 sm:px-6">
+    <section class="border-y border-border bg-white no-print">
+      <div class="mx-auto max-w-7xl px-4 py-5 sm:px-6">
+        <TrustBadges />
+      </div>
+    </section>
+
+    <section class="mx-auto max-w-4xl px-4 py-14 no-print sm:px-6">
+      <h2 class="text-2xl font-bold text-ink">What makes a concrete estimate hold up</h2>
+      <p class="mt-2 text-muted">
+        A clear, complete estimate protects you from scope disputes as much as it helps the customer say yes. A few
+        things worth getting right before you hit print.
+      </p>
+      <div class="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2">
+        {goodEstimateFactors.map((f) => (
+          <div>
+            <h3 class="font-semibold text-ink">{f.title}</h3>
+            <p class="mt-1 text-sm text-muted">{f.body}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="mx-auto max-w-7xl px-4 py-14 no-print sm:px-6">
       <FaqAccordion faqs={faqs} />
     </section>
 

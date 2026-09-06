@@ -27,6 +27,29 @@ const faqs = [
   },
 ];
 
+const costFactors = [
+  {
+    title: "Overhead allocation",
+    body: "How much of your fixed business costs — insurance, office, vehicles, admin time — you spread across each job changes your true cost more than most contractors expect. A too-low overhead percentage quietly erodes profit across every job you price.",
+  },
+  {
+    title: "Target margin, not markup",
+    body: "Pricing off markup instead of margin is a common, costly mix-up. A 30% markup on a $10,000 true cost prices at $13,000 — a 23% margin, not 30%. This tool always solves for margin.",
+  },
+  {
+    title: "Equipment and pump rental",
+    body: "Pump rental, saws and other equipment are often the most volatile line item job to job — price them per job rather than folding them into a flat average.",
+  },
+  {
+    title: "Labor accuracy",
+    body: "The gap between estimated and actual labor hours is where a lot of contractors lose margin without realizing it. Logging actuals over time (Concrete Cost Pro's Actuals tab) shows whether your labor assumptions run optimistic.",
+  },
+  {
+    title: "Material price volatility",
+    body: "Ready-mix and rebar prices can shift month to month. If you're quoting from memory instead of a current supplier price, you're pricing yesterday's costs.",
+  },
+];
+
 const webApplicationSchema = {
   "@context": "https://schema.org",
   "@type": "WebApplication",
@@ -55,21 +78,65 @@ const webApplicationSchema = {
         { label: "Job Cost Calculator", href: "/concrete-job-cost-calculator" },
       ]}
     />
+
     <section class="border-b border-border bg-white">
-      <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12">
-        <div class="max-w-2xl">
-          <h1 class="text-3xl font-extrabold tracking-tight text-ink sm:text-4xl">Concrete Job Cost Calculator</h1>
-          <p class="mt-3 text-lg text-muted">
-            Already know your costs? Enter them directly to see your true job cost, current margin and the price you
-            need to charge to hit your target.
-          </p>
-        </div>
-        <TrustBadges align="left" class="mt-6" />
+      <div class="mx-auto max-w-7xl px-4 pb-5 pt-5 sm:px-6 sm:pb-6 sm:pt-6">
+        <h1 class="text-2xl font-extrabold tracking-tight text-ink sm:text-3xl">Concrete Job Cost Calculator</h1>
+        <p class="mt-1.5 max-w-2xl text-base text-muted">
+          Already know your costs? Enter them directly to see your true job cost, current margin and the price you
+          need to charge to hit your target.
+        </p>
       </div>
     </section>
 
-    <section class="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
+    <section class="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
       <JobCostCalculatorIsland client:load />
+    </section>
+
+    <section class="border-y border-border bg-white">
+      <div class="mx-auto max-w-7xl px-4 py-5 sm:px-6">
+        <TrustBadges />
+      </div>
+    </section>
+
+    <section class="mx-auto max-w-4xl px-4 py-14 sm:px-6">
+      <h2 class="text-2xl font-bold text-ink">What actually moves your true job cost</h2>
+      <p class="mt-2 text-muted">
+        Job costing is only useful if the inputs are right. These are the places contractors most often under- or
+        over-price without realizing it.
+      </p>
+      <div class="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2">
+        {costFactors.map((f) => (
+          <div>
+            <h3 class="font-semibold text-ink">{f.title}</h3>
+            <p class="mt-1 text-sm text-muted">{f.body}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="border-t border-border bg-white">
+      <div class="mx-auto max-w-4xl px-4 py-12 sm:px-6">
+        <h2 class="text-xl font-bold text-ink">How this calculator works</h2>
+        <ol class="mt-4 flex flex-col gap-3 text-sm text-muted">
+          <li class="flex gap-3">
+            <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-orange/10 text-xs font-bold text-orange">1</span>
+            <span><strong class="text-ink">Direct cost</strong> — every cost line (ready mix, labor, forms, reinforcement, pump, equipment, other) is added together.</span>
+          </li>
+          <li class="flex gap-3">
+            <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-orange/10 text-xs font-bold text-orange">2</span>
+            <span><strong class="text-ink">True cost</strong> — your overhead percentage is applied on top of direct cost.</span>
+          </li>
+          <li class="flex gap-3">
+            <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-orange/10 text-xs font-bold text-orange">3</span>
+            <span><strong class="text-ink">Required price</strong> — solved so that (price − true cost) ÷ price equals your target margin, not markup.</span>
+          </li>
+          <li class="flex gap-3">
+            <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-orange/10 text-xs font-bold text-orange">4</span>
+            <span><strong class="text-ink">Current margin</strong> — recalculated live against whatever selling price you enter, so you can see the gap instantly.</span>
+          </li>
+        </ol>
+      </div>
     </section>
 
     <section class="mx-auto max-w-7xl px-4 py-14 sm:px-6">
