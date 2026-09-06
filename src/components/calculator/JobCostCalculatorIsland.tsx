@@ -135,11 +135,12 @@ export default function JobCostCalculatorIsland() {
 }
 
 function DollarField({ label, hint, value, onChange }: { label: string; hint: string; value: number; onChange: (v: number) => void }) {
+  const id = `jc-${label.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}`;
   return (
-    <Field label={label} hint={hint}>
+    <Field label={label} hint={hint} htmlFor={id}>
       <div className="flex overflow-hidden rounded-lg border border-border shadow-sm focus-within:border-orange">
         <span className="flex items-center border-r border-border bg-warm-white px-2.5 text-sm text-muted">$</span>
-        <NumberInput min={0} value={value} onChange={(e) => onChange(e.target.value === "" ? 0 : parseFloat(e.target.value))} className="rounded-none border-0 shadow-none focus:border-0" />
+        <NumberInput id={id} min={0} value={value} onChange={(e) => onChange(e.target.value === "" ? 0 : parseFloat(e.target.value))} className="rounded-none border-0 shadow-none focus:border-0" />
       </div>
     </Field>
   );

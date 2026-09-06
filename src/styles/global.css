@@ -5,6 +5,16 @@
 
   --color-charcoal: #20252b;
   --color-charcoal-light: #2b323a;
+  /* CCP-002 (see docs/TEST_REPORT.md): --color-orange fails WCAG 2 AA color-contrast
+     (~3.1:1 vs the required 4.5:1) both as white-text-on-orange (buttons) and as
+     orange-text-on-white (links/accents). A single darkened value was tried and reverted:
+     it fixed those two pairings but flipped a THIRD pairing — orange text on the dark
+     --color-charcoal background — from passing (4.95:1) to failing (3.09:1). One color
+     token cannot satisfy both "orange on light" and "orange on dark" contexts at once;
+     a correct fix needs two tokens (e.g. a lighter orange for on-dark contexts) applied
+     per call site, which is a broader, brand-visual change intentionally left for a
+     dedicated pass rather than shipped as a partial, regression-trading autonomous fix.
+     Left at the original value pending that follow-up. */
   --color-orange: #ff5a1f;
   --color-orange-dark: #e64d15;
   --color-green: #0a8f47;

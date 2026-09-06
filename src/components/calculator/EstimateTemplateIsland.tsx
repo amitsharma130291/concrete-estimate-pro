@@ -51,22 +51,26 @@ export default function EstimateTemplateIsland() {
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-[55%_45%] lg:items-start">
       <div className="flex flex-col gap-6 no-print">
         <Card title="Contractor & Customer">
-          <Field label="Contractor">
-            <TextInput value={contractor} onChange={(e) => setContractor(e.target.value)} />
+          <Field label="Contractor" htmlFor="et-contractor">
+            <TextInput id="et-contractor" value={contractor} onChange={(e) => setContractor(e.target.value)} />
           </Field>
-          <Field label="Phone">
-            <TextInput value={contractorPhone} onChange={(e) => setContractorPhone(e.target.value)} />
+          <Field label="Phone" htmlFor="et-phone">
+            <TextInput id="et-phone" value={contractorPhone} onChange={(e) => setContractorPhone(e.target.value)} />
           </Field>
-          <Field label="Customer">
-            <TextInput value={customer} onChange={(e) => setCustomer(e.target.value)} />
+          <Field label="Customer" htmlFor="et-customer">
+            <TextInput id="et-customer" value={customer} onChange={(e) => setCustomer(e.target.value)} />
           </Field>
-          <Field label="Project type">
-            <TextInput value={projectType} onChange={(e) => setProjectType(e.target.value)} />
+          <Field label="Project type" htmlFor="et-project-type">
+            <TextInput id="et-project-type" value={projectType} onChange={(e) => setProjectType(e.target.value)} />
           </Field>
         </Card>
 
         <Card title="Scope of work">
+          <label htmlFor="et-scope" className="sr-only">
+            Scope of work
+          </label>
           <textarea
+            id="et-scope"
             value={scope}
             onChange={(e) => setScope(e.target.value)}
             rows={4}
@@ -78,10 +82,16 @@ export default function EstimateTemplateIsland() {
           <div className="flex flex-col gap-2">
             {items.map((item) => (
               <div key={item.id} className="flex items-center gap-2">
-                <TextInput value={item.label} onChange={(e) => updateItem(item.id, { label: e.target.value })} className="flex-1" />
+                <TextInput
+                  aria-label="Line item description"
+                  value={item.label}
+                  onChange={(e) => updateItem(item.id, { label: e.target.value })}
+                  className="flex-1"
+                />
                 <div className="flex w-32 overflow-hidden rounded-lg border border-border shadow-sm focus-within:border-orange">
                   <span className="flex items-center border-r border-border bg-warm-white px-2 text-xs text-muted">$</span>
                   <NumberInput
+                    aria-label={`Amount for ${item.label || "line item"}`}
                     value={item.amount}
                     onChange={(e) => updateItem(item.id, { amount: e.target.value === "" ? 0 : parseFloat(e.target.value) })}
                     className="rounded-none border-0 shadow-none focus:border-0"
@@ -104,7 +114,11 @@ export default function EstimateTemplateIsland() {
         </Card>
 
         <Card title="Notes">
+          <label htmlFor="et-notes" className="sr-only">
+            Notes
+          </label>
           <textarea
+            id="et-notes"
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             rows={3}
