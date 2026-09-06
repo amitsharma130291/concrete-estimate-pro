@@ -16,6 +16,15 @@ M9 | negative-validation removal: safe() no longer clamps negatives | KILLED (5 
 
 Result: 9/9 mutants killed (100% for this scoped, hand-picked operator set).
 
+RERUN after the decimal-safe arithmetic migration (src/lib/calc.ts rewritten to perform all
+internal arithmetic via Decimal.js — see git log "fix: migrate currency/quantity arithmetic
+to decimal-safe"): all 9 operators re-applied at their new equivalent call sites (Decimal
+method chains instead of raw operators) against the post-migration code and the full
+142-test suite (up from 112 — golden fixtures, third-path fixtures and decimal before/after
+tests were added since the original run). All 9/9 killed again — see
+reports/mutation/results-migrated.txt for the per-mutant log. The migration did not weaken
+mutation coverage.
+
 Scope disclosure: this is 9 targeted mutations covering each specified operator ONCE at one
 call site in calc.ts, not an exhaustive automated mutation run (e.g. Stryker) across every
 line/operator combination in calc.ts and estimateMath.ts. A full automated mutation run was
