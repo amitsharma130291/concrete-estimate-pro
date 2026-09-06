@@ -44,6 +44,20 @@ test.describe("Pro app: Projects tab", () => {
     await expect(page.getByRole("link", { name: /log actuals/i })).toBeVisible();
   });
 
+  test("duplicate: creates a (copy) with an independent id (CCP-005 fix — the pricing page promises \"one-click estimate and project duplication\", but Projects had no duplicate control)", async ({ page }) => {
+    await resetWorkspace(page, "/app/projects");
+    await createProject(page, "E2E Duplicable Building");
+    await page.getByRole("button", { name: /duplicate/i }).click();
+    await expect(page.getByText("E2E Duplicable Building (copy)")).toBeVisible();
+    const ws = await getWorkspace(page);
+    const original = ws.projects.find((p: any) => p.name === "E2E Duplicable Building");
+    const copy = ws.projects.find((p: any) => p.name === "E2E Duplicable Building (copy)");
+    expect(original).toBeTruthy();
+    expect(copy).toBeTruthy();
+    expect(copy.id).not.toBe(original.id);
+    expect(copy.status).toBe("estimate");
+  });
+
   test("delete: removes the project after confirmation", async ({ page }) => {
     await resetWorkspace(page, "/app/projects");
     await createProject(page, "E2E Doomed Building");

@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { PlusCircle, Trash2 } from "lucide-react";
+import { Copy, PlusCircle, Trash2 } from "lucide-react";
 import { useWorkspace } from "../../../lib/workspaceContext";
 import { newId, removeBy, upsertBy } from "../../../lib/storage";
 import { evaluateProject, combinedAreaSqFt } from "../../../lib/estimateMath";
@@ -43,6 +43,17 @@ export default function ProjectsTab() {
   function remove(p: Project) {
     update((ws) => ({ ...ws, projects: removeBy(ws.projects, p.id) }));
     setDeleting(null);
+  }
+  function duplicate(p: Project) {
+    const copy: Project = {
+      ...p,
+      id: newId("proj"),
+      name: `${p.name} (copy)`,
+      status: "estimate",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    update((ws) => ({ ...ws, projects: upsertBy(ws.projects, copy) }));
   }
   function setStatus(p: Project, status: ProjectStatus) {
     update((ws) => ({ ...ws, projects: upsertBy(ws.projects, { ...p, status, updatedAt: new Date().toISOString() }) }));
@@ -101,6 +112,9 @@ export default function ProjectsTab() {
                 <div className="mt-4 flex gap-2">
                   <Button size="sm" variant="ghost" onClick={() => setEditing(p)}>
                     Edit
+                  </Button>
+                  <Button size="sm" variant="ghost" onClick={() => duplicate(p)}>
+                    <Copy size={14} /> Duplicate
                   </Button>
                   {p.status === "completed" && (
                     <a href={`/app/actuals?projectId=${p.id}`}>
