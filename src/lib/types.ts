@@ -141,6 +141,7 @@ export interface Estimate {
   sellingPrice: number;
   notes?: string;
   status: EstimateStatus;
+  archived?: boolean;
   createdAt: string;
   updatedAt: string;
   isSample?: boolean;

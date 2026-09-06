@@ -9,8 +9,9 @@ export default function OverviewTab() {
   const { workspace, ready, seedSample, hasRealData } = useWorkspace();
 
   const kpis = useMemo(() => {
-    const quoted = workspace.estimates.filter((e) => e.status === "sent" || e.status === "draft");
-    const won = workspace.estimates.filter((e) => e.status === "accepted");
+    const active = workspace.estimates.filter((e) => !e.archived);
+    const quoted = active.filter((e) => e.status === "sent" || e.status === "draft");
+    const won = active.filter((e) => e.status === "accepted");
     const quotedTotal = quoted.reduce((s, e) => s + e.sellingPrice, 0);
     const wonTotal = won.reduce((s, e) => s + e.sellingPrice, 0);
     const expectedProfit = won.reduce((s, e) => s + (e.sellingPrice - evaluateEstimate(e).trueCost), 0);
@@ -36,7 +37,10 @@ export default function OverviewTab() {
     [workspace.templates, workspace.settings],
   );
 
-  const recentEstimates = [...workspace.estimates].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)).slice(0, 5);
+  const recentEstimates = workspace.estimates
+    .filter((e) => !e.archived)
+    .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
+    .slice(0, 5);
 
   if (!ready) return <div className="text-sm text-muted">Loading…</div>;
 

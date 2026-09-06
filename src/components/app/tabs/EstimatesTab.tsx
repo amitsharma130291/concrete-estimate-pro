@@ -1,10 +1,10 @@
 import { useMemo, useState } from "react";
-import { Copy, PlusCircle, Printer, Search, Trash2 } from "lucide-react";
+import { Archive, ArchiveRestore, Copy, FolderInput, PlusCircle, Printer, Search, Trash2 } from "lucide-react";
 import { useWorkspace } from "../../../lib/workspaceContext";
 import { newId, removeBy, upsertBy } from "../../../lib/storage";
 import { evaluateEstimate } from "../../../lib/estimateMath";
 import { formatCurrency, formatPercent } from "../../../lib/calc";
-import type { Estimate, EstimateStatus } from "../../../lib/types";
+import type { Estimate, EstimateStatus, Project } from "../../../lib/types";
 import { Button, Card, ConfirmDialog, EmptyState, Select, TextInput } from "../../ui/primitives";
 import { StatusBadge } from "./OverviewTab";
 import EstimateWizard from "../EstimateWizard";
@@ -36,6 +36,7 @@ export default function EstimatesTab() {
 
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<EstimateStatus | "all">("all");
+  const [showArchived, setShowArchived] = useState(false);
   const [deleting, setDeleting] = useState<Estimate | null>(null);
 
   function navigate(next: Record<string, string | undefined>) {
@@ -62,6 +63,31 @@ export default function EstimatesTab() {
   function setStatus(e: Estimate, status: EstimateStatus) {
     update((ws) => ({ ...ws, estimates: upsertBy(ws.estimates, { ...e, status, updatedAt: new Date().toISOString() }) }));
   }
+  function toggleArchived(e: Estimate) {
+    update((ws) => ({ ...ws, estimates: upsertBy(ws.estimates, { ...e, archived: !e.archived, updatedAt: new Date().toISOString() }) }));
+  }
+  function convertToProject(e: Estimate) {
+    const project: Project = {
+      id: newId("proj"),
+      name: e.projectName,
+      projectType: e.projectType,
+      customerName: e.customerName,
+      status: "accepted",
+      estimateId: e.id,
+      sections: e.sections,
+      allowancePercent: e.allowancePercent,
+      rounding: e.rounding,
+      costs: e.costs,
+      labor: e.labor,
+      overheadPercent: e.overheadPercent,
+      targetMarginPercent: e.targetMarginPercent,
+      sellingPrice: e.sellingPrice,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    update((ws) => ({ ...ws, projects: upsertBy(ws.projects, project) }));
+    window.location.href = "/app/projects";
+  }
   function exportCsv() {
     const rows = [
       ["estimateNumber", "projectName", "customerName", "status", "sellingPrice"],
@@ -81,10 +107,12 @@ export default function EstimatesTab() {
 
   const filtered = useMemo(() => {
     return workspace.estimates
+      .filter((e) => (showArchived ? true : !e.archived))
       .filter((e) => statusFilter === "all" || e.status === statusFilter)
       .filter((e) => `${e.projectName} ${e.customerName} ${e.estimateNumber}`.toLowerCase().includes(search.toLowerCase()))
       .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
-  }, [workspace.estimates, search, statusFilter]);
+  }, [workspace.estimates, search, statusFilter, showArchived]);
+  const archivedCount = workspace.estimates.filter((e) => e.archived).length;
 
   if (mode === "new" || (mode === "edit" && activeEstimate)) {
     return (
@@ -139,6 +167,22 @@ export default function EstimatesTab() {
                   Mark declined
                 </Button>
               )}
+              {activeEstimate.status === "accepted" && (
+                <Button size="sm" variant="ghost" onClick={() => convertToProject(activeEstimate)}>
+                  <FolderInput size={14} /> Convert to project
+                </Button>
+              )}
+              <Button size="sm" variant="ghost" onClick={() => toggleArchived(activeEstimate)}>
+                {activeEstimate.archived ? (
+                  <>
+                    <ArchiveRestore size={14} /> Unarchive
+                  </>
+                ) : (
+                  <>
+                    <Archive size={14} /> Archive
+                  </>
+                )}
+              </Button>
             </div>
           </Card>
         </div>
@@ -175,6 +219,10 @@ export default function EstimatesTab() {
           <option value="accepted">Accepted</option>
           <option value="declined">Declined</option>
         </Select>
+        <label className="flex shrink-0 items-center gap-1.5 text-sm text-muted">
+          <input type="checkbox" checked={showArchived} onChange={(e) => setShowArchived(e.target.checked)} className="rounded border-border text-orange focus:ring-orange" />
+          Show archived {archivedCount > 0 && `(${archivedCount})`}
+        </label>
       </div>
 
       {filtered.length === 0 ? (
@@ -191,9 +239,18 @@ export default function EstimatesTab() {
               </button>
               <span className="text-sm font-semibold text-ink">{formatCurrency(e.sellingPrice)}</span>
               <StatusBadge status={e.status} />
+              {e.archived && <span className="text-xs font-medium text-muted">Archived</span>}
               <div className="flex gap-1">
                 <button type="button" onClick={() => duplicate(e)} aria-label="Duplicate" className="rounded-lg p-1.5 text-muted hover:bg-warm-white hover:text-ink">
                   <Copy size={15} />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => toggleArchived(e)}
+                  aria-label={e.archived ? "Unarchive" : "Archive"}
+                  className="rounded-lg p-1.5 text-muted hover:bg-warm-white hover:text-ink"
+                >
+                  {e.archived ? <ArchiveRestore size={15} /> : <Archive size={15} />}
                 </button>
                 <button type="button" onClick={() => setDeleting(e)} aria-label="Delete" className="rounded-lg p-1.5 text-muted hover:bg-red-light hover:text-red">
                   <Trash2 size={15} />
