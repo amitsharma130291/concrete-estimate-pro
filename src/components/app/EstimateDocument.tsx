@@ -15,11 +15,16 @@ export default function EstimateDocument({ estimate }: { estimate: Estimate }) {
   return (
     <div className="rounded-xl border border-border bg-white p-6 shadow-sm print:border-0 print:shadow-none sm:p-8">
       <div className="flex flex-wrap items-start justify-between gap-4 border-b border-border pb-5">
-        <div>
-          <div className="text-lg font-bold text-ink">{profile.businessName || "Your Business Name"}</div>
-          <div className="text-sm text-muted">{profile.phone}</div>
-          <div className="text-sm text-muted">{profile.email}</div>
-          <div className="text-sm text-muted">{profile.address}</div>
+        <div className="flex items-start gap-3">
+          {profile.logoDataUrl && (
+            <img src={profile.logoDataUrl} alt="" className="h-12 w-12 shrink-0 object-contain" />
+          )}
+          <div>
+            <div className="text-lg font-bold text-ink">{profile.businessName || "Your Business Name"}</div>
+            <div className="text-sm text-muted">{profile.phone}</div>
+            <div className="text-sm text-muted">{profile.email}</div>
+            <div className="text-sm text-muted">{profile.address}</div>
+          </div>
         </div>
         <div className="text-right">
           <div className="text-xs font-semibold uppercase tracking-wide text-orange">Project Estimate</div>

@@ -1,16 +1,38 @@
 import { useRef, useState } from "react";
-import { Download, Upload } from "lucide-react";
+import { Download, Upload, X } from "lucide-react";
 import { useWorkspace } from "../../../lib/workspaceContext";
 import { exportWorkspaceJson, saveWorkspace, validateImport } from "../../../lib/storage";
 import type { Rounding } from "../../../lib/types";
 import { Button, Card, ConfirmDialog, Field, NumberInput, Select, TextInput } from "../../ui/primitives";
 
+const MAX_LOGO_BYTES = 500_000; // keep the base64 copy small — this lives in every backup/localStorage write
+
 export default function SettingsTab() {
   const { workspace, update, clearSample, resetAll } = useWorkspace();
   const fileRef = useRef<HTMLInputElement>(null);
+  const logoFileRef = useRef<HTMLInputElement>(null);
   const [importErrors, setImportErrors] = useState<string[]>([]);
+  const [logoError, setLogoError] = useState<string | null>(null);
   const [confirmingReset, setConfirmingReset] = useState(false);
   const [confirmingClearSample, setConfirmingClearSample] = useState(false);
+
+  function handleLogoFile(file: File) {
+    if (file.size > MAX_LOGO_BYTES) {
+      setLogoError(`That image is too large (${Math.round(file.size / 1000)}KB) — please use one under ${Math.round(MAX_LOGO_BYTES / 1000)}KB.`);
+      return;
+    }
+    setLogoError(null);
+    const reader = new FileReader();
+    reader.onload = () => {
+      update((ws) => ({ ...ws, businessProfile: { ...ws.businessProfile, logoDataUrl: reader.result as string } }));
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function removeLogo() {
+    update((ws) => ({ ...ws, businessProfile: { ...ws.businessProfile, logoDataUrl: undefined } }));
+    setLogoError(null);
+  }
 
   function exportJson() {
     const json = exportWorkspaceJson(workspace);
@@ -46,6 +68,41 @@ export default function SettingsTab() {
       </div>
 
       <Card title="Business profile">
+        <div className="mb-5 flex items-center gap-4">
+          <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border bg-warm-white">
+            {workspace.businessProfile.logoDataUrl ? (
+              <img src={workspace.businessProfile.logoDataUrl} alt="Business logo" className="h-full w-full object-contain" />
+            ) : (
+              <span className="text-[10px] text-muted">No logo</span>
+            )}
+          </div>
+          <div>
+            <div className="flex gap-2">
+              <Button size="sm" variant="ghost" onClick={() => logoFileRef.current?.click()}>
+                {workspace.businessProfile.logoDataUrl ? "Replace logo" : "Upload logo"}
+              </Button>
+              {workspace.businessProfile.logoDataUrl && (
+                <button
+                  type="button"
+                  onClick={removeLogo}
+                  aria-label="Remove logo"
+                  className="rounded-lg p-2 text-muted hover:bg-red-light hover:text-red"
+                >
+                  <X size={16} />
+                </button>
+              )}
+            </div>
+            <input
+              ref={logoFileRef}
+              type="file"
+              accept="image/png,image/jpeg,image/svg+xml,image/webp"
+              className="hidden"
+              onChange={(e) => e.target.files?.[0] && handleLogoFile(e.target.files[0])}
+            />
+            <p className="mt-1 text-xs text-muted">Appears on your branded customer estimate PDFs. PNG, JPG or SVG, under 500KB.</p>
+            {logoError && <p className="mt-1 text-xs text-red">{logoError}</p>}
+          </div>
+        </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field label="Business name">
             <TextInput
