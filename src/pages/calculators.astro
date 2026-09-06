@@ -3,6 +3,7 @@ import Layout from "../layouts/Layout.astro";
 import PublicHeader from "../components/PublicHeader.astro";
 import PublicFooter from "../components/PublicFooter.astro";
 import Breadcrumbs from "../components/Breadcrumbs.astro";
+import TrustBadges from "../components/TrustBadges.astro";
 import { CALCULATOR_CONFIGS } from "../data/calculatorConfigs";
 
 const tools = [
@@ -51,6 +52,7 @@ const itemListSchema = {
           Every free calculator we build, in one place. Pick the project type below — each one calculates concrete
           quantity, total cost and, with Contractor Pricing, the price you need to hit your target margin.
         </p>
+        <TrustBadges class="mt-6" />
       </div>
     </section>
 

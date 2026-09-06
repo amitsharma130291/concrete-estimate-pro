@@ -3,6 +3,7 @@ import Layout from "../layouts/Layout.astro";
 import PublicHeader from "../components/PublicHeader.astro";
 import PublicFooter from "../components/PublicFooter.astro";
 import FaqAccordion from "../components/FaqAccordion.astro";
+import TrustBadges from "../components/TrustBadges.astro";
 
 const calculators = [
   { title: "Driveway Cost Calculator", desc: "Length, width, thickness → cost and pricing.", href: "/concrete-driveway-cost-calculator" },
@@ -65,21 +66,7 @@ const faqs = [
             See Concrete Cost Pro
           </a>
         </div>
-        <ul class="mx-auto mt-7 flex max-w-3xl flex-wrap items-center justify-center gap-x-6 gap-y-2.5 text-sm text-muted">
-          {[
-            "No sign-up required",
-            "Free calculators, forever",
-            "One-time payment for Pro — no subscription",
-            "Your data stays on your device",
-          ].map((item) => (
-            <li class="flex items-center gap-1.5">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="shrink-0 text-green" aria-hidden="true">
-                <path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round" />
-              </svg>
-              {item}
-            </li>
-          ))}
-        </ul>
+        <TrustBadges class="mt-7" />
       </div>
     </section>
 
