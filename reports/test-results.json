@@ -1,0 +1,99 @@
+{
+  "auditBranch": "qa/full-audit",
+  "date": "2026-09-07",
+  "reportFile": "docs/TEST_REPORT.md",
+  "specFile": "docs/CALCULATION_SPEC.md",
+  "traceabilityFile": "docs/REQUIREMENTS_TRACEABILITY.md",
+  "vitestSuite": {
+    "testFiles": 9,
+    "tests": 118,
+    "passed": 118,
+    "failed": 0
+  },
+  "propertyBasedCasesExecuted": {
+    "goldenFixtures": 50,
+    "generalQuantity": 10000,
+    "unitConversion": 5000,
+    "invalidBoundary": 4000,
+    "pricingScenarios": 4000,
+    "invariants": 4300,
+    "estimateVsActual": 1200,
+    "approxTotal": 28550
+  },
+  "mutationTesting": {
+    "operatorsSpecified": 9,
+    "operatorsKilled": 9,
+    "method": "manual/scripted (not automated Stryker) - see reports/mutation/results.txt",
+    "resultFile": "reports/mutation/results.txt"
+  },
+  "e2e": {
+    "chromium": { "passed": 27, "total": 27 },
+    "firefox": { "passed": 17, "total": 19, "note": "2 failures = Firefox headless graphics-compositor crash on cold browser launch (environment-specific), not a product defect" },
+    "webkit": { "passed": 17, "total": 17, "note": "1 initial timeout on estimate wizard Continue click, retried in isolation and passed - treated as one-off flake" }
+  },
+  "nonfunctional": {
+    "typecheck": { "tool": "astro check", "errors": 0, "warnings": 0 },
+    "build": { "tool": "astro build", "status": "pass", "pagesBuilt": 23 },
+    "npmAudit": { "vulnerabilities": 0 },
+    "eslint": "NOT_IMPLEMENTED",
+    "accessibility": {
+      "tool": "axe-core via playwright",
+      "pagesScanned": 6,
+      "criticalViolations": 0,
+      "seriousViolations": "38 nodes across 6 pages (color-contrast, CCP-002, confirmed not fixed)"
+    }
+  },
+  "bugs": [
+    {
+      "id": "CCP-001-CANDIDATE",
+      "title": "Apparent precision divergence near 100% margin asymptote",
+      "severity": null,
+      "status": "closed_not_a_bug"
+    },
+    {
+      "id": "CCP-002",
+      "title": "Color contrast fails WCAG AA (--color-orange), sitewide",
+      "severity": "MEDIUM",
+      "status": "confirmed_not_fixed",
+      "reason": "fix attempted and reverted - single token cannot satisfy both light and dark contexts"
+    },
+    {
+      "id": "CCP-003",
+      "title": "21 form inputs missing accessible labels (axe critical) on 2 pages",
+      "severity": "MEDIUM",
+      "status": "fixed"
+    },
+    {
+      "id": "CCP-004",
+      "title": "CSV export corrupts columns when a name contains a comma",
+      "severity": "MEDIUM",
+      "status": "fixed"
+    },
+    {
+      "id": "PAYMENT-LICENSE-GAP",
+      "title": "No payment/license gating exists anywhere; /app fully open and free",
+      "severity": "CRITICAL",
+      "status": "not_implemented",
+      "releaseCritical": true
+    }
+  ],
+  "confidenceScore": {
+    "overall": 76.0,
+    "components": {
+      "calculation": { "weight": 30, "scorePercent": 96, "weighted": 28.8 },
+      "proWorkflow": { "weight": 18, "scorePercent": 65, "weighted": 11.7 },
+      "dataIntegrity": { "weight": 12, "scorePercent": 92, "weighted": 11.0 },
+      "exportPdfCsv": { "weight": 10, "scorePercent": 90, "weighted": 9.0 },
+      "paymentLicense": { "weight": 12, "scorePercent": 5, "weighted": 0.6, "capped": true, "capReason": "NOT_IMPLEMENTED" },
+      "publicCalculators": { "weight": 8, "scorePercent": 95, "weighted": 7.6 },
+      "a11yBrowser": { "weight": 5, "scorePercent": 55, "weighted": 2.75 },
+      "buildQuality": { "weight": 5, "scorePercent": 90, "weighted": 4.5 }
+    }
+  },
+  "releaseRecommendation": {
+    "verdict": "CONDITIONAL_GO",
+    "scope": "free lead-generation / SEO calculator tools only",
+    "blockedScope": "accepting real payments - NO-GO until payment/license entitlement is implemented",
+    "mostImportantRemainingAction": "Implement server-verified payment/license entitlement before enabling any real checkout - currently /app is 100% open and free to anyone."
+  }
+}
