@@ -109,7 +109,7 @@ export default function JobCostCalculatorIsland() {
                 <TriangleAlert size={18} className="mt-0.5 shrink-0 text-red" aria-hidden="true" />
                 <div>
                   <div className="text-sm font-semibold text-red">Below your {targetMarginPercent}% target</div>
-                  <p className="mt-0.5 text-sm text-red/90">
+                  <p className="mt-0.5 text-sm text-red">
                     Raise your price to {formatCurrency(requiredSellingPrice)} to hit at least {targetMarginPercent}%.
                   </p>
                 </div>

@@ -214,7 +214,7 @@ export default function EstimatesTab() {
           <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
           <TextInput value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search by name, customer or number" className="pl-9" />
         </div>
-        <Select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as any)} className="sm:w-48">
+        <Select aria-label="Filter by status" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as any)} className="sm:w-48">
           <option value="all">All statuses</option>
           <option value="draft">Draft</option>
           <option value="sent">Sent</option>

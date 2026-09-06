@@ -234,7 +234,7 @@ export default function ProjectCalculatorIsland({ config }: { config: Calculator
                 <TriangleAlert size={18} className="mt-0.5 shrink-0 text-red" aria-hidden="true" />
                 <div>
                   <div className="text-sm font-semibold text-red">Below your {targetMarginPercent}% target</div>
-                  <p className="mt-0.5 text-sm text-red/90">
+                  <p className="mt-0.5 text-sm text-red">
                     Your current margin is {formatPercent(result.pricing.currentMargin, 0)}. Consider raising your price to{" "}
                     {formatCurrency(result.pricing.requiredSellingPrice)} to reach at least {targetMarginPercent}%.
                   </p>

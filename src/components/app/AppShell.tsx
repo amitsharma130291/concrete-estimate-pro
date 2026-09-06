@@ -111,7 +111,7 @@ function SidebarContent({ activeTab, onNavigate }: { activeTab: AppTab; onNaviga
           <img src="/icon-192.png" alt="" className="h-full w-full object-contain" width="192" height="192" />
         </span>
         <span className="text-sm font-bold">
-          Concrete Cost <span className="text-orange">Pro</span>
+          Concrete Cost <span className="text-orange-ondark">Pro</span>
         </span>
       </a>
       <nav aria-label="Application" className="flex-1 space-y-0.5 px-3">

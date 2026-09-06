@@ -104,26 +104,30 @@ export default function SettingsTab() {
           </div>
         </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <Field label="Business name">
+          <Field label="Business name" htmlFor="set-business-name">
             <TextInput
+              id="set-business-name"
               value={workspace.businessProfile.businessName}
               onChange={(e) => update((ws) => ({ ...ws, businessProfile: { ...ws.businessProfile, businessName: e.target.value } }))}
             />
           </Field>
-          <Field label="Phone">
+          <Field label="Phone" htmlFor="set-phone">
             <TextInput
+              id="set-phone"
               value={workspace.businessProfile.phone}
               onChange={(e) => update((ws) => ({ ...ws, businessProfile: { ...ws.businessProfile, phone: e.target.value } }))}
             />
           </Field>
-          <Field label="Email">
+          <Field label="Email" htmlFor="set-email">
             <TextInput
+              id="set-email"
               value={workspace.businessProfile.email}
               onChange={(e) => update((ws) => ({ ...ws, businessProfile: { ...ws.businessProfile, email: e.target.value } }))}
             />
           </Field>
-          <Field label="Address">
+          <Field label="Address" htmlFor="set-address">
             <TextInput
+              id="set-address"
               value={workspace.businessProfile.address}
               onChange={(e) => update((ws) => ({ ...ws, businessProfile: { ...ws.businessProfile, address: e.target.value } }))}
             />
@@ -133,32 +137,37 @@ export default function SettingsTab() {
 
       <Card title="Defaults" subtitle="Used to pre-fill new templates, projects and estimates">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <Field label="Default overhead (%)">
+          <Field label="Default overhead (%)" htmlFor="set-overhead">
             <NumberInput
+              id="set-overhead"
               value={workspace.settings.defaultOverheadPercent}
               onChange={(e) => update((ws) => ({ ...ws, settings: { ...ws.settings, defaultOverheadPercent: parseFloat(e.target.value) || 0 } }))}
             />
           </Field>
-          <Field label="Default target margin (%)">
+          <Field label="Default target margin (%)" htmlFor="set-target-margin">
             <NumberInput
+              id="set-target-margin"
               value={workspace.settings.defaultTargetMarginPercent}
               onChange={(e) => update((ws) => ({ ...ws, settings: { ...ws.settings, defaultTargetMarginPercent: parseFloat(e.target.value) || 0 } }))}
             />
           </Field>
-          <Field label="Default loaded labor rate ($/hr)">
+          <Field label="Default loaded labor rate ($/hr)" htmlFor="set-labor-rate">
             <NumberInput
+              id="set-labor-rate"
               value={workspace.settings.defaultLoadedLaborRate}
               onChange={(e) => update((ws) => ({ ...ws, settings: { ...ws.settings, defaultLoadedLaborRate: parseFloat(e.target.value) || 0 } }))}
             />
           </Field>
-          <Field label="Default order allowance (%)">
+          <Field label="Default order allowance (%)" htmlFor="set-allowance">
             <NumberInput
+              id="set-allowance"
               value={workspace.settings.defaultAllowancePercent}
               onChange={(e) => update((ws) => ({ ...ws, settings: { ...ws.settings, defaultAllowancePercent: parseFloat(e.target.value) || 0 } }))}
             />
           </Field>
-          <Field label="Default rounding">
+          <Field label="Default rounding" htmlFor="set-rounding">
             <Select
+              id="set-rounding"
               value={workspace.settings.defaultRounding}
               onChange={(e) => update((ws) => ({ ...ws, settings: { ...ws.settings, defaultRounding: e.target.value as Rounding } }))}
             >
@@ -168,15 +177,17 @@ export default function SettingsTab() {
               <option value="whole">Nearest 1 yd³</option>
             </Select>
           </Field>
-          <Field label="Estimate validity (days)">
+          <Field label="Estimate validity (days)" htmlFor="set-validity-days">
             <NumberInput
+              id="set-validity-days"
               value={workspace.settings.estimateValidityDays}
               onChange={(e) => update((ws) => ({ ...ws, settings: { ...ws.settings, estimateValidityDays: parseFloat(e.target.value) || 0 } }))}
             />
           </Field>
         </div>
-        <Field label="Default estimate notes">
+        <Field label="Default estimate notes" htmlFor="set-notes">
           <textarea
+            id="set-notes"
             value={workspace.settings.defaultNotes}
             onChange={(e) => update((ws) => ({ ...ws, settings: { ...ws.settings, defaultNotes: e.target.value } }))}
             rows={3}

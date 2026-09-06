@@ -163,11 +163,12 @@ export default function RateHealthTab() {
 }
 
 function ScenarioInput({ label, value, onChange }: { label: string; value: number; onChange: (v: number) => void }) {
+  const id = `rh-${label.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}`;
   return (
     <div>
-      <label className="text-sm font-medium text-ink">{label}</label>
+      <label htmlFor={id} className="text-sm font-medium text-ink">{label}</label>
       <div className="mt-1 flex overflow-hidden rounded-lg border border-border shadow-sm focus-within:border-orange">
-        <NumberInput value={value} onChange={(e) => onChange(parseFloat(e.target.value) || 0)} className="rounded-none border-0 shadow-none focus:border-0" />
+        <NumberInput id={id} value={value} onChange={(e) => onChange(parseFloat(e.target.value) || 0)} className="rounded-none border-0 shadow-none focus:border-0" />
         <span className="flex items-center border-l border-border bg-warm-white px-2.5 text-sm text-muted">%</span>
       </div>
     </div>
