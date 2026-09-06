@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { ArrowLeft, ArrowRight, Check, Printer } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Printer, SplitSquareHorizontal } from "lucide-react";
 import { useWorkspace } from "../../lib/workspaceContext";
 import { newId, upsertBy } from "../../lib/storage";
 import { evaluateEntity, combinedAreaSqFt } from "../../lib/estimateMath";
@@ -9,6 +9,7 @@ import { Button, Card, Field, NumberInput, Select, TextInput } from "../ui/primi
 import SectionsEditor from "./SectionsEditor";
 import EstimateDocument from "./EstimateDocument";
 import LaborCostInput, { DEFAULT_LABOR_INPUT } from "./LaborCostInput";
+import ScenarioCompareModal from "./ScenarioCompareModal";
 
 const STEPS = ["Project", "Dimensions", "Costs", "Price", "Customer"] as const;
 type Step = (typeof STEPS)[number];
@@ -93,6 +94,7 @@ export default function EstimateWizard({
     );
   });
   const [saved, setSaved] = useState(false);
+  const [comparingScenarios, setComparingScenarios] = useState(false);
 
   const result = useMemo(
     () =>
@@ -211,6 +213,11 @@ export default function EstimateWizard({
                   Use required price ({formatCurrency(result.requiredSellingPrice)})
                 </Button>
               </div>
+              <div className="sm:col-span-2">
+                <Button variant="ghost" size="sm" onClick={() => setComparingScenarios(true)}>
+                  <SplitSquareHorizontal size={15} /> Compare two pricing scenarios
+                </Button>
+              </div>
             </div>
           )}
 
@@ -290,6 +297,44 @@ export default function EstimateWizard({
           )}
         </div>
       </div>
+
+      {comparingScenarios && (
+        <ScenarioCompareModal
+          sections={draft.sections}
+          initial={{
+            allowancePercent: draft.allowancePercent,
+            rounding: draft.rounding,
+            readyMixRatePerYd3: draft.costs.readyMixRatePerYd3,
+            laborCost: draft.costs.laborCost,
+            formsCost: draft.costs.formsCost,
+            reinforcementCost: draft.costs.reinforcementCost,
+            equipmentCost: draft.costs.equipmentCost,
+            otherCost: draft.costs.otherCost,
+            overheadPercent: draft.overheadPercent,
+            targetMarginPercent: draft.targetMarginPercent,
+            sellingPrice: draft.sellingPrice,
+          }}
+          onApply={(chosen) =>
+            setDraft((d) => ({
+              ...d,
+              allowancePercent: chosen.allowancePercent,
+              rounding: chosen.rounding,
+              costs: {
+                readyMixRatePerYd3: chosen.readyMixRatePerYd3,
+                laborCost: chosen.laborCost,
+                formsCost: chosen.formsCost,
+                reinforcementCost: chosen.reinforcementCost,
+                equipmentCost: chosen.equipmentCost,
+                otherCost: chosen.otherCost,
+              },
+              overheadPercent: chosen.overheadPercent,
+              targetMarginPercent: chosen.targetMarginPercent,
+              sellingPrice: chosen.sellingPrice,
+            }))
+          }
+          onClose={() => setComparingScenarios(false)}
+        />
+      )}
     </div>
   );
 }
