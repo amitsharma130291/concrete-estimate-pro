@@ -131,6 +131,33 @@ export function calculateRequiredSellingPrice(trueCost: number, targetMarginPerc
   return safe(trueCost) / (1 - marginDecimal);
 }
 
+export type LaborMode = "flat" | "hourly" | "unit";
+
+export interface LaborModeInput {
+  mode: LaborMode;
+  crewSize: number;
+  hours: number;
+  ratePerHour: number;
+  unitRatePerSqft: number;
+}
+
+/**
+ * Resolves a labor input (flat/hourly/unit) plus the project's total area into a
+ * single dollar labor cost. "flat" ignores every other field and returns it unchanged
+ * so callers can pass a plain number through this same path.
+ */
+export function calculateLaborCost(labor: LaborModeInput, totalAreaSqFt: number): number {
+  switch (labor.mode) {
+    case "hourly":
+      return safe(labor.crewSize) * safe(labor.hours) * safe(labor.ratePerHour);
+    case "unit":
+      return safe(labor.unitRatePerSqft) * safe(totalAreaSqFt);
+    case "flat":
+    default:
+      return 0;
+  }
+}
+
 export function calculateEstimate(input: EstimateInput): EstimateResult {
   const quantity = calculateQuantity(input.dimensions);
   const cost = calculateCost(quantity, input.costs, input.pricing.overheadPercent);

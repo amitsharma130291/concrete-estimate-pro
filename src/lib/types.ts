@@ -67,6 +67,22 @@ export interface ProjectSection {
   thicknessIn: number;
 }
 
+export type LaborMode = "flat" | "hourly" | "unit";
+
+/**
+ * How labor cost was derived. `costs.laborCost` (on Estimate/Project) or
+ * `defaultCosts.laborCost` (on ProjectTemplate) always holds the resolved dollar
+ * amount used in every calculation — this is only kept so the editor can re-derive
+ * and re-edit the inputs that produced it.
+ */
+export interface LaborInput {
+  mode: LaborMode;
+  crewSize: number;
+  hours: number;
+  ratePerHour: number;
+  unitRatePerSqft: number;
+}
+
 export interface ProjectTemplate {
   id: string;
   name: string;
@@ -82,6 +98,8 @@ export interface ProjectTemplate {
     equipmentCost: number;
     otherCost: number;
   };
+  /** How defaultCosts.laborCost was derived; omitted means a flat-entered amount. */
+  labor?: LaborInput;
   /** What you currently charge customers for this standard job type — drives Rate Health. */
   currentSellingPrice: number;
   createdAt: string;
@@ -116,6 +134,8 @@ export interface Estimate {
     equipmentCost: number;
     otherCost: number;
   };
+  /** How costs.laborCost was derived; omitted means a flat-entered amount. */
+  labor?: LaborInput;
   overheadPercent: number;
   targetMarginPercent: number;
   sellingPrice: number;
@@ -146,6 +166,8 @@ export interface Project {
     equipmentCost: number;
     otherCost: number;
   };
+  /** How costs.laborCost was derived; omitted means a flat-entered amount. */
+  labor?: LaborInput;
   overheadPercent: number;
   targetMarginPercent: number;
   sellingPrice: number;

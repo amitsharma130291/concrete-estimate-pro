@@ -2,11 +2,12 @@ import { useMemo, useState } from "react";
 import { PlusCircle, Trash2 } from "lucide-react";
 import { useWorkspace } from "../../../lib/workspaceContext";
 import { newId, removeBy, upsertBy } from "../../../lib/storage";
-import { evaluateProject } from "../../../lib/estimateMath";
+import { evaluateProject, combinedAreaSqFt } from "../../../lib/estimateMath";
 import { formatCurrency, formatPercent, formatYd3 } from "../../../lib/calc";
 import type { Project, ProjectStatus, ProjectType } from "../../../lib/types";
 import { Badge, Button, Card, ConfirmDialog, EmptyState, Field, Modal, NumberInput, Select, TextInput } from "../../ui/primitives";
 import SectionsEditor from "../SectionsEditor";
+import LaborCostInput, { DEFAULT_LABOR_INPUT } from "../LaborCostInput";
 
 const STATUSES: ProjectStatus[] = ["estimate", "sent", "accepted", "completed"];
 const PROJECT_TYPES: ProjectType[] = ["driveway", "slab", "patio", "footing", "sidewalk", "general"];
@@ -171,12 +172,18 @@ function ProjectEditor({ project, onSave, onCancel }: { project: Project; onSave
         <SectionsEditor sections={draft.sections} onChange={(sections) => setDraft((d) => ({ ...d, sections }))} />
       </div>
 
+      <div className="mt-4">
+        <LaborCostInput
+          labor={draft.labor ?? DEFAULT_LABOR_INPUT}
+          laborCost={draft.costs.laborCost}
+          totalAreaSqFt={combinedAreaSqFt(draft.sections)}
+          onChange={(laborCost, labor) => setDraft((d) => ({ ...d, labor, costs: { ...d.costs, laborCost } }))}
+        />
+      </div>
+
       <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
         <Field label="Ready mix ($/yd³)">
           <NumberInput value={draft.costs.readyMixRatePerYd3} onChange={(e) => setDraft((d) => ({ ...d, costs: { ...d.costs, readyMixRatePerYd3: parseFloat(e.target.value) || 0 } }))} />
-        </Field>
-        <Field label="Labor ($)">
-          <NumberInput value={draft.costs.laborCost} onChange={(e) => setDraft((d) => ({ ...d, costs: { ...d.costs, laborCost: parseFloat(e.target.value) || 0 } }))} />
         </Field>
         <Field label="Forms ($)">
           <NumberInput value={draft.costs.formsCost} onChange={(e) => setDraft((d) => ({ ...d, costs: { ...d.costs, formsCost: parseFloat(e.target.value) || 0 } }))} />

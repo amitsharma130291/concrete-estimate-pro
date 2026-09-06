@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   calculateCost,
   calculateEstimate,
+  calculateLaborCost,
   calculateMargin,
   calculateMarkup,
   calculateQuantity,
@@ -172,5 +173,27 @@ describe("calculateEstimate (driveway scenario)", () => {
       pricing: { overheadPercent: 10, targetMarginPercent: 25, sellingPrice: 5000 },
     });
     expect(result.pricing.isBelowTarget).toBe(false);
+  });
+});
+
+describe("calculateLaborCost", () => {
+  it("computes hourly labor as crew size × hours × loaded rate", () => {
+    const cost = calculateLaborCost({ mode: "hourly", crewSize: 4, hours: 12, ratePerHour: 36, unitRatePerSqft: 0 }, 0);
+    expect(cost).toBe(4 * 12 * 36);
+  });
+
+  it("computes unit-based labor as rate per square foot × total area", () => {
+    const cost = calculateLaborCost({ mode: "unit", crewSize: 0, hours: 0, ratePerHour: 0, unitRatePerSqft: 3.25 }, 1200);
+    expect(cost).toBeCloseTo(3.25 * 1200, 2);
+  });
+
+  it("returns 0 for flat mode — the caller uses the entered amount directly", () => {
+    const cost = calculateLaborCost({ mode: "flat", crewSize: 4, hours: 12, ratePerHour: 36, unitRatePerSqft: 3.25 }, 1200);
+    expect(cost).toBe(0);
+  });
+
+  it("treats negative or invalid inputs as zero", () => {
+    const cost = calculateLaborCost({ mode: "hourly", crewSize: -4, hours: NaN, ratePerHour: 36, unitRatePerSqft: 0 }, 0);
+    expect(cost).toBe(0);
   });
 });

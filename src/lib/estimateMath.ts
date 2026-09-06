@@ -10,6 +10,11 @@ export interface MultiSectionCosts {
   otherCost: number;
 }
 
+/** Sum footprint area across every rectangular section — used for unit-rate ($/ft²) labor. */
+export function combinedAreaSqFt(sections: ProjectSection[]): number {
+  return sections.reduce((sum, s) => sum + Math.max(0, s.lengthFt) * Math.max(0, s.widthFt), 0);
+}
+
 /** Sum concrete volume across every rectangular section of a multi-section project. */
 export function combinedNetCubicYards(sections: ProjectSection[]): number {
   return sections.reduce((sum, s) => {

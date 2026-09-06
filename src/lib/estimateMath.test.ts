@@ -1,5 +1,19 @@
 import { describe, expect, it } from "vitest";
-import { combinedNetCubicYards, combinedOrderQuantity, evaluateEntity } from "./estimateMath";
+import { combinedAreaSqFt, combinedNetCubicYards, combinedOrderQuantity, evaluateEntity } from "./estimateMath";
+
+describe("combinedAreaSqFt", () => {
+  it("sums footprint area across sections", () => {
+    const sections = [
+      { id: "a", name: "A", lengthFt: 60, widthFt: 18, thicknessIn: 4 },
+      { id: "b", name: "B", lengthFt: 20, widthFt: 24, thicknessIn: 4 },
+    ];
+    expect(combinedAreaSqFt(sections)).toBe(60 * 18 + 20 * 24);
+  });
+
+  it("returns 0 for no sections", () => {
+    expect(combinedAreaSqFt([])).toBe(0);
+  });
+});
 
 describe("combinedNetCubicYards", () => {
   it("sums volume across multiple sections", () => {

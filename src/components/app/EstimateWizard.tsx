@@ -2,12 +2,13 @@ import { useMemo, useState } from "react";
 import { ArrowLeft, ArrowRight, Check, Printer } from "lucide-react";
 import { useWorkspace } from "../../lib/workspaceContext";
 import { newId, upsertBy } from "../../lib/storage";
-import { evaluateEntity } from "../../lib/estimateMath";
+import { evaluateEntity, combinedAreaSqFt } from "../../lib/estimateMath";
 import { formatCurrency, formatPercent, formatYd3 } from "../../lib/calc";
 import type { Estimate, ProjectType } from "../../lib/types";
 import { Button, Card, Field, NumberInput, Select, TextInput } from "../ui/primitives";
 import SectionsEditor from "./SectionsEditor";
 import EstimateDocument from "./EstimateDocument";
+import LaborCostInput, { DEFAULT_LABOR_INPUT } from "./LaborCostInput";
 
 const STEPS = ["Project", "Dimensions", "Costs", "Price", "Customer"] as const;
 type Step = (typeof STEPS)[number];
@@ -130,9 +131,14 @@ export default function EstimateWizard({ existing, onDone }: { existing?: Estima
               <Field label="Ready mix ($/yd³)">
                 <NumberInput value={draft.costs.readyMixRatePerYd3} onChange={(e) => setDraft((d) => ({ ...d, costs: { ...d.costs, readyMixRatePerYd3: parseFloat(e.target.value) || 0 } }))} />
               </Field>
-              <Field label="Labor ($)">
-                <NumberInput value={draft.costs.laborCost} onChange={(e) => setDraft((d) => ({ ...d, costs: { ...d.costs, laborCost: parseFloat(e.target.value) || 0 } }))} />
-              </Field>
+              <div className="sm:col-span-2">
+                <LaborCostInput
+                  labor={draft.labor ?? DEFAULT_LABOR_INPUT}
+                  laborCost={draft.costs.laborCost}
+                  totalAreaSqFt={combinedAreaSqFt(draft.sections)}
+                  onChange={(laborCost, labor) => setDraft((d) => ({ ...d, labor, costs: { ...d.costs, laborCost } }))}
+                />
+              </div>
               <Field label="Forms ($)">
                 <NumberInput value={draft.costs.formsCost} onChange={(e) => setDraft((d) => ({ ...d, costs: { ...d.costs, formsCost: parseFloat(e.target.value) || 0 } }))} />
               </Field>

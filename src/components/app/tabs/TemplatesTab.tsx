@@ -2,10 +2,11 @@ import { useState } from "react";
 import { Copy, PlusCircle, Trash2 } from "lucide-react";
 import { useWorkspace } from "../../../lib/workspaceContext";
 import { newId, removeBy, upsertBy } from "../../../lib/storage";
-import { evaluateEntity } from "../../../lib/estimateMath";
+import { evaluateEntity, combinedAreaSqFt } from "../../../lib/estimateMath";
 import { formatCurrency, formatPercent, formatYd3 } from "../../../lib/calc";
 import type { ProjectTemplate, ProjectType } from "../../../lib/types";
 import { Badge, Button, Card, ConfirmDialog, EmptyState, Field, Modal, NumberInput, Select, TextInput } from "../../ui/primitives";
+import LaborCostInput, { DEFAULT_LABOR_INPUT } from "../LaborCostInput";
 
 const PROJECT_TYPES: { value: ProjectType; label: string }[] = [
   { value: "driveway", label: "Driveway" },
@@ -180,9 +181,6 @@ function TemplateEditor({ template, onSave, onCancel }: { template: ProjectTempl
         <Field label="Ready mix ($/yd³)">
           <NumberInput value={draft.defaultCosts.readyMixRatePerYd3} onChange={(e) => setDraft((d) => ({ ...d, defaultCosts: { ...d.defaultCosts, readyMixRatePerYd3: parseFloat(e.target.value) || 0 } }))} />
         </Field>
-        <Field label="Labor ($)">
-          <NumberInput value={draft.defaultCosts.laborCost} onChange={(e) => setDraft((d) => ({ ...d, defaultCosts: { ...d.defaultCosts, laborCost: parseFloat(e.target.value) || 0 } }))} />
-        </Field>
         <Field label="Forms ($)">
           <NumberInput value={draft.defaultCosts.formsCost} onChange={(e) => setDraft((d) => ({ ...d, defaultCosts: { ...d.defaultCosts, formsCost: parseFloat(e.target.value) || 0 } }))} />
         </Field>
@@ -195,6 +193,14 @@ function TemplateEditor({ template, onSave, onCancel }: { template: ProjectTempl
         <Field label="Current selling price ($)">
           <NumberInput value={draft.currentSellingPrice} onChange={(e) => setDraft((d) => ({ ...d, currentSellingPrice: parseFloat(e.target.value) || 0 }))} />
         </Field>
+      </div>
+      <div className="mt-4">
+        <LaborCostInput
+          labor={draft.labor ?? DEFAULT_LABOR_INPUT}
+          laborCost={draft.defaultCosts.laborCost}
+          totalAreaSqFt={combinedAreaSqFt(draft.sections)}
+          onChange={(laborCost, labor) => setDraft((d) => ({ ...d, labor, defaultCosts: { ...d.defaultCosts, laborCost } }))}
+        />
       </div>
       <div className="mt-5 flex justify-end gap-2">
         <Button variant="ghost" onClick={onCancel}>
