@@ -52,7 +52,7 @@ const faqs = [
   },
   {
     q: "Is there a monthly fee?",
-    a: "No. Concrete Estimate Pro is a single $99 lifetime purchase with no subscription.",
+    a: "No. Concrete Estimate Pro is a single one-time purchase with no subscription — $79 at the current launch price, regularly $99.",
   },
   {
     q: "Is this the same as concrete contractor software or bidding software?",
@@ -69,18 +69,18 @@ const softwareApplicationSchema = {
   url: "https://concretecostpro.com/concrete-estimating-software",
   offers: {
     "@type": "Offer",
-    price: "99",
+    price: "79",
     priceCurrency: "USD",
     availability: "https://schema.org/InStock",
   },
   description:
-    "Concrete estimating and job-profitability software: quantities, true job costs, target-margin pricing, rate health and estimate-vs-actual reporting for concrete contractors. $99 lifetime, no subscription.",
+    "Concrete estimating and job-profitability software: quantities, true job costs, target-margin pricing, rate health and estimate-vs-actual reporting for concrete contractors. $79 launch price (regularly $99), no subscription.",
 };
 ---
 
 <Layout
   title="Concrete Estimating Software | Concrete Estimate Pro"
-  description="Concrete estimating software without another monthly subscription. Calculate quantities, true job costs, target-margin pricing, and estimate-vs-actual profitability. $99 lifetime."
+  description="Concrete estimating software without another monthly subscription. Calculate quantities, true job costs, target-margin pricing, and estimate-vs-actual profitability. $79 launch price, regularly $99."
 >
   <Fragment slot="head">
     <script type="application/ld+json" is:inline set:html={JSON.stringify(softwareApplicationSchema)} />
@@ -97,12 +97,18 @@ const softwareApplicationSchema = {
           Calculate quantities, true job costs, target-margin pricing, and estimate-vs-actual profitability — all in
           one local-first concrete estimator software built for concrete contractors.
         </p>
-        <a
-          href="/pricing"
-          class="mt-6 inline-flex items-center justify-center rounded-lg bg-orange px-6 py-3.5 text-base font-semibold text-white transition hover:bg-orange-dark"
-        >
-          Get Concrete Estimate Pro — $99 Lifetime
-        </a>
+        <p class="mt-4 inline-flex items-center gap-2 text-sm font-semibold">
+          <span class="text-muted line-through">$99</span>
+          <span class="rounded-full bg-orange/10 px-2.5 py-1 text-orange">$79 launch price</span>
+        </p>
+        <div class="mt-4">
+          <a
+            href="/pricing"
+            class="inline-flex items-center justify-center rounded-lg bg-orange px-6 py-3.5 text-base font-semibold text-white transition hover:bg-orange-dark"
+          >
+            Get Concrete Estimate Pro — $79 Launch Price
+          </a>
+        </div>
       </div>
     </section>
 
@@ -170,13 +176,21 @@ const softwareApplicationSchema = {
 
     <section class="bg-charcoal">
       <div class="mx-auto max-w-4xl px-4 py-14 text-center sm:px-6">
-        <h2 class="text-2xl font-bold text-white sm:text-3xl">$99 Lifetime</h2>
-        <p class="mx-auto mt-3 max-w-xl text-white/70">One payment. Every future update. No subscription.</p>
+        <span class="inline-flex items-center rounded-full bg-orange px-3 py-1 text-xs font-bold uppercase tracking-wide text-white">
+          Launch Price
+        </span>
+        <h2 class="mt-3 text-2xl font-bold text-white sm:text-3xl">
+          <span class="text-white/40 line-through">$99</span> $79 Lifetime
+        </h2>
+        <p class="mx-auto mt-3 max-w-xl text-white/70">
+          One payment. Every future update. No subscription. Buy at $79 now and that's your price for good — the
+          regular price rises to $99 once launch pricing ends.
+        </p>
         <a
           href="/pricing"
           class="mt-6 inline-flex items-center justify-center rounded-lg bg-orange px-6 py-3.5 text-base font-semibold text-white transition hover:bg-orange-dark"
         >
-          Get Concrete Estimate Pro
+          Get Concrete Estimate Pro — $79 Launch Price
         </a>
       </div>
     </section>

@@ -247,7 +247,7 @@ export default function ProjectCalculatorIsland({ config }: { config: Calculator
               <ArrowRight size={18} />
             </Button>
           </a>
-          <p className="mt-2 text-center text-xs text-muted">$99 lifetime • No subscription</p>
+          <p className="mt-2 text-center text-xs text-muted">$79 launch price (reg. $99) • No subscription</p>
           <p className="mt-1 text-center text-xs text-muted">Get advanced pricing tools, save estimates, and more.</p>
         </Card>
       </div>

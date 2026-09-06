@@ -22,7 +22,7 @@ const steps = [
 const faqs = [
   {
     q: "Is the calculator really free?",
-    a: "Yes. Every calculator on this site is free to use, with no account or sign-up required. Concrete Estimate Pro ($99 lifetime) adds saved rates, job costing, rate-health tracking and estimate history for contractors running an ongoing concrete business.",
+    a: "Yes. Every calculator on this site is free to use, with no account or sign-up required. Concrete Estimate Pro ($79 launch price, regularly $99) adds saved rates, job costing, rate-health tracking and estimate history for contractors running an ongoing concrete business.",
   },
   {
     q: "Does this replace an engineer?",
@@ -37,7 +37,7 @@ const faqs = [
 
 <Layout
   title="Concrete Cost & Estimating Calculators | Concrete Estimate Pro"
-  description="Free concrete cost and quantity calculators for driveways, slabs, patios, footings and sidewalks — plus Concrete Estimate Pro, contractor estimating software for $99 lifetime."
+  description="Free concrete cost and quantity calculators for driveways, slabs, patios, footings and sidewalks — plus Concrete Estimate Pro, contractor estimating software at a $79 launch price (regularly $99)."
 >
   <PublicHeader />
   <main>
@@ -125,11 +125,16 @@ const faqs = [
                 </li>
               ))}
             </ul>
+            <p class="mt-5 inline-flex items-center gap-2 text-sm font-semibold">
+              <span class="rounded-full bg-orange/10 px-2.5 py-1 text-orange">Launch price</span>
+              <span class="text-muted line-through">$99</span>
+              <span class="text-ink">$79 lifetime</span>
+            </p>
             <a
               href="/pricing"
-              class="mt-6 inline-flex items-center justify-center rounded-lg bg-orange px-6 py-3.5 text-base font-semibold text-white transition hover:bg-orange-dark"
+              class="mt-3 inline-flex items-center justify-center rounded-lg bg-orange px-6 py-3.5 text-base font-semibold text-white transition hover:bg-orange-dark"
             >
-              Get Concrete Estimate Pro — $99 Lifetime
+              Get Concrete Estimate Pro — $79 Launch Price
             </a>
           </div>
           <div class="rounded-2xl border border-border bg-warm-white p-6">

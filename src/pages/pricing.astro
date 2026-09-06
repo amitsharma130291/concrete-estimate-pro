@@ -21,8 +21,12 @@ const included = [
 
 const faqs = [
   {
+    q: "Is $79 a permanent price?",
+    a: "$79 is the launch price. Once launch pricing ends, new purchases move to the regular $99 price — but it's a one-time payment, not a subscription, so your price never changes after you buy. Buying now locks in $79 for as long as you use the product.",
+  },
+  {
     q: "Is this a subscription?",
-    a: "No. Concrete Estimate Pro is a one-time $99 payment for lifetime access. There's no recurring billing.",
+    a: "No. Concrete Estimate Pro is a one-time payment for lifetime access — no recurring billing, ever.",
   },
   {
     q: "Do I need an account?",
@@ -47,7 +51,7 @@ const productSchema = {
   offers: {
     "@type": "Offer",
     url: "https://concretecostpro.com/pricing",
-    price: "99",
+    price: "79",
     priceCurrency: "USD",
     availability: "https://schema.org/InStock",
   },
@@ -56,7 +60,7 @@ const productSchema = {
 
 <Layout
   title="Pricing | Concrete Estimate Pro"
-  description="Concrete Estimate Pro — $99 lifetime. Saved rates, job costing, rate-health tracking, branded estimates and estimate-vs-actual reporting. No subscription."
+  description="Concrete Estimate Pro — $79 launch price (regularly $99), one-time payment for lifetime access. Saved rates, job costing, rate-health tracking, branded estimates and estimate-vs-actual reporting. No subscription."
 >
   <Fragment slot="head">
     <script type="application/ld+json" is:inline set:html={JSON.stringify(productSchema)} />
@@ -74,14 +78,22 @@ const productSchema = {
     </section>
 
     <section class="mx-auto max-w-4xl px-4 py-12 sm:px-6">
-      <div class="overflow-hidden rounded-2xl border border-border bg-white shadow-sm">
+      <div class="overflow-hidden rounded-2xl border-2 border-orange bg-white shadow-sm">
         <div class="bg-charcoal px-6 py-8 text-center text-white sm:px-10">
-          <div class="text-sm font-semibold uppercase tracking-wide text-orange">Concrete Estimate Pro</div>
-          <div class="mt-2 flex items-end justify-center gap-1">
-            <span class="text-5xl font-extrabold">$99</span>
+          <span class="inline-flex items-center rounded-full bg-orange px-3 py-1 text-xs font-bold uppercase tracking-wide text-white">
+            Launch Price
+          </span>
+          <div class="text-sm font-semibold uppercase tracking-wide text-orange mt-3">Concrete Estimate Pro</div>
+          <div class="mt-2 flex items-end justify-center gap-3">
+            <span class="pb-2 text-2xl font-medium text-white/40 line-through">$99</span>
+            <span class="text-6xl font-extrabold">$79</span>
             <span class="pb-1.5 text-white/70">lifetime</span>
           </div>
-          <p class="mt-2 text-sm text-white/60">One payment. No subscription. No account required.</p>
+          <p class="mt-2 text-sm font-semibold text-orange">Save $20 — launch pricing won't last</p>
+          <p class="mt-1 text-sm text-white/60">
+            One-time payment. Buy at $79 and that's your price for good — the regular price rises to $99 once launch
+            pricing ends, but it never changes for you after you buy.
+          </p>
         </div>
 
         <div class="px-6 py-8 sm:px-10">
