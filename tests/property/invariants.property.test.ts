@@ -17,7 +17,6 @@ describe("invariant: zero dimension implies zero volume", () => {
   it("length=0 OR width=0 OR thickness=0 => netCubicYards=0 and orderQuantityYd3=0", () => {
     fc.assert(
       fc.property(dim, dim, pct, fc.constantFrom(0, 1, 2), (a, b, allowance, zeroPos) => {
-        const dims = [a, b, 10][zeroPos === 2 ? 2 : 0]; // placeholder not used; build explicit below
         const lengthFt = zeroPos === 0 ? 0 : a;
         const widthFt = zeroPos === 1 ? 0 : b;
         const thicknessIn = zeroPos === 2 ? 0 : 6;
