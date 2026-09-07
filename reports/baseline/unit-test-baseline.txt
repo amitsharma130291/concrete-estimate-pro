@@ -1,0 +1,14 @@
+
+> concreteestimatepro@0.0.1 test
+> vitest run --run
+
+
+ RUN  v5.0.0 C:/Users/amits/SEOSites/concreteestimatepro
+
+
+ Test Files  2 passed (2)
+      Tests  30 passed (30)
+   Start at  00:04:05
+   Duration  360ms (transform 58%, import 25%, tests 9%, worker 7%)
+
+EXIT:0

@@ -1,56 +1,48 @@
 import { useMemo } from "react";
 import { PlusCircle } from "lucide-react";
-import { useWorkspace } from "../../../lib/workspaceContext";
+import { isUntouchedBlankEstimate, useWorkspace } from "../../../lib/workspaceContext";
 import { evaluateEstimate, evaluateEntity } from "../../../lib/estimateMath";
-import { calculateMargin, formatCurrency, formatPercent } from "../../../lib/calc";
+import { formatCurrency, formatPercent } from "../../../lib/calc";
 import { Badge, Button, Card, EmptyState, StatTile } from "../../ui/primitives";
+import SaveStatusIndicator from "../SaveStatusIndicator";
 
 export default function OverviewTab() {
-  const { workspace, ready, seedSample, hasRealData } = useWorkspace();
+  const { currentEstimate, templates, preferences, ready, seedSample, estimateSaveStatus, estimateLastSavedAt, estimateSaveError, storageAvailable } = useWorkspace();
 
-  const kpis = useMemo(() => {
-    const active = workspace.estimates.filter((e) => !e.archived);
-    const quoted = active.filter((e) => e.status === "sent" || e.status === "draft");
-    const won = active.filter((e) => e.status === "accepted");
-    const quotedTotal = quoted.reduce((s, e) => s + e.sellingPrice, 0);
-    const wonTotal = won.reduce((s, e) => s + e.sellingPrice, 0);
-    const expectedProfit = won.reduce((s, e) => s + (e.sellingPrice - evaluateEstimate(e).trueCost), 0);
-    const margins = won.map((e) => calculateMargin(e.sellingPrice, evaluateEstimate(e).trueCost)).filter((m): m is number => m !== null);
-    const avgMargin = margins.length ? margins.reduce((a, b) => a + b, 0) / margins.length : null;
-    return { quotedTotal, wonTotal, wonCount: won.length, expectedProfit, avgMargin };
-  }, [workspace.estimates]);
+  // "Nothing here yet" means genuinely nothing was ever loaded -- not `hasRealData` (which
+  // deliberately excludes sample-flagged records too): after "Load sample data", the
+  // current estimate and templates ARE sample-flagged, so this must still resolve to
+  // "something to show" rather than looping back to the welcome screen.
+  const isPristine = !!currentEstimate && isUntouchedBlankEstimate(currentEstimate) && templates.length === 0;
+
+  const result = useMemo(() => (currentEstimate ? evaluateEstimate(currentEstimate) : null), [currentEstimate]);
 
   const rateHealthRows = useMemo(
     () =>
-      workspace.templates.slice(0, 4).map((t) => {
-        const result = evaluateEntity({
+      templates.slice(0, 4).map((t) => {
+        const r = evaluateEntity({
           sections: t.sections,
           allowancePercent: t.allowancePercent,
           rounding: t.rounding,
           costs: t.defaultCosts,
-          overheadPercent: workspace.settings.defaultOverheadPercent,
-          targetMarginPercent: workspace.settings.defaultTargetMarginPercent,
+          overheadPercent: preferences.defaultOverheadPercent,
+          targetMarginPercent: preferences.defaultTargetMarginPercent,
           sellingPrice: t.currentSellingPrice,
         });
-        return { template: t, result };
+        return { template: t, result: r };
       }),
-    [workspace.templates, workspace.settings],
+    [templates, preferences],
   );
-
-  const recentEstimates = workspace.estimates
-    .filter((e) => !e.archived)
-    .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
-    .slice(0, 5);
 
   if (!ready) return <div className="text-sm text-muted">Loading…</div>;
 
-  if (!hasRealData && workspace.estimates.length === 0) {
+  if (isPristine) {
     return (
       <div className="flex flex-col gap-6">
-        <PageHeader />
+        <PageHeader hasCurrentEstimate={false} />
         <EmptyState
           title="Welcome to Concrete Cost Pro"
-          desc="Load sample data to explore Rate Health, estimates and job costing — or start fresh with your own project."
+          desc="Load sample data to explore Rate Health and job costing — or start fresh with your own estimate."
           action={
             <div className="flex flex-wrap justify-center gap-2">
               <Button onClick={seedSample}>Load sample data</Button>
@@ -66,19 +58,39 @@ export default function OverviewTab() {
 
   return (
     <div className="flex flex-col gap-6">
-      <PageHeader />
+      <PageHeader hasCurrentEstimate={!!currentEstimate} />
 
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <StatTile label="Quoted" value={formatCurrency(kpis.quotedTotal)} sub="Draft + sent estimates" />
-        <StatTile label="Won" value={formatCurrency(kpis.wonTotal)} sub={`${kpis.wonCount} accepted`} />
-        <StatTile label="Expected profit" value={formatCurrency(kpis.expectedProfit)} sub="On accepted jobs" tone="green" />
-        <StatTile
-          label="Average margin"
-          value={formatPercent(kpis.avgMargin, 0)}
-          sub="Across accepted jobs"
-          tone={kpis.avgMargin !== null && kpis.avgMargin < workspace.settings.defaultTargetMarginPercent / 100 ? "red" : "green"}
-        />
-      </div>
+      {currentEstimate && result ? (
+        <Card title="Current estimate">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <div className="font-semibold text-ink">{currentEstimate.projectName || "Untitled project"}</div>
+              <div className="text-xs text-muted">
+                {currentEstimate.customerName || "No customer yet"} · {currentEstimate.estimateNumber}
+              </div>
+            </div>
+            <StatusBadge status={currentEstimate.status} />
+          </div>
+          <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4">
+            <StatTile label="Selling price" value={formatCurrency(currentEstimate.sellingPrice)} />
+            <StatTile label="True cost" value={formatCurrency(result.trueCost)} />
+            <StatTile
+              label="Margin"
+              value={formatPercent(result.currentMargin, 0)}
+              tone={result.isBelowTarget ? "red" : "green"}
+            />
+            <StatTile label="Required price" value={formatCurrency(result.requiredSellingPrice)} />
+          </div>
+          <div className="mt-4 flex items-center justify-between">
+            <a href="/app/estimates" className="text-sm font-medium text-orange">
+              Open current estimate &rarr;
+            </a>
+            <SaveStatusIndicator status={estimateSaveStatus} lastSavedAt={estimateLastSavedAt} errorMessage={estimateSaveError} storageAvailable={storageAvailable} />
+          </div>
+        </Card>
+      ) : (
+        <EmptyState title="No current estimate" desc="Start one to see it summarized here." action={<a href="/app/estimates?new=1"><Button>Start a new estimate</Button></a>} />
+      )}
 
       <Card title="Rate Health" subtitle="Your standard job-type pricing">
         {rateHealthRows.length === 0 ? (
@@ -95,13 +107,13 @@ export default function OverviewTab() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
-                {rateHealthRows.map(({ template, result }) => (
+                {rateHealthRows.map(({ template, result: r }) => (
                   <tr key={template.id}>
                     <td className="py-2.5 text-ink">{template.name}</td>
                     <td className="py-2.5 text-ink">{formatCurrency(template.currentSellingPrice)}</td>
-                    <td className={`py-2.5 font-medium ${result.isBelowTarget ? "text-red" : "text-green"}`}>{formatPercent(result.currentMargin, 0)}</td>
+                    <td className={`py-2.5 font-medium ${r.isBelowTarget ? "text-red" : "text-green"}`}>{formatPercent(r.currentMargin, 0)}</td>
                     <td className="py-2.5">
-                      <Badge tone={result.isBelowTarget ? "red" : "green"}>{result.isBelowTarget ? "Needs review" : "On target"}</Badge>
+                      <Badge tone={r.isBelowTarget ? "red" : "green"}>{r.isBelowTarget ? "Needs review" : "On target"}</Badge>
                     </td>
                   </tr>
                 ))}
@@ -113,34 +125,11 @@ export default function OverviewTab() {
           View full Rate Health &rarr;
         </a>
       </Card>
-
-      <Card title="Recent estimates">
-        {recentEstimates.length === 0 ? (
-          <p className="text-sm text-muted">No estimates yet.</p>
-        ) : (
-          <div className="divide-y divide-border">
-            {recentEstimates.map((e) => (
-              <a key={e.id} href={`/app/estimates?id=${e.id}`} className="flex items-center justify-between gap-3 py-3 hover:bg-warm-white">
-                <div>
-                  <div className="text-sm font-medium text-ink">{e.projectName}</div>
-                  <div className="text-xs text-muted">
-                    {e.customerName} · {e.estimateNumber}
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-sm font-semibold text-ink">{formatCurrency(e.sellingPrice)}</span>
-                  <StatusBadge status={e.status} />
-                </div>
-              </a>
-            ))}
-          </div>
-        )}
-      </Card>
     </div>
   );
 }
 
-function PageHeader() {
+function PageHeader({ hasCurrentEstimate }: { hasCurrentEstimate: boolean }) {
   return (
     <div className="flex flex-wrap items-center justify-between gap-3">
       <div>
@@ -149,7 +138,7 @@ function PageHeader() {
       </div>
       <a href="/app/estimates?new=1">
         <Button>
-          <PlusCircle size={16} /> New estimate
+          <PlusCircle size={16} /> {hasCurrentEstimate ? "New Estimate" : "New estimate"}
         </Button>
       </a>
     </div>
@@ -157,6 +146,6 @@ function PageHeader() {
 }
 
 export function StatusBadge({ status }: { status: string }) {
-  const tone = status === "accepted" ? "green" : status === "declined" ? "red" : status === "sent" ? "amber" : "neutral";
+  const tone = status === "accepted" ? "green" : status === "completed" ? "green" : status === "declined" ? "red" : status === "sent" ? "amber" : "neutral";
   return <Badge tone={tone as any}>{status[0].toUpperCase() + status.slice(1)}</Badge>;
 }

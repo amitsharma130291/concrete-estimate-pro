@@ -1,0 +1,632 @@
+[
+  {
+    "id": "TP-01",
+    "kind": "single-section",
+    "input": {
+      "length_ft": 40,
+      "width_ft": 20,
+      "thickness_in": 4,
+      "allowance_pct": 10,
+      "rounding": "quarter",
+      "ready_mix_rate": 165,
+      "labor": 1200,
+      "forms": 180,
+      "reinforcement": 220,
+      "equipment": 150,
+      "other": 50,
+      "overhead_pct": 15,
+      "target_margin_pct": 30,
+      "selling_price": 4200
+    },
+    "expected": {
+      "quantity": {
+        "areaSqFt": "800",
+        "netCubicFeet": "266.66666666666666666666666666666666666666666666666",
+        "netCubicYards": "9.8765432098765432098765432098765432098765432098763",
+        "orderQuantityYd3": "11.00"
+      },
+      "cost": {
+        "readyMixCost": "1815.00",
+        "directCost": "3615.00",
+        "overheadAmount": "542.2500",
+        "trueCost": "4157.2500"
+      },
+      "requiredSellingPrice": "5938.9285714285714285714285714285714285714285714286",
+      "currentMargin": "0.010178571428571428571428571428571428571428571428571"
+    }
+  },
+  {
+    "id": "TP-02",
+    "kind": "single-section",
+    "input": {
+      "length_ft": 25,
+      "width_ft": 25,
+      "thickness_in": 5,
+      "allowance_pct": 8,
+      "rounding": "half",
+      "ready_mix_rate": 170,
+      "labor": 1400,
+      "forms": 200,
+      "reinforcement": 250,
+      "equipment": 100,
+      "other": 0,
+      "overhead_pct": 12,
+      "target_margin_pct": 28,
+      "selling_price": 5000
+    },
+    "expected": {
+      "quantity": {
+        "areaSqFt": "625",
+        "netCubicFeet": "260.41666666666666666666666666666666666666666666667",
+        "netCubicYards": "9.6450617283950617283950617283950617283950617283952",
+        "orderQuantityYd3": "10.5"
+      },
+      "cost": {
+        "readyMixCost": "1785.0",
+        "directCost": "3735.0",
+        "overheadAmount": "448.200",
+        "trueCost": "4183.200"
+      },
+      "requiredSellingPrice": "5810.0",
+      "currentMargin": "0.16336"
+    }
+  },
+  {
+    "id": "TP-03",
+    "kind": "single-section",
+    "input": {
+      "length_ft": 12,
+      "width_ft": 12,
+      "thickness_in": 4,
+      "allowance_pct": 0,
+      "rounding": "none",
+      "ready_mix_rate": 160,
+      "labor": 300,
+      "forms": 50,
+      "reinforcement": 0,
+      "equipment": 0,
+      "other": 0,
+      "overhead_pct": 10,
+      "target_margin_pct": 20,
+      "selling_price": 900
+    },
+    "expected": {
+      "quantity": {
+        "areaSqFt": "144",
+        "netCubicFeet": "48.000000000000000000000000000000000000000000000000",
+        "netCubicYards": "1.7777777777777777777777777777777777777777777777778",
+        "orderQuantityYd3": "1.7777777777777777777777777777777777777777777777778"
+      },
+      "cost": {
+        "readyMixCost": "284.44444444444444444444444444444444444444444444445",
+        "directCost": "634.44444444444444444444444444444444444444444444445",
+        "overheadAmount": "63.444444444444444444444444444444444444444444444445",
+        "trueCost": "697.88888888888888888888888888888888888888888888890"
+      },
+      "requiredSellingPrice": "872.36111111111111111111111111111111111111111111112",
+      "currentMargin": "0.22456790123456790123456790123456790123456790123456"
+    }
+  },
+  {
+    "id": "TP-04",
+    "kind": "single-section",
+    "input": {
+      "length_ft": 80,
+      "width_ft": 10,
+      "thickness_in": 6,
+      "allowance_pct": 12,
+      "rounding": "whole",
+      "ready_mix_rate": 175,
+      "labor": 2200,
+      "forms": 300,
+      "reinforcement": 400,
+      "equipment": 250,
+      "other": 100,
+      "overhead_pct": 18,
+      "target_margin_pct": 32,
+      "selling_price": 8500
+    },
+    "expected": {
+      "quantity": {
+        "areaSqFt": "800",
+        "netCubicFeet": "400.0",
+        "netCubicYards": "14.814814814814814814814814814814814814814814814815",
+        "orderQuantityYd3": "17"
+      },
+      "cost": {
+        "readyMixCost": "2975",
+        "directCost": "6225",
+        "overheadAmount": "1120.50",
+        "trueCost": "7345.50"
+      },
+      "requiredSellingPrice": "10802.205882352941176470588235294117647058823529412",
+      "currentMargin": "0.13582352941176470588235294117647058823529411764706"
+    }
+  },
+  {
+    "id": "TP-05",
+    "kind": "single-section",
+    "input": {
+      "length_ft": 0,
+      "width_ft": 30,
+      "thickness_in": 4,
+      "allowance_pct": 10,
+      "rounding": "quarter",
+      "ready_mix_rate": 165,
+      "labor": 500,
+      "forms": 0,
+      "reinforcement": 0,
+      "equipment": 0,
+      "other": 0,
+      "overhead_pct": 10,
+      "target_margin_pct": 25,
+      "selling_price": 600
+    },
+    "expected": {
+      "quantity": {
+        "areaSqFt": "0",
+        "netCubicFeet": "0E-50",
+        "netCubicYards": "0E-50",
+        "orderQuantityYd3": "0.00"
+      },
+      "cost": {
+        "readyMixCost": "0.00",
+        "directCost": "500.00",
+        "overheadAmount": "50.000",
+        "trueCost": "550.000"
+      },
+      "requiredSellingPrice": "733.33333333333333333333333333333333333333333333333",
+      "currentMargin": "0.083333333333333333333333333333333333333333333333333"
+    }
+  },
+  {
+    "id": "TP-06",
+    "kind": "single-section",
+    "input": {
+      "length_ft": 15,
+      "width_ft": 15,
+      "thickness_in": 0,
+      "allowance_pct": 5,
+      "rounding": "none",
+      "ready_mix_rate": 160,
+      "labor": 200,
+      "forms": 0,
+      "reinforcement": 0,
+      "equipment": 0,
+      "other": 0,
+      "overhead_pct": 10,
+      "target_margin_pct": 20,
+      "selling_price": 300
+    },
+    "expected": {
+      "quantity": {
+        "areaSqFt": "225",
+        "netCubicFeet": "0",
+        "netCubicYards": "0",
+        "orderQuantityYd3": "0.00"
+      },
+      "cost": {
+        "readyMixCost": "0.00",
+        "directCost": "200.00",
+        "overheadAmount": "20.000",
+        "trueCost": "220.000"
+      },
+      "requiredSellingPrice": "275.00",
+      "currentMargin": "0.26666666666666666666666666666666666666666666666667"
+    }
+  },
+  {
+    "id": "TP-07",
+    "kind": "single-section",
+    "input": {
+      "length_ft": -10,
+      "width_ft": 20,
+      "thickness_in": 4,
+      "allowance_pct": 10,
+      "rounding": "none",
+      "ready_mix_rate": 165,
+      "labor": 0,
+      "forms": 0,
+      "reinforcement": 0,
+      "equipment": 0,
+      "other": 0,
+      "overhead_pct": 10,
+      "target_margin_pct": 25,
+      "selling_price": 50
+    },
+    "expected": {
+      "quantity": {
+        "areaSqFt": "0",
+        "netCubicFeet": "0E-50",
+        "netCubicYards": "0E-50",
+        "orderQuantityYd3": "0E-51"
+      },
+      "cost": {
+        "readyMixCost": "0E-51",
+        "directCost": "0E-51",
+        "overheadAmount": "0E-52",
+        "trueCost": "0E-52"
+      },
+      "requiredSellingPrice": "0E-50",
+      "currentMargin": "1.000000000000000000000000000000000000000000000000"
+    }
+  },
+  {
+    "id": "TP-08",
+    "kind": "single-section",
+    "input": {
+      "length_ft": 33,
+      "width_ft": 3,
+      "thickness_in": 6,
+      "allowance_pct": 0,
+      "rounding": "whole",
+      "ready_mix_rate": 150,
+      "labor": 0,
+      "forms": 0,
+      "reinforcement": 0,
+      "equipment": 0,
+      "other": 0,
+      "overhead_pct": 0,
+      "target_margin_pct": 0,
+      "selling_price": 0
+    },
+    "expected": {
+      "quantity": {
+        "areaSqFt": "99",
+        "netCubicFeet": "49.5",
+        "netCubicYards": "1.8333333333333333333333333333333333333333333333333",
+        "orderQuantityYd3": "2"
+      },
+      "cost": {
+        "readyMixCost": "300",
+        "directCost": "300",
+        "overheadAmount": "0",
+        "trueCost": "300"
+      },
+      "requiredSellingPrice": "300",
+      "currentMargin": null
+    }
+  },
+  {
+    "id": "TP-09",
+    "kind": "single-section",
+    "input": {
+      "length_ft": 18,
+      "width_ft": 9,
+      "thickness_in": 4,
+      "allowance_pct": 15,
+      "rounding": "quarter",
+      "ready_mix_rate": 168,
+      "labor": 650,
+      "forms": 90,
+      "reinforcement": 110,
+      "equipment": 60,
+      "other": 30,
+      "overhead_pct": 14,
+      "target_margin_pct": 100,
+      "selling_price": 3000
+    },
+    "expected": {
+      "quantity": {
+        "areaSqFt": "162",
+        "netCubicFeet": "53.999999999999999999999999999999999999999999999999",
+        "netCubicYards": "2.0000000000000000000000000000000000000000000000000",
+        "orderQuantityYd3": "2.50"
+      },
+      "cost": {
+        "readyMixCost": "420.00",
+        "directCost": "1360.00",
+        "overheadAmount": "190.4000",
+        "trueCost": "1550.4000"
+      },
+      "requiredSellingPrice": null,
+      "currentMargin": "0.4832"
+    }
+  },
+  {
+    "id": "TP-10",
+    "kind": "single-section",
+    "input": {
+      "length_ft": 45,
+      "width_ft": 22,
+      "thickness_in": 5,
+      "allowance_pct": 9,
+      "rounding": "half",
+      "ready_mix_rate": 172,
+      "labor": 1650,
+      "forms": 210,
+      "reinforcement": 260,
+      "equipment": 140,
+      "other": 45,
+      "overhead_pct": 16,
+      "target_margin_pct": 27,
+      "selling_price": 6800
+    },
+    "expected": {
+      "quantity": {
+        "areaSqFt": "990",
+        "netCubicFeet": "412.50000000000000000000000000000000000000000000000",
+        "netCubicYards": "15.277777777777777777777777777777777777777777777778",
+        "orderQuantityYd3": "17.0"
+      },
+      "cost": {
+        "readyMixCost": "2924.0",
+        "directCost": "5229.0",
+        "overheadAmount": "836.640",
+        "trueCost": "6065.640"
+      },
+      "requiredSellingPrice": "8309.0958904109589041095890410958904109589041095890",
+      "currentMargin": "0.10799411764705882352941176470588235294117647058824"
+    }
+  },
+  {
+    "id": "TP-11",
+    "kind": "multi-section",
+    "input": {
+      "sections": [
+        [
+          50,
+          12,
+          4
+        ],
+        [
+          10,
+          10,
+          4
+        ]
+      ],
+      "allowance_pct": 10,
+      "rounding": "quarter",
+      "ready_mix_rate": 165,
+      "labor": 1400,
+      "forms": 200,
+      "reinforcement": 250,
+      "equipment": 120,
+      "other": 40,
+      "overhead_pct": 15,
+      "target_margin_pct": 30,
+      "selling_price": 4800
+    },
+    "expected": {
+      "netCubicYards": "8.6419753086419753086419753086419753086419753086420",
+      "orderQuantityYd3": "9.75",
+      "cost": {
+        "readyMixCost": "1608.75",
+        "directCost": "3618.75",
+        "overheadAmount": "542.8125",
+        "trueCost": "4161.5625"
+      },
+      "requiredSellingPrice": "5945.0892857142857142857142857142857142857142857143",
+      "currentMargin": "0.1330078125"
+    }
+  },
+  {
+    "id": "TP-12",
+    "kind": "multi-section",
+    "input": {
+      "sections": [
+        [
+          20,
+          20,
+          4
+        ],
+        [
+          20,
+          20,
+          4
+        ],
+        [
+          20,
+          20,
+          4
+        ]
+      ],
+      "allowance_pct": 5,
+      "rounding": "none",
+      "ready_mix_rate": 160,
+      "labor": 2000,
+      "forms": 0,
+      "reinforcement": 0,
+      "equipment": 0,
+      "other": 0,
+      "overhead_pct": 10,
+      "target_margin_pct": 25,
+      "selling_price": 6000
+    },
+    "expected": {
+      "netCubicYards": "14.814814814814814814814814814814814814814814814814",
+      "orderQuantityYd3": "15.555555555555555555555555555555555555555555555555",
+      "cost": {
+        "readyMixCost": "2488.8888888888888888888888888888888888888888888888",
+        "directCost": "4488.8888888888888888888888888888888888888888888888",
+        "overheadAmount": "448.88888888888888888888888888888888888888888888888",
+        "trueCost": "4937.7777777777777777777777777777777777777777777777"
+      },
+      "requiredSellingPrice": "6583.7037037037037037037037037037037037037037037036",
+      "currentMargin": "0.17703703703703703703703703703703703703703703703705"
+    }
+  },
+  {
+    "id": "TP-13",
+    "kind": "multi-section",
+    "input": {
+      "sections": [
+        [
+          30,
+          0,
+          4
+        ],
+        [
+          20,
+          15,
+          4
+        ]
+      ],
+      "allowance_pct": 10,
+      "rounding": "none",
+      "ready_mix_rate": 165,
+      "labor": 800,
+      "forms": 0,
+      "reinforcement": 0,
+      "equipment": 0,
+      "other": 0,
+      "overhead_pct": 12,
+      "target_margin_pct": 25,
+      "selling_price": 2200
+    },
+    "expected": {
+      "netCubicYards": "3.7037037037037037037037037037037037037037037037037",
+      "orderQuantityYd3": "4.0740740740740740740740740740740740740740740740741",
+      "cost": {
+        "readyMixCost": "672.22222222222222222222222222222222222222222222223",
+        "directCost": "1472.2222222222222222222222222222222222222222222222",
+        "overheadAmount": "176.66666666666666666666666666666666666666666666666",
+        "trueCost": "1648.8888888888888888888888888888888888888888888889"
+      },
+      "requiredSellingPrice": "2198.5185185185185185185185185185185185185185185185",
+      "currentMargin": "0.25050505050505050505050505050505050505050505050505"
+    }
+  },
+  {
+    "id": "TP-14",
+    "kind": "multi-section",
+    "input": {
+      "sections": [
+        [
+          60,
+          18,
+          4
+        ]
+      ],
+      "allowance_pct": 10,
+      "rounding": "quarter",
+      "ready_mix_rate": 165,
+      "labor": 1800,
+      "forms": 250,
+      "reinforcement": 300,
+      "equipment": 200,
+      "other": 100,
+      "overhead_pct": 15,
+      "target_margin_pct": 30,
+      "selling_price": 5500
+    },
+    "expected": {
+      "netCubicYards": "13.333333333333333333333333333333333333333333333333",
+      "orderQuantityYd3": "14.75",
+      "cost": {
+        "readyMixCost": "2433.75",
+        "directCost": "5083.75",
+        "overheadAmount": "762.5625",
+        "trueCost": "5846.3125"
+      },
+      "requiredSellingPrice": "8351.875",
+      "currentMargin": "-0.062965909090909090909090909090909090909090909090909"
+    }
+  },
+  {
+    "id": "TP-15",
+    "kind": "multi-section",
+    "input": {
+      "sections": [
+        [
+          15,
+          15,
+          4
+        ],
+        [
+          15,
+          15,
+          4
+        ]
+      ],
+      "allowance_pct": 20,
+      "rounding": "whole",
+      "ready_mix_rate": 170,
+      "labor": 900,
+      "forms": 100,
+      "reinforcement": 100,
+      "equipment": 50,
+      "other": 0,
+      "overhead_pct": 13,
+      "target_margin_pct": 28,
+      "selling_price": 3300
+    },
+    "expected": {
+      "netCubicYards": "5.5555555555555555555555555555555555555555555555554",
+      "orderQuantityYd3": "7",
+      "cost": {
+        "readyMixCost": "1190",
+        "directCost": "2340",
+        "overheadAmount": "304.20",
+        "trueCost": "2644.20"
+      },
+      "requiredSellingPrice": "3672.5",
+      "currentMargin": "0.19872727272727272727272727272727272727272727272727"
+    }
+  },
+  {
+    "id": "TP-16",
+    "kind": "pricing-only",
+    "input": {
+      "true_cost": 5000,
+      "target_margin_pct": 25,
+      "selling_price": 6667
+    },
+    "expected": {
+      "requiredSellingPrice": "6666.6666666666666666666666666666666666666666666667",
+      "currentMargin": "0.25003749812509374531273436328183590820458977051147"
+    }
+  },
+  {
+    "id": "TP-17",
+    "kind": "pricing-only",
+    "input": {
+      "true_cost": 8441,
+      "target_margin_pct": 30,
+      "selling_price": 9800
+    },
+    "expected": {
+      "requiredSellingPrice": "12058.571428571428571428571428571428571428571428571",
+      "currentMargin": "0.13867346938775510204081632653061224489795918367347"
+    }
+  },
+  {
+    "id": "TP-18",
+    "kind": "pricing-only",
+    "input": {
+      "true_cost": 1000,
+      "target_margin_pct": 50,
+      "selling_price": 0
+    },
+    "expected": {
+      "requiredSellingPrice": "2.00E+3",
+      "currentMargin": null
+    }
+  },
+  {
+    "id": "TP-19",
+    "kind": "pricing-only",
+    "input": {
+      "true_cost": 0,
+      "target_margin_pct": 30,
+      "selling_price": 500
+    },
+    "expected": {
+      "requiredSellingPrice": "0E+1",
+      "currentMargin": "1"
+    }
+  },
+  {
+    "id": "TP-20",
+    "kind": "pricing-only",
+    "input": {
+      "true_cost": 2500,
+      "target_margin_pct": 99,
+      "selling_price": 250000
+    },
+    "expected": {
+      "requiredSellingPrice": "2.500E+5",
+      "currentMargin": "0.99"
+    }
+  }
+]

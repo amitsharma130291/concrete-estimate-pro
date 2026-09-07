@@ -1,0 +1,9 @@
+M1 (+/- swap in calculateMargin) | KILLED
+M2 (x/div swap) | KILLED
+M3 (constant tampering /27->/28) | KILLED
+M4 (percent-div-100 removal) | KILLED
+M5 (margin/markup swap) | KILLED
+M6 (rounding direction flip ceil->floor) | KILLED
+M7 (boundary operator flip <=0 -> <0) | KILLED
+M8 (cost-category omission: formsCost dropped) | KILLED
+M9 (negative-validation removal in safeD) | KILLED

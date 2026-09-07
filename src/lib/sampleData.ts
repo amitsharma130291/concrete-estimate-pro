@@ -1,24 +1,14 @@
-import type {
-  ActualJobResult,
-  CatalogItem,
-  EquipmentItem,
-  Estimate,
-  LaborRateItem,
-  Project,
-  ProjectTemplate,
-  Workspace,
-} from "./types";
-import { emptyWorkspace } from "./storage";
-import { newId } from "./storage";
+import type { ActualJobResult, CatalogItem, EquipmentItem, Estimate, LaborRateItem, ProjectTemplate } from "./types";
+import type { CatalogBundle } from "./persistence";
+import { newId } from "./workspaceContext";
 
-const now = () => new Date().toISOString();
 const daysAgo = (n: number) => new Date(Date.now() - n * 86400000).toISOString();
 
-export function buildSampleWorkspace(): Pick<
-  Workspace,
-  "catalog" | "laborRates" | "equipment" | "templates" | "projects" | "estimates" | "actuals"
-> {
-  const catalog: CatalogItem[] = [
+/** One sample current estimate (status "completed", with a matching sample actual) plus
+ * reusable sample templates/catalog -- matches the single-current-estimate model: there is
+ * only ever one sample estimate to seed, not a list. */
+export function buildSampleWorkspace(): { catalog: CatalogBundle; templates: ProjectTemplate[]; estimate: Estimate; actual: ActualJobResult | null } {
+  const materials: CatalogItem[] = [
     { id: newId("cat"), kind: "readyMix", name: "Standard 3000 PSI mix", supplier: "Riverside Ready Mix", unit: "yd³", unitCost: 165 },
     { id: newId("cat"), kind: "readyMix", name: "4000 PSI mix", supplier: "Riverside Ready Mix", unit: "yd³", unitCost: 178 },
     { id: newId("cat"), kind: "material", name: "#4 rebar", supplier: "ABC Supply", unit: "each", unitCost: 8.5 },
@@ -88,167 +78,36 @@ export function buildSampleWorkspace(): Pick<
     },
   ];
 
-  const projects: Project[] = [
-    {
-      id: newId("proj"),
-      name: "Smith Driveway",
-      projectType: "driveway",
-      customerName: "Smith Residence",
-      status: "completed",
-      sections: [{ id: newId("sec"), name: "Driveway", lengthFt: 80, widthFt: 18, thicknessIn: 4 }],
-      allowancePercent: 8,
-      rounding: "quarter",
-      costs: { readyMixRatePerYd3: 165, laborCost: 3400, formsCost: 550, reinforcementCost: 950, equipmentCost: 750, otherCost: 0 },
-      overheadPercent: 15,
-      targetMarginPercent: 30,
-      sellingPrice: 12470,
-      createdAt: daysAgo(60),
-      updatedAt: daysAgo(45),
-      isSample: true,
-    },
-    {
-      id: newId("proj"),
-      name: "Jones Patio",
-      projectType: "patio",
-      customerName: "Jones Residence",
-      status: "accepted",
-      sections: [{ id: newId("sec"), name: "Patio", lengthFt: 24, widthFt: 16, thicknessIn: 4 }],
-      allowancePercent: 8,
-      rounding: "quarter",
-      costs: { readyMixRatePerYd3: 165, laborCost: 1600, formsCost: 250, reinforcementCost: 300, equipmentCost: 150, otherCost: 0 },
-      overheadPercent: 15,
-      targetMarginPercent: 30,
-      sellingPrice: 6900,
-      createdAt: daysAgo(20),
-      updatedAt: daysAgo(18),
-      isSample: true,
-    },
-  ];
-
-  const estimates: Estimate[] = [
-    {
-      id: newId("est"),
-      estimateNumber: "EST-1001",
-      projectType: "driveway",
-      projectName: "Smith Driveway",
-      customerName: "Smith Residence",
-      customerAddress: "142 Maple St",
-      sections: [{ id: newId("sec"), name: "Driveway", lengthFt: 80, widthFt: 18, thicknessIn: 4 }],
-      allowancePercent: 8,
-      rounding: "quarter",
-      costs: { readyMixRatePerYd3: 165, laborCost: 3400, formsCost: 550, reinforcementCost: 950, equipmentCost: 750, otherCost: 0 },
-      overheadPercent: 15,
-      targetMarginPercent: 30,
-      sellingPrice: 12470,
-      status: "accepted",
-      createdAt: daysAgo(60),
-      updatedAt: daysAgo(45),
-      isSample: true,
-    },
-    {
-      id: newId("est"),
-      estimateNumber: "EST-1002",
-      projectType: "patio",
-      projectName: "Jones Patio",
-      customerName: "Jones Residence",
-      customerAddress: "88 Birch Ave",
-      sections: [{ id: newId("sec"), name: "Patio", lengthFt: 24, widthFt: 16, thicknessIn: 4 }],
-      allowancePercent: 8,
-      rounding: "quarter",
-      costs: { readyMixRatePerYd3: 165, laborCost: 1600, formsCost: 250, reinforcementCost: 300, equipmentCost: 150, otherCost: 0 },
-      overheadPercent: 15,
-      targetMarginPercent: 30,
-      sellingPrice: 6900,
-      status: "accepted",
-      createdAt: daysAgo(20),
-      updatedAt: daysAgo(18),
-      isSample: true,
-    },
-    {
-      id: newId("est"),
-      estimateNumber: "EST-1003",
-      projectType: "slab",
-      projectName: "Garcia Shed Pad",
-      customerName: "Garcia Residence",
-      customerAddress: "310 Oak Dr",
-      sections: [{ id: newId("sec"), name: "Slab", lengthFt: 12, widthFt: 10, thicknessIn: 4 }],
-      allowancePercent: 8,
-      rounding: "quarter",
-      costs: { readyMixRatePerYd3: 165, laborCost: 700, formsCost: 150, reinforcementCost: 150, equipmentCost: 0, otherCost: 0 },
-      overheadPercent: 15,
-      targetMarginPercent: 30,
-      sellingPrice: 2450,
-      status: "sent",
-      createdAt: daysAgo(5),
-      updatedAt: daysAgo(5),
-      isSample: true,
-    },
-    {
-      id: newId("est"),
-      estimateNumber: "EST-1004",
-      projectType: "sidewalk",
-      projectName: "Main St Sidewalk Repair",
-      customerName: "City of Fairview",
-      customerAddress: "Main St & 4th",
-      sections: [{ id: newId("sec"), name: "Sidewalk", lengthFt: 100, widthFt: 4, thicknessIn: 4 }],
-      allowancePercent: 6,
-      rounding: "quarter",
-      costs: { readyMixRatePerYd3: 165, laborCost: 1800, formsCost: 300, reinforcementCost: 0, equipmentCost: 200, otherCost: 0 },
-      overheadPercent: 15,
-      targetMarginPercent: 30,
-      sellingPrice: 4200,
-      status: "draft",
-      createdAt: daysAgo(2),
-      updatedAt: daysAgo(2),
-      isSample: true,
-    },
-  ];
-
-  const actuals: ActualJobResult[] = [
-    {
-      id: newId("act"),
-      projectId: projects[0].id,
-      actualQuantityYd3: 17.2,
-      actualLaborHours: 61,
-      actualLaborCost: 3660,
-      actualMaterialCost: 3388,
-      actualEquipmentCost: 750,
-      actualOtherCost: 0,
-      finalSellingPrice: 12470,
-      completedAt: daysAgo(45),
-      isSample: true,
-    },
-    {
-      id: newId("act"),
-      projectId: projects[1].id,
-      actualQuantityYd3: 6.1,
-      actualLaborHours: 34,
-      actualLaborCost: 1500,
-      actualMaterialCost: 1150,
-      actualEquipmentCost: 150,
-      actualOtherCost: 0,
-      finalSellingPrice: 6900,
-      completedAt: daysAgo(18),
-      isSample: true,
-    },
-  ];
-
-  return { catalog, laborRates, equipment, templates, projects, estimates, actuals };
-}
-
-export function sampleAppShellSeed(): Workspace {
-  const base = emptyWorkspace();
-  const sample = buildSampleWorkspace();
-  return {
-    ...base,
-    businessProfile: {
-      businessName: "ABC Concrete Co.",
-      phone: "(555) 210-4488",
-      email: "office@abcconcrete.example",
-      address: "1200 Industrial Pkwy, Fairview",
-    },
-    ...sample,
+  const estimate: Estimate = {
+    id: newId("est"),
+    estimateNumber: "EST-1001",
+    projectType: "driveway",
+    projectName: "Smith Driveway",
+    customerName: "Smith Residence",
+    customerAddress: "142 Maple St",
+    sections: [{ id: newId("sec"), name: "Driveway", lengthFt: 80, widthFt: 18, thicknessIn: 4 }],
+    allowancePercent: 8,
+    rounding: "quarter",
+    costs: { readyMixRatePerYd3: 165, laborCost: 3400, formsCost: 550, reinforcementCost: 950, equipmentCost: 750, otherCost: 0 },
+    overheadPercent: 15,
+    targetMarginPercent: 30,
+    sellingPrice: 12470,
+    status: "completed",
+    createdAt: daysAgo(60),
+    updatedAt: daysAgo(45),
+    isSample: true,
   };
-}
 
-export { now, daysAgo };
+  const actual: ActualJobResult = {
+    actualQuantityYd3: 17.2,
+    actualLaborHours: 61,
+    actualLaborCost: 3660,
+    actualMaterialCost: 3388,
+    actualEquipmentCost: 750,
+    actualOtherCost: 0,
+    finalSellingPrice: 12470,
+    completedAt: daysAgo(45),
+  };
+
+  return { catalog: { materials, laborRates, equipment }, templates, estimate, actual };
+}

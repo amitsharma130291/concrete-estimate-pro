@@ -1,0 +1,9 @@
+[2m00:04:17[22m [34m[vite][39m Re-optimizing dependencies because vite config has changed
+[2m00:04:18[22m [34m[types][39m Generated [2m957ms[22m
+[2m00:04:18[22m [34m[check][39m Getting diagnostics for Astro files in C:\Users\amits\SEOSites\concreteestimatepro...
+Result (62 files): 
+- 0 errors
+- 0 warnings
+- 0 hints
+
+EXIT:0

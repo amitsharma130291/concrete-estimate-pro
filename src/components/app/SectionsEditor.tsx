@@ -1,9 +1,10 @@
 import { PlusCircle, Trash2 } from "lucide-react";
-import { newId } from "../../lib/storage";
+import { newId } from "../../lib/workspaceContext";
 import type { ProjectSection } from "../../lib/types";
 import { Button, NumberInput, TextInput } from "../ui/primitives";
 import { combinedNetCubicYards } from "../../lib/estimateMath";
 import { formatYd3 } from "../../lib/calc";
+import { numberFieldError, parseRequiredNumber } from "../../lib/validation";
 
 export default function SectionsEditor({ sections, onChange }: { sections: ProjectSection[]; onChange: (s: ProjectSection[]) => void }) {
   function addSection() {
@@ -49,10 +50,16 @@ export default function SectionsEditor({ sections, onChange }: { sections: Proje
 }
 
 function LabeledNum({ label, value, onChange }: { label: string; value: number; onChange: (v: number) => void }) {
+  const error = numberFieldError(value);
   return (
     <label className="flex flex-col gap-0.5">
       <span className="text-[10px] uppercase text-muted">{label}</span>
-      <NumberInput value={value} onChange={(e) => onChange(parseFloat(e.target.value) || 0)} className="px-2 py-1.5" />
+      <NumberInput value={value} error={error} onChange={(e) => onChange(parseRequiredNumber(e.target.value))} className="px-2 py-1.5" />
+      {error && (
+        <span role="alert" className="text-[10px] font-medium text-red">
+          {error}
+        </span>
+      )}
     </label>
   );
 }

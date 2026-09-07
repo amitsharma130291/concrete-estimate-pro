@@ -1,0 +1,151 @@
+{
+  "auditBranch": "qa/full-audit",
+  "date": "2026-09-07",
+  "pass": "release-blocker remediation (second pass, built on the initial calculation-verification audit)",
+  "reportFile": "docs/TEST_REPORT.md",
+  "specFile": "docs/CALCULATION_SPEC.md",
+  "traceabilityFile": "docs/REQUIREMENTS_TRACEABILITY.md",
+  "featureClaimsAuditFile": "docs/FEATURE_CLAIMS_AUDIT.md",
+  "contrastTokensFile": "docs/CONTRAST_TOKENS.md",
+  "vitestSuite": {
+    "testFiles": 11,
+    "tests": 147,
+    "passed": 147,
+    "failed": 0,
+    "note": "142 -> 147 after third-pass remediation (2026-09-07) added getZeroCostWarnings tests"
+  },
+  "thirdPassRemediation": {
+    "date": "2026-09-07",
+    "trigger": "independent third-party review (ChatGPT, given the QA report + calculator-logic doc, no repo access)",
+    "fixed": [
+      "getZeroCostWarnings() added to src/lib/calc.ts; wired into EstimateWizard, ProjectCalculatorIsland, JobCostCalculatorIsland to visibly flag $0 ready-mix rate / labor cost instead of silently accepting it",
+      "rounding option labels corrected from 'Nearest X yd3' to 'Round up to next X yd3' in EstimateWizard.tsx, SettingsTab.tsx, ProjectCalculatorIsland.tsx",
+      "target margin inputs capped at 99% (max attribute + clamping onChange) in 6 locations to keep requiredSellingPrice finite",
+      "estimate customer-document E2E test strengthened: asserts real content present and margin/overhead/true-cost/markup text absent (tests/e2e/pro/estimates.spec.ts)"
+    ],
+    "consideredNotConfirmed": [
+      "fixed additional quantity allowance (not found anywhere in the codebase)",
+      "Rate Health per-square-foot normalization (not part of this app's design)",
+      "flat labor duplicated per-caller (false - single shared LaborCostInput.tsx component)"
+    ],
+    "paymentLicenseStatus": "unchanged - still NOT_IMPLEMENTED, still release-critical, still blocked on user's provider selection"
+  },
+  "fourthPassRemediation": {
+    "date": "2026-09-07",
+    "trigger": "independent third-party review of a full per-calculator verification package (ChatGPT, 14 tool docs + generator script, still no repo access)",
+    "realProductBugFixed": [
+      "Actuals tab (src/components/app/tabs/ActualsTab.tsx) compared an overhead-inclusive estimated margin/cost against an overhead-EXCLUSIVE actual margin/cost, making every logged job look more profitable than it really was. Fixed: actual costs now apply the project's own saved overheadPercent before the comparison. New Playwright test added (tests/e2e/pro/actuals.spec.ts) asserting the corrected dollar and percent figures."
+    ],
+    "documentationErrorsFixed": [
+      "The verification package's Footing-calculator examples used a wrong simplified default-selling-price formula (a generic area*$12/sqft placeholder) instead of the real production fallback ProjectCalculatorIsland.tsx uses when marketRatePerSqft is 0. Corrected the generator script and regenerated - real default margin is +13.36%, not the -113.63% the earlier (wrong) numbers showed. This was a documentation bug, not a product bug.",
+      "Scenario Compare Example 2 omitted its underlying cost inputs, making the stated true-cost figure unreproducible by a reader. Added."
+    ],
+    "minorClarityFix": "Renamed the hourly-labor 'Hours' field to 'Job duration (hrs)' with a hint, to reduce ambiguity with per-person-hours (src/components/app/LaborCostInput.tsx)",
+    "openDecisionNotActioned": "Blocking (not just warning) validation on invalid/blank cost fields, and grouped multi-job historical worked examples for Actuals, were both raised again by this review round. Not implemented this pass - flagged back to the user as a scope decision (the third pass deliberately chose non-blocking warnings over full blocking validation across every cost field in the app)."
+  },
+  "fifthPassUserSuppliedTestSheet": {
+    "date": "2026-09-07",
+    "trigger": "user supplied an independently-authored 140-case test spreadsheet (10 cases per tool x 14 tools) with pre-computed expected results",
+    "method": "Every case executed directly against the real production functions (src/lib/calc.ts, src/lib/estimateMath.ts) via tests/oracle/runUserTestSheet.ts - not re-derived by hand.",
+    "result": { "total": 140, "pass": 111, "failRealMathMismatch": 0, "failNotBlocked_knownGap": 23, "naNotImplemented": 3, "naNoMatchingUiField": 3 },
+    "realBugFound": "ActualsTab.tsx summed actualLaborCost/actualMaterialCost/actualEquipmentCost/actualOtherCost with NO clamping at all (not even the safeD()-style clamp-negative-to-zero every other numeric field in the app has) - a negative actual cost silently reduced the true cost and inflated the reported margin (e.g. one test case: 95% instead of a realistic ~57%). Fixed: exported safe() from calc.ts, applied it to those 4 fields plus actualQuantityYd3/actualLaborHours in ActualsTab.tsx and its historical aggregation. New Playwright test added.",
+    "modelMismatchesFound": [
+      "The 6 free calculator pages hardcode overheadPercent=15 and targetMarginPercent=30 as non-editable constants (ProjectCalculatorIsland.tsx) - many test rows assumed these were adjustable inputs on those pages, which they are not; the underlying formula was still verified correct with those values.",
+      "The free 'Concrete Estimate Template' tool (EstimateTemplateIsland.tsx) has no quantity field per line at all - each line is a label + single dollar amount, summed directly. Test rows assuming a qty*price-per-line model don't match any real input in that tool.",
+      "Pro Estimates/Projects/Templates have no 'fixed extra yd3' allowance mode (only percentage allowance exists) - 3 test rows exercised this nonexistent input."
+    ]
+  },
+  "propertyBasedAndFixtureCasesExecuted": {
+    "goldenFixtures": 50,
+    "thirdPathFixtures": 20,
+    "generalQuantity": 10000,
+    "unitConversion": 5000,
+    "invalidBoundary": 4000,
+    "pricingScenarios": 4000,
+    "invariants": 4300,
+    "estimateVsActual": 1200,
+    "decimalMigrationBeforeAfter": 5070,
+    "approxTotal": 33640
+  },
+  "mutationTesting": {
+    "operatorsSpecified": 9,
+    "operatorsKilled": 9,
+    "rerunAfterDecimalMigration": true,
+    "rerunOperatorsKilled": 9,
+    "method": "manual/scripted (not automated Stryker)",
+    "resultFiles": ["reports/mutation/results.txt", "reports/mutation/results-migrated.txt"]
+  },
+  "e2e": {
+    "chromium": { "passed": 90, "total": 90 },
+    "firefox": { "passed": 88, "total": 90, "skipped": 2, "note": "2 skipped are Chromium-only page.pdf() tests by design; zero failures" },
+    "webkit": { "passed": 88, "total": 90, "skipped": 2, "note": "87 passed directly + 1 (patio calculator) failed with a transient HTTP 404 verified non-reproducible (curl to the live server returned 200 immediately after, built file exists, isolated retry passed in 4.8s) - not a product defect" },
+    "proTabCoverage": {
+      "overview": 3, "estimates": 8, "projects": 7, "templates": 5,
+      "rateHealth": 4, "catalog": 6, "actuals": 4, "settings": 8, "scenarioCompare": 1,
+      "totalProTabTests": 46
+    }
+  },
+  "nonfunctional": {
+    "typecheck": { "tool": "astro check", "errors": 0, "warnings": 0, "filesChecked": 93 },
+    "build": { "tool": "astro build", "status": "pass", "pagesBuilt": 23 },
+    "npmAudit": { "vulnerabilities": 0 },
+    "eslint": "NOT_IMPLEMENTED",
+    "accessibility": {
+      "tool": "axe-core via playwright",
+      "routesScanned": 23,
+      "criticalViolations": 0,
+      "seriousViolations": 0,
+      "note": "CCP-002 (color-contrast) fully fixed this pass with a two-token architecture; 3 additional label/select-name defects found and fixed"
+    }
+  },
+  "decimalSafeMigration": {
+    "status": "COMPLETE",
+    "filesMigrated": ["src/lib/calc.ts", "src/lib/estimateMath.ts"],
+    "library": "decimal.js (moved devDependencies -> dependencies)",
+    "beforeAfterCasesCompared": 5070,
+    "numericallyEquivalentCases": 5070,
+    "publicApiChanged": false
+  },
+  "featureClaimsAudit": {
+    "claimsVerifiedImplemented": 17,
+    "claimsFixed": 1,
+    "claimsBlockedOnPayment": 1,
+    "undocumentedRealFeatures": 5
+  },
+  "bugs": [
+    { "id": "CCP-001-CANDIDATE", "title": "Apparent precision divergence near 100% margin asymptote", "severity": null, "status": "closed_not_a_bug" },
+    { "id": "CCP-002", "title": "Color contrast fails WCAG AA (--color-orange), sitewide", "severity": "MEDIUM", "status": "fixed", "note": "was confirmed-not-fixed in the first pass; fixed this pass with a two-token architecture" },
+    { "id": "CCP-003", "title": "21 form inputs missing accessible labels on 2 pages", "severity": "MEDIUM", "status": "fixed", "pass": "first pass" },
+    { "id": "CCP-004", "title": "CSV export corrupts columns when a name contains a comma", "severity": "MEDIUM", "status": "fixed", "pass": "first pass" },
+    { "id": "CCP-005", "title": "Project duplication promised on the pricing page, not implemented", "severity": "MEDIUM", "status": "fixed", "pass": "second pass" },
+    { "id": "A11Y-EXPANDED-1", "title": "Missing accessible names on /app/estimates, /app/rate-health, /app/settings (found by expanded 23-route axe scan)", "severity": "MEDIUM", "status": "fixed", "pass": "second pass" },
+    { "id": "GREEN-RED-CONTRAST", "title": "--color-green and text-red/90 contrast failures found alongside the CCP-002 fix", "severity": "LOW-MEDIUM", "status": "fixed", "pass": "second pass" },
+    { "id": "PAYMENT-LICENSE-GAP", "title": "No payment/license gating exists anywhere; /app fully open and free", "severity": "CRITICAL", "status": "not_implemented", "releaseCritical": true, "note": "explicitly blocked pending user's payment provider selection per this pass's own mandate" }
+  ],
+  "confidenceScore": {
+    "overall": 84.6,
+    "components": {
+      "calculation": { "weight": 30, "scorePercent": 98, "weighted": 29.4 },
+      "proWorkflow": { "weight": 18, "scorePercent": 95, "weighted": 17.1 },
+      "dataIntegrity": { "weight": 13, "scorePercent": 95, "weighted": 12.4 },
+      "exportPdfCsv": { "weight": 10, "scorePercent": 93, "weighted": 9.3 },
+      "paymentLicense": { "weight": 12, "scorePercent": 5, "weighted": 0.6, "capped": true, "capReason": "NOT_IMPLEMENTED, blocked pending payment provider selection" },
+      "publicCalculators": { "weight": 8, "scorePercent": 95, "weighted": 7.6 },
+      "a11yBrowser": { "weight": 6, "scorePercent": 92, "weighted": 5.5 },
+      "buildQuality": { "weight": 3, "scorePercent": 90, "weighted": 2.7 }
+    }
+  },
+  "releaseGates": {
+    "paymentAndLicenseTestsPass": false,
+    "everyPaidTabHasDirectE2ECoverage": true,
+    "noCriticalOrHighBugsRemain": true,
+    "everyAdvertisedFeatureExists": true,
+    "productionBuildPasses": true
+  },
+  "releaseRecommendation": {
+    "verdict": "GO_FREE_TIER_NOGO_PAYMENTS",
+    "freeTierScope": "all 6 SEO calculators, job cost calculator, estimate template, and continued free use of the full Pro app across all 8 tabs",
+    "blockedScope": "accepting real payments - NO-GO until payment/license entitlement is implemented",
+    "mostImportantRemainingAction": "User must select a payment provider and supply credentials; then implement server-verified entitlement (not success-URL or localStorage boolean) per docs/TEST_REPORT.md section 9.2, and test successful/failed/cancelled/duplicate/delayed/replayed/invalid-signature sandbox events before enabling any real checkout."
+  }
+}

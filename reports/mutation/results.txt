@@ -1,0 +1,35 @@
+Mutation testing — manual/scripted (not an automated Stryker run), against the 9 operators
+specified in the QA audit mandate, applied one at a time directly to src/lib/calc.ts (each
+reverted via git checkout immediately after measurement), full 112-test suite run per mutant.
+
+Baseline (unmutated): 112/112 passing.
+
+M1 | +/- swap: calculateMargin numerator + instead of - | KILLED (tests failed as expected)
+M2 | x/div swap: netCubicFeet * 27 instead of / 27 | KILLED (tests failed as expected)
+M3 | constant tampering: /28 instead of /27 | KILLED (tests failed as expected)
+M4 | percent-div-100 removal: overheadAmount uses raw percent, not /100 | KILLED (tests failed as expected)
+M5 | margin/markup swap: calculateMargin divides by trueCost instead of sellingPrice | KILLED (tests failed as expected)
+M6 | rounding direction flip: Math.ceil -> Math.floor in roundQuantity | KILLED (27 tests failed)
+M7 | boundary operator flip: sellingPrice <= 0 -> < 0 in calculateMargin | KILLED (19 tests failed)
+M8 | cost-category omission: formsCost dropped from directCost sum | KILLED (exit 1)
+M9 | negative-validation removal: safe() no longer clamps negatives | KILLED (5 tests failed)
+
+Result: 9/9 mutants killed (100% for this scoped, hand-picked operator set).
+
+RERUN after the decimal-safe arithmetic migration (src/lib/calc.ts rewritten to perform all
+internal arithmetic via Decimal.js — see git log "fix: migrate currency/quantity arithmetic
+to decimal-safe"): all 9 operators re-applied at their new equivalent call sites (Decimal
+method chains instead of raw operators) against the post-migration code and the full
+142-test suite (up from 112 — golden fixtures, third-path fixtures and decimal before/after
+tests were added since the original run). All 9/9 killed again — see
+reports/mutation/results-migrated.txt for the per-mutant log. The migration did not weaken
+mutation coverage.
+
+Scope disclosure: this is 9 targeted mutations covering each specified operator ONCE at one
+call site in calc.ts, not an exhaustive automated mutation run (e.g. Stryker) across every
+line/operator combination in calc.ts and estimateMath.ts. A full automated mutation run was
+not executed in this pass — installing/configuring StrykerJS for an Astro+ESM+Vitest 5
+project was judged lower value than the manual operator-coverage pass given the volume of
+other required testing in this audit, and is recorded as a follow-up recommendation rather
+than silently skipped. The 9/9 result should be read as "the specific mutation classes the
+audit called out are all caught by the current suite," not as a general mutation score.

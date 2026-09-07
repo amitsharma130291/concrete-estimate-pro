@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { Copy, PlusCircle, Trash2 } from "lucide-react";
-import { useWorkspace } from "../../../lib/workspaceContext";
-import { newId, removeBy, upsertBy } from "../../../lib/storage";
+import { Copy, PlusCircle, Trash2, TriangleAlert } from "lucide-react";
+import { newId, removeBy, upsertBy, useWorkspace } from "../../../lib/workspaceContext";
 import { evaluateEntity, combinedAreaSqFt } from "../../../lib/estimateMath";
-import { formatCurrency, formatPercent, formatYd3 } from "../../../lib/calc";
+import { formatCurrency, formatPercent, formatYd3, getZeroCostWarnings } from "../../../lib/calc";
+import { numberFieldError, parseRequiredNumber, sectionsAreValid } from "../../../lib/validation";
 import type { ProjectTemplate, ProjectType } from "../../../lib/types";
 import { Badge, Button, Card, ConfirmDialog, EmptyState, Field, Modal, NumberInput, Select, TextInput } from "../../ui/primitives";
-import LaborCostInput, { DEFAULT_LABOR_INPUT } from "../LaborCostInput";
+import LaborCostInput, { DEFAULT_LABOR_INPUT, laborInputError } from "../LaborCostInput";
 
 const PROJECT_TYPES: { value: ProjectType; label: string }[] = [
   { value: "driveway", label: "Driveway" },
@@ -32,20 +32,20 @@ function blankTemplate(): ProjectTemplate {
 }
 
 export default function TemplatesTab() {
-  const { workspace, update } = useWorkspace();
+  const { templates, updateTemplates, preferences } = useWorkspace();
   const [editing, setEditing] = useState<ProjectTemplate | null>(null);
   const [deleting, setDeleting] = useState<ProjectTemplate | null>(null);
 
   function save(t: ProjectTemplate) {
-    update((ws) => ({ ...ws, templates: upsertBy(ws.templates, t) }));
+    updateTemplates((list) => upsertBy(list, t));
     setEditing(null);
   }
   function duplicate(t: ProjectTemplate) {
     const copy: ProjectTemplate = { ...t, id: newId("tpl"), name: `${t.name} (copy)`, createdAt: new Date().toISOString(), isSample: false };
-    update((ws) => ({ ...ws, templates: upsertBy(ws.templates, copy) }));
+    updateTemplates((list) => upsertBy(list, copy));
   }
   function remove(t: ProjectTemplate) {
-    update((ws) => ({ ...ws, templates: removeBy(ws.templates, t.id) }));
+    updateTemplates((list) => removeBy(list, t.id));
     setDeleting(null);
   }
 
@@ -61,7 +61,7 @@ export default function TemplatesTab() {
         </Button>
       </div>
 
-      {workspace.templates.length === 0 ? (
+      {templates.length === 0 ? (
         <EmptyState
           title="No templates yet"
           desc="Save a template for each standard job type so estimating takes seconds."
@@ -69,14 +69,14 @@ export default function TemplatesTab() {
         />
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {workspace.templates.map((t) => {
+          {templates.map((t) => {
             const result = evaluateEntity({
               sections: t.sections,
               allowancePercent: t.allowancePercent,
               rounding: t.rounding,
               costs: t.defaultCosts,
-              overheadPercent: workspace.settings.defaultOverheadPercent,
-              targetMarginPercent: workspace.settings.defaultTargetMarginPercent,
+              overheadPercent: preferences.defaultOverheadPercent,
+              targetMarginPercent: preferences.defaultTargetMarginPercent,
               sellingPrice: t.currentSellingPrice,
             });
             return (
@@ -154,6 +154,27 @@ function TemplateEditor({ template, onSave, onCancel }: { template: ProjectTempl
     setDraft((d) => ({ ...d, sections: [{ ...d.sections[0], ...patch }] }));
   }
 
+  const allowanceError = numberFieldError(draft.allowancePercent);
+  const readyMixError = numberFieldError(draft.defaultCosts.readyMixRatePerYd3);
+  const laborError = laborInputError(draft.labor ?? DEFAULT_LABOR_INPUT, draft.defaultCosts.laborCost);
+  const formsError = numberFieldError(draft.defaultCosts.formsCost);
+  const reinforcementError = numberFieldError(draft.defaultCosts.reinforcementCost);
+  const equipmentError = numberFieldError(draft.defaultCosts.equipmentCost);
+  const otherError = numberFieldError(draft.defaultCosts.otherCost);
+  const sellingPriceError = numberFieldError(draft.currentSellingPrice);
+  const hasBlockingError = !!(
+    allowanceError ||
+    readyMixError ||
+    laborError ||
+    formsError ||
+    reinforcementError ||
+    equipmentError ||
+    otherError ||
+    sellingPriceError
+  );
+  const canSave = sectionsAreValid(draft.sections) && !hasBlockingError;
+  const zeroCostWarnings = getZeroCostWarnings(draft.defaultCosts, combinedAreaSqFt(draft.sections));
+
   return (
     <Modal title={template.name === "New template" ? "New template" : `Edit ${template.name}`} onClose={onCancel} wide>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -169,32 +190,35 @@ function TemplateEditor({ template, onSave, onCancel }: { template: ProjectTempl
             ))}
           </Select>
         </Field>
-        <Field label="Length (ft)">
-          <NumberInput value={section.lengthFt} onChange={(e) => patchSection({ lengthFt: parseFloat(e.target.value) || 0 })} />
+        <Field label="Length (ft)" htmlFor="tpl-length" error={numberFieldError(section.lengthFt)}>
+          <NumberInput id="tpl-length" value={section.lengthFt} error={numberFieldError(section.lengthFt)} onChange={(e) => patchSection({ lengthFt: parseRequiredNumber(e.target.value) })} />
         </Field>
-        <Field label="Width (ft)">
-          <NumberInput value={section.widthFt} onChange={(e) => patchSection({ widthFt: parseFloat(e.target.value) || 0 })} />
+        <Field label="Width (ft)" htmlFor="tpl-width" error={numberFieldError(section.widthFt)}>
+          <NumberInput id="tpl-width" value={section.widthFt} error={numberFieldError(section.widthFt)} onChange={(e) => patchSection({ widthFt: parseRequiredNumber(e.target.value) })} />
         </Field>
-        <Field label="Thickness (in)">
-          <NumberInput value={section.thicknessIn} onChange={(e) => patchSection({ thicknessIn: parseFloat(e.target.value) || 0 })} />
+        <Field label="Thickness (in)" htmlFor="tpl-thickness" error={numberFieldError(section.thicknessIn)}>
+          <NumberInput id="tpl-thickness" value={section.thicknessIn} error={numberFieldError(section.thicknessIn)} onChange={(e) => patchSection({ thicknessIn: parseRequiredNumber(e.target.value) })} />
         </Field>
-        <Field label="Allowance (%)">
-          <NumberInput value={draft.allowancePercent} onChange={(e) => setDraft((d) => ({ ...d, allowancePercent: parseFloat(e.target.value) || 0 }))} />
+        <Field label="Allowance (%)" error={allowanceError}>
+          <NumberInput value={draft.allowancePercent} error={allowanceError} onChange={(e) => setDraft((d) => ({ ...d, allowancePercent: parseRequiredNumber(e.target.value) }))} />
         </Field>
-        <Field label="Ready mix ($/yd³)">
-          <NumberInput value={draft.defaultCosts.readyMixRatePerYd3} onChange={(e) => setDraft((d) => ({ ...d, defaultCosts: { ...d.defaultCosts, readyMixRatePerYd3: parseFloat(e.target.value) || 0 } }))} />
+        <Field label="Ready mix ($/yd³)" error={readyMixError}>
+          <NumberInput value={draft.defaultCosts.readyMixRatePerYd3} error={readyMixError} onChange={(e) => setDraft((d) => ({ ...d, defaultCosts: { ...d.defaultCosts, readyMixRatePerYd3: parseRequiredNumber(e.target.value) } }))} />
         </Field>
-        <Field label="Forms ($)">
-          <NumberInput value={draft.defaultCosts.formsCost} onChange={(e) => setDraft((d) => ({ ...d, defaultCosts: { ...d.defaultCosts, formsCost: parseFloat(e.target.value) || 0 } }))} />
+        <Field label="Forms ($)" error={formsError}>
+          <NumberInput value={draft.defaultCosts.formsCost} error={formsError} onChange={(e) => setDraft((d) => ({ ...d, defaultCosts: { ...d.defaultCosts, formsCost: parseRequiredNumber(e.target.value) } }))} />
         </Field>
-        <Field label="Reinforcement ($)">
-          <NumberInput value={draft.defaultCosts.reinforcementCost} onChange={(e) => setDraft((d) => ({ ...d, defaultCosts: { ...d.defaultCosts, reinforcementCost: parseFloat(e.target.value) || 0 } }))} />
+        <Field label="Reinforcement ($)" error={reinforcementError}>
+          <NumberInput value={draft.defaultCosts.reinforcementCost} error={reinforcementError} onChange={(e) => setDraft((d) => ({ ...d, defaultCosts: { ...d.defaultCosts, reinforcementCost: parseRequiredNumber(e.target.value) } }))} />
         </Field>
-        <Field label="Equipment ($)">
-          <NumberInput value={draft.defaultCosts.equipmentCost} onChange={(e) => setDraft((d) => ({ ...d, defaultCosts: { ...d.defaultCosts, equipmentCost: parseFloat(e.target.value) || 0 } }))} />
+        <Field label="Equipment ($)" error={equipmentError}>
+          <NumberInput value={draft.defaultCosts.equipmentCost} error={equipmentError} onChange={(e) => setDraft((d) => ({ ...d, defaultCosts: { ...d.defaultCosts, equipmentCost: parseRequiredNumber(e.target.value) } }))} />
         </Field>
-        <Field label="Current selling price ($)">
-          <NumberInput value={draft.currentSellingPrice} onChange={(e) => setDraft((d) => ({ ...d, currentSellingPrice: parseFloat(e.target.value) || 0 }))} />
+        <Field label="Other ($)" error={otherError}>
+          <NumberInput value={draft.defaultCosts.otherCost} error={otherError} onChange={(e) => setDraft((d) => ({ ...d, defaultCosts: { ...d.defaultCosts, otherCost: parseRequiredNumber(e.target.value) } }))} />
+        </Field>
+        <Field label="Current selling price ($)" error={sellingPriceError}>
+          <NumberInput value={draft.currentSellingPrice} error={sellingPriceError} onChange={(e) => setDraft((d) => ({ ...d, currentSellingPrice: parseRequiredNumber(e.target.value) }))} />
         </Field>
       </div>
       <div className="mt-4">
@@ -205,11 +229,36 @@ function TemplateEditor({ template, onSave, onCancel }: { template: ProjectTempl
           onChange={(laborCost, labor) => setDraft((d) => ({ ...d, labor, defaultCosts: { ...d.defaultCosts, laborCost } }))}
         />
       </div>
+
+      {zeroCostWarnings.length > 0 && (
+        <div className="mt-3 flex flex-col gap-1.5 rounded-lg border border-amber/30 bg-amber-light px-3 py-2.5 text-sm text-amber" role="alert">
+          {zeroCostWarnings.map((w) => (
+            <div key={w} className="flex items-start gap-2">
+              <TriangleAlert size={15} className="mt-0.5 shrink-0" aria-hidden="true" />
+              <span>{w}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {!sectionsAreValid(draft.sections) && (
+        <p role="alert" className="mt-3 text-sm font-medium text-red">
+          Fix the highlighted section field{draft.sections.length > 1 ? "s" : ""} above before saving.
+        </p>
+      )}
+      {sectionsAreValid(draft.sections) && hasBlockingError && (
+        <p role="alert" className="mt-3 text-sm font-medium text-red">
+          Fix the highlighted field above before saving.
+        </p>
+      )}
+
       <div className="mt-5 flex justify-end gap-2">
         <Button variant="ghost" onClick={onCancel}>
           Cancel
         </Button>
-        <Button onClick={() => onSave(draft)}>Save template</Button>
+        <Button onClick={() => onSave(draft)} disabled={!canSave}>
+          Save template
+        </Button>
       </div>
     </Modal>
   );

@@ -1,8 +1,7 @@
 ---
-import Layout from "../../layouts/Layout.astro";
-import AppShell from "../../components/app/AppShell";
+// "Projects" (a separate saved-project list) was removed under the single-current-estimate
+// model -- a completed job is just the current Estimate with status "completed" plus a
+// logged actual result, not a second persisted record. Redirect instead of leaving a dead
+// route or a stale nav entry.
+return Astro.redirect("/app/estimates", 301);
 ---
-
-<Layout title="Projects | Concrete Cost Pro" description="Track jobs from estimate through completion." noIndex>
-  <AppShell activeTab="projects" client:only="react" />
-</Layout>

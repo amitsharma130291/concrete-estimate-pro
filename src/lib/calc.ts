@@ -1,6 +1,15 @@
 // Pure, unit-tested calculation engine for Concrete Cost Pro.
 // No structural/engineering logic lives here — only quantity, cost and pricing math
 // from user-supplied dimensions and rates.
+//
+// Decimal-safe arithmetic: every internal calculation below runs through Decimal.js
+// (arbitrary-precision) rather than raw IEEE-754 doubles, so intermediate rounding error
+// cannot accumulate across a multi-step chain (area -> volume -> allowance -> rounding ->
+// cost -> overhead -> margin). Public function signatures are unchanged — every function
+// still accepts and returns plain `number` — so no caller in the app needed to change;
+// only the arithmetic performed *between* those boundaries is decimal-safe now.
+
+import Decimal from "decimal.js";
 
 export type Rounding = "none" | "quarter" | "half" | "whole";
 
@@ -61,74 +70,110 @@ export interface EstimateResult {
   pricing: PricingResult;
 }
 
+/** Clamp a raw number to a Decimal, treating non-finite/negative as 0 (same contract as
+ * the pre-migration `safe()` helper, checked on the raw JS number since Decimal cannot
+ * represent NaN/±Infinity as a usable value). */
+function safeD(n: number): Decimal {
+  return Number.isFinite(n) && n >= 0 ? new Decimal(n) : new Decimal(0);
+}
+
+/** Clamp a raw number to 0 when negative or non-finite. Exported so callers outside this
+ * file (e.g. ActualsTab.tsx, which sums logged real-world costs that never go through
+ * calculateCost()) can apply the same input-sanitization contract as every calculation in
+ * this module, instead of silently summing an unclamped negative. */
+export function safe(n: number): number {
+  return safeD(n).toNumber();
+}
+
 /** Round a cubic-yard quantity to the requested increment. Defaults to no rounding. */
 export function roundQuantity(value: number, rounding: Rounding = "none"): number {
   if (!Number.isFinite(value) || value < 0) return 0;
+  const v = new Decimal(value);
   switch (rounding) {
     case "quarter":
-      return Math.ceil(value / 0.25) * 0.25;
+      return v.dividedBy("0.25").ceil().times("0.25").toNumber();
     case "half":
-      return Math.ceil(value / 0.5) * 0.5;
+      return v.dividedBy("0.5").ceil().times("0.5").toNumber();
     case "whole":
-      return Math.ceil(value);
+      return v.ceil().toNumber();
     case "none":
     default:
       return value;
   }
 }
 
-function safe(n: number): number {
-  return Number.isFinite(n) && n >= 0 ? n : 0;
+function roundQuantityD(value: Decimal, rounding: Rounding): Decimal {
+  if (!value.isFinite() || value.isNegative()) return new Decimal(0);
+  switch (rounding) {
+    case "quarter":
+      return value.dividedBy("0.25").ceil().times("0.25");
+    case "half":
+      return value.dividedBy("0.5").ceil().times("0.5");
+    case "whole":
+      return value.ceil();
+    case "none":
+    default:
+      return value;
+  }
 }
 
 export function calculateQuantity(input: DimensionsInput): QuantityResult {
-  const lengthFt = safe(input.lengthFt);
-  const widthFt = safe(input.widthFt);
-  const thicknessIn = safe(input.thicknessIn);
-  const allowancePercent = safe(input.allowancePercent);
+  const lengthFt = safeD(input.lengthFt);
+  const widthFt = safeD(input.widthFt);
+  const thicknessIn = safeD(input.thicknessIn);
+  const allowancePercent = safeD(input.allowancePercent);
 
-  const areaSqFt = lengthFt * widthFt;
-  const thicknessFt = thicknessIn / 12;
-  const netCubicFeet = areaSqFt * thicknessFt;
-  const netCubicYards = netCubicFeet / 27;
-  const withAllowance = netCubicYards * (1 + allowancePercent / 100);
-  const orderQuantityYd3 = roundQuantity(withAllowance, input.rounding ?? "none");
+  const areaSqFtD = lengthFt.times(widthFt);
+  const thicknessFtD = thicknessIn.dividedBy(12);
+  const netCubicFeetD = areaSqFtD.times(thicknessFtD);
+  const netCubicYardsD = netCubicFeetD.dividedBy(27);
+  const withAllowanceD = netCubicYardsD.times(allowancePercent.dividedBy(100).plus(1));
+  const orderQuantityYd3D = roundQuantityD(withAllowanceD, input.rounding ?? "none");
 
-  return { areaSqFt, netCubicFeet, netCubicYards, orderQuantityYd3 };
+  return {
+    areaSqFt: areaSqFtD.toNumber(),
+    netCubicFeet: netCubicFeetD.toNumber(),
+    netCubicYards: netCubicYardsD.toNumber(),
+    orderQuantityYd3: orderQuantityYd3D.toNumber(),
+  };
 }
 
 export function calculateCost(quantity: QuantityResult, costs: CostInputs, overheadPercent: number): CostResult {
-  const readyMixCost = safe(quantity.orderQuantityYd3) * safe(costs.readyMixRatePerYd3);
-  const directCost =
-    readyMixCost +
-    safe(costs.laborCost) +
-    safe(costs.formsCost) +
-    safe(costs.reinforcementCost) +
-    safe(costs.equipmentCost) +
-    safe(costs.otherCost);
-  const overheadAmount = directCost * (safe(overheadPercent) / 100);
-  const trueCost = directCost + overheadAmount;
+  const readyMixCostD = safeD(quantity.orderQuantityYd3).times(safeD(costs.readyMixRatePerYd3));
+  const directCostD = readyMixCostD
+    .plus(safeD(costs.laborCost))
+    .plus(safeD(costs.formsCost))
+    .plus(safeD(costs.reinforcementCost))
+    .plus(safeD(costs.equipmentCost))
+    .plus(safeD(costs.otherCost));
+  const overheadAmountD = directCostD.times(safeD(overheadPercent).dividedBy(100));
+  const trueCostD = directCostD.plus(overheadAmountD);
 
-  return { readyMixCost, directCost, overheadAmount, trueCost };
+  return {
+    readyMixCost: readyMixCostD.toNumber(),
+    directCost: directCostD.toNumber(),
+    overheadAmount: overheadAmountD.toNumber(),
+    trueCost: trueCostD.toNumber(),
+  };
 }
 
 /** Margin = (sellingPrice - trueCost) / sellingPrice. Returns null when sellingPrice is 0 (undefined). */
 export function calculateMargin(sellingPrice: number, trueCost: number): number | null {
   if (!Number.isFinite(sellingPrice) || sellingPrice <= 0) return null;
-  return (sellingPrice - trueCost) / sellingPrice;
+  return new Decimal(sellingPrice).minus(trueCost).dividedBy(sellingPrice).toNumber();
 }
 
 /** Markup = (sellingPrice - trueCost) / trueCost. Distinct from margin. Returns null when trueCost is 0. */
 export function calculateMarkup(sellingPrice: number, trueCost: number): number | null {
   if (!Number.isFinite(trueCost) || trueCost <= 0) return null;
-  return (sellingPrice - trueCost) / trueCost;
+  return new Decimal(sellingPrice).minus(trueCost).dividedBy(trueCost).toNumber();
 }
 
 /** Required selling price to hit a target margin (not markup). */
 export function calculateRequiredSellingPrice(trueCost: number, targetMarginPercent: number): number {
-  const marginDecimal = safe(targetMarginPercent) / 100;
-  if (marginDecimal >= 1) return Infinity;
-  return safe(trueCost) / (1 - marginDecimal);
+  const marginDecimal = safeD(targetMarginPercent).dividedBy(100);
+  if (marginDecimal.greaterThanOrEqualTo(1)) return Infinity;
+  return safeD(trueCost).dividedBy(new Decimal(1).minus(marginDecimal)).toNumber();
 }
 
 export type LaborMode = "flat" | "hourly" | "unit";
@@ -149,9 +194,9 @@ export interface LaborModeInput {
 export function calculateLaborCost(labor: LaborModeInput, totalAreaSqFt: number): number {
   switch (labor.mode) {
     case "hourly":
-      return safe(labor.crewSize) * safe(labor.hours) * safe(labor.ratePerHour);
+      return safeD(labor.crewSize).times(safeD(labor.hours)).times(safeD(labor.ratePerHour)).toNumber();
     case "unit":
-      return safe(labor.unitRatePerSqft) * safe(totalAreaSqFt);
+      return safeD(labor.unitRatePerSqft).times(safeD(totalAreaSqFt)).toNumber();
     case "flat":
     default:
       return 0;
@@ -166,7 +211,7 @@ export function calculateEstimate(input: EstimateInput): EstimateResult {
   const currentMarkup = calculateMarkup(input.pricing.sellingPrice, cost.trueCost);
   const targetDecimal = safe(input.pricing.targetMarginPercent) / 100;
   const isBelowTarget = currentMargin === null ? false : currentMargin < targetDecimal;
-  const profitAtCurrentPrice = safe(input.pricing.sellingPrice) - cost.trueCost;
+  const profitAtCurrentPrice = safeD(input.pricing.sellingPrice).minus(cost.trueCost).toNumber();
 
   return {
     quantity,
@@ -179,6 +224,22 @@ export function calculateEstimate(input: EstimateInput): EstimateResult {
       profitAtCurrentPrice,
     },
   };
+}
+
+/**
+ * Flags cost fields that are exactly $0 while the job has real quantity/area to build —
+ * almost always a blank/mistyped field rather than a legitimate $0 cost, since ready-mix
+ * and labor are essentially never free. Deliberately does NOT flag forms/reinforcement/
+ * equipment/other: those are commonly, validly zero on many real jobs. Non-blocking — the
+ * caller decides whether to show this as a dismissible warning, since a contractor doing
+ * their own labor for free (e.g. a DIY-adjacent quote) is a real, if unusual, case.
+ */
+export function getZeroCostWarnings(costs: Pick<CostInputs, "readyMixRatePerYd3" | "laborCost">, areaSqFt: number): string[] {
+  if (!(areaSqFt > 0)) return [];
+  const warnings: string[] = [];
+  if (costs.readyMixRatePerYd3 === 0) warnings.push("Ready-mix rate is $0/yd³ — confirm this is intentional, not a blank field.");
+  if (costs.laborCost === 0) warnings.push("Labor cost is $0 — confirm this is intentional, not a blank field.");
+  return warnings;
 }
 
 // ---- Formatting helpers ----

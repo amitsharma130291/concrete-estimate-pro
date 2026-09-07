@@ -1,0 +1,717 @@
+{
+  "01 Pro Estimates": [
+    {
+      "testId": "PE2-01",
+      "scenario": "Mixed thin pours",
+      "status": "PASS",
+      "actual": {
+        "netYd3": 4.716049382716049,
+        "orderYd3": 5.25,
+        "direct": 3019.5,
+        "trueCost": 3412.035,
+        "actualMargin": 0.44065,
+        "requiredPrice": 4674.020547945205
+      },
+      "notes": ""
+    },
+    {
+      "testId": "PE2-02",
+      "scenario": "Quarter boundary just over",
+      "status": "PASS",
+      "actual": {
+        "netYd3": 3.0011111111111113,
+        "orderYd3": 3.25,
+        "direct": 1504,
+        "trueCost": 1654.4,
+        "actualMargin": 0.49866666666666665,
+        "requiredPrice": 2205.866666666667
+      },
+      "notes": ""
+    },
+    {
+      "testId": "PE2-03",
+      "scenario": "No allowance/no rounding",
+      "status": "PASS",
+      "actual": {
+        "netYd3": 3.1510416666666665,
+        "orderYd3": 3.1510416666666665,
+        "direct": 1882.4622395833333,
+        "trueCost": 2042.4715299479167,
+        "actualMargin": 0.5018362122078251,
+        "requiredPrice": 2635.4471354166667
+      },
+      "notes": ""
+    },
+    {
+      "testId": "PE2-04",
+      "scenario": "Large commercial pour",
+      "status": "PASS",
+      "actual": {
+        "netYd3": 548.1481481481482,
+        "orderYd3": 614,
+        "direct": 140056,
+        "trueCost": 165266.08,
+        "actualMargin": -0.32212864,
+        "requiredPrice": 254255.5076923077
+      },
+      "notes": ""
+    },
+    {
+      "testId": "PE2-05",
+      "scenario": "Zero non-concrete costs",
+      "status": "PASS",
+      "actual": {
+        "netYd3": 4.444444444444445,
+        "orderYd3": 5,
+        "direct": 845,
+        "trueCost": 845,
+        "actualMargin": 0.78875,
+        "requiredPrice": 1056.25
+      },
+      "notes": ""
+    },
+    {
+      "testId": "PE2-06",
+      "scenario": "High valid margin",
+      "status": "PASS",
+      "actual": {
+        "netYd3": 1.4814814814814814,
+        "orderYd3": 1.75,
+        "direct": 1023.75,
+        "trueCost": 1177.3125,
+        "actualMargin": 0.988226875,
+        "requiredPrice": 117731.25
+      },
+      "notes": ""
+    },
+    {
+      "testId": "PE2-07",
+      "scenario": "Many small sections",
+      "status": "PASS",
+      "actual": {
+        "netYd3": 1.0030864197530864,
+        "orderYd3": 1.5,
+        "direct": 2154,
+        "trueCost": 2455.56,
+        "actualMargin": 0.527776923076923,
+        "requiredPrice": 3558.782608695652
+      },
+      "notes": ""
+    },
+    {
+      "testId": "PE2-08",
+      "scenario": "Negative section dimension",
+      "status": "PASS",
+      "actual": {},
+      "notes": "Negative section dimension IS blocked: SectionsEditor's required/non-negative validation + the tool's own Save/Continue gate (fixed/verified in the prior pass)."
+    },
+    {
+      "testId": "PE2-09",
+      "scenario": "Blank mix rate",
+      "status": "GAP_NOT_BLOCKED",
+      "actual": {},
+      "notes": "A blank/null \"Ready mix ($/yd³)\" is NOT blocked on Estimates/Projects/Templates -- only SECTION dimensions were in scope for blocking validation in the prior pass, not cost fields. Clamps to $0 and calculates anyway (known, documented gap)."
+    },
+    {
+      "testId": "PE2-10",
+      "scenario": "Target margin exactly 100%",
+      "status": "PARTIAL_CLAMPED_NOT_ERROR",
+      "actual": {},
+      "notes": "Target margin is capped at 99% by the field's own clamp (Math.min(99,...)), so 100 can never actually be entered and Infinity can never be produced -- but this is a silent clamp, not an explicit rejection error as the case describes."
+    }
+  ],
+  "02 Pro Projects": [
+    {
+      "testId": "PP2-01",
+      "scenario": "Mixed thin pours",
+      "status": "PASS",
+      "actual": {
+        "netYd3": 4.746543209876543,
+        "orderYd3": 5.25,
+        "direct": 3019.5,
+        "trueCost": 3412.035,
+        "actualMargin": 0.44065,
+        "requiredPrice": 4674.020547945205
+      },
+      "notes": ""
+    },
+    {
+      "testId": "PP2-02",
+      "scenario": "Quarter boundary just over",
+      "status": "PASS",
+      "actual": {
+        "netYd3": 3.0155555555555558,
+        "orderYd3": 3.25,
+        "direct": 1504,
+        "trueCost": 1654.4,
+        "actualMargin": 0.49866666666666665,
+        "requiredPrice": 2205.866666666667
+      },
+      "notes": ""
+    },
+    {
+      "testId": "PP2-03",
+      "scenario": "No allowance/no rounding",
+      "status": "PASS",
+      "actual": {
+        "netYd3": 3.1758680555555556,
+        "orderYd3": 3.1758680555555556,
+        "direct": 1887.2226996527777,
+        "trueCost": 2047.636629123264,
+        "actualMargin": 0.5005764319211551,
+        "requiredPrice": 2642.111779513889
+      },
+      "notes": ""
+    },
+    {
+      "testId": "PP2-04",
+      "scenario": "Large commercial pour",
+      "status": "PASS",
+      "actual": {
+        "netYd3": 548.5333333333333,
+        "orderYd3": 615,
+        "direct": 140210,
+        "trueCost": 165447.8,
+        "actualMargin": -0.3235824,
+        "requiredPrice": 254535.07692307694
+      },
+      "notes": ""
+    },
+    {
+      "testId": "PP2-05",
+      "scenario": "Zero non-concrete costs",
+      "status": "PASS",
+      "actual": {
+        "netYd3": 4.463703703703704,
+        "orderYd3": 5,
+        "direct": 845,
+        "trueCost": 845,
+        "actualMargin": 0.78875,
+        "requiredPrice": 1056.25
+      },
+      "notes": ""
+    },
+    {
+      "testId": "PP2-06",
+      "scenario": "High valid margin",
+      "status": "PASS",
+      "actual": {
+        "netYd3": 1.497530864197531,
+        "orderYd3": 1.75,
+        "direct": 1023.75,
+        "trueCost": 1177.3125,
+        "actualMargin": 0.988226875,
+        "requiredPrice": 117731.25
+      },
+      "notes": ""
+    },
+    {
+      "testId": "PP2-07",
+      "scenario": "Many small sections",
+      "status": "PASS",
+      "actual": {
+        "netYd3": 1.0323765432098766,
+        "orderYd3": 1.5,
+        "direct": 2154,
+        "trueCost": 2455.56,
+        "actualMargin": 0.527776923076923,
+        "requiredPrice": 3558.782608695652
+      },
+      "notes": ""
+    },
+    {
+      "testId": "PP2-08",
+      "scenario": "Negative section dimension",
+      "status": "PASS",
+      "actual": {},
+      "notes": "Negative section dimension IS blocked: SectionsEditor's required/non-negative validation + the tool's own Save/Continue gate (fixed/verified in the prior pass)."
+    },
+    {
+      "testId": "PP2-09",
+      "scenario": "Blank mix rate",
+      "status": "GAP_NOT_BLOCKED",
+      "actual": {},
+      "notes": "A blank/null \"Ready mix ($/yd³)\" is NOT blocked on Estimates/Projects/Templates -- only SECTION dimensions were in scope for blocking validation in the prior pass, not cost fields. Clamps to $0 and calculates anyway (known, documented gap)."
+    },
+    {
+      "testId": "PP2-10",
+      "scenario": "Target margin exactly 100%",
+      "status": "PARTIAL_CLAMPED_NOT_ERROR",
+      "actual": {},
+      "notes": "Target margin is capped at 99% by the field's own clamp (Math.min(99,...)), so 100 can never actually be entered and Infinity can never be produced -- but this is a silent clamp, not an explicit rejection error as the case describes."
+    }
+  ],
+  "03 Pro Templates": [
+    {
+      "testId": "PT2-01",
+      "scenario": "Mixed thin pours",
+      "status": "PASS",
+      "actual": {
+        "netYd3": 4.7793827160493825,
+        "orderYd3": 5.25,
+        "direct": 3019.5,
+        "trueCost": 3412.035,
+        "actualMargin": 0.44065,
+        "requiredPrice": 4674.020547945205
+      },
+      "notes": ""
+    },
+    {
+      "testId": "PT2-02",
+      "scenario": "Quarter boundary just over",
+      "status": "PASS",
+      "actual": {
+        "netYd3": 3.031111111111111,
+        "orderYd3": 3.25,
+        "direct": 1504,
+        "trueCost": 1654.4,
+        "actualMargin": 0.49866666666666665,
+        "requiredPrice": 2205.866666666667
+      },
+      "notes": ""
+    },
+    {
+      "testId": "PT2-03",
+      "scenario": "No allowance/no rounding",
+      "status": "PASS",
+      "actual": {
+        "netYd3": 3.2026041666666667,
+        "orderYd3": 3.2026041666666667,
+        "direct": 1892.3493489583334,
+        "trueCost": 2053.1990436197916,
+        "actualMargin": 0.49921974545858744,
+        "requiredPrice": 2649.2890885416664
+      },
+      "notes": ""
+    },
+    {
+      "testId": "PT2-04",
+      "scenario": "Large commercial pour",
+      "status": "PASS",
+      "actual": {
+        "netYd3": 548.9481481481481,
+        "orderYd3": 615,
+        "direct": 140210,
+        "trueCost": 165447.8,
+        "actualMargin": -0.3235824,
+        "requiredPrice": 254535.07692307694
+      },
+      "notes": ""
+    },
+    {
+      "testId": "PT2-05",
+      "scenario": "Zero non-concrete costs",
+      "status": "PASS",
+      "actual": {
+        "netYd3": 4.484444444444445,
+        "orderYd3": 5,
+        "direct": 845,
+        "trueCost": 845,
+        "actualMargin": 0.78875,
+        "requiredPrice": 1056.25
+      },
+      "notes": ""
+    },
+    {
+      "testId": "PT2-06",
+      "scenario": "High valid margin",
+      "status": "PASS",
+      "actual": {
+        "netYd3": 1.5148148148148148,
+        "orderYd3": 1.75,
+        "direct": 1023.75,
+        "trueCost": 1177.3125,
+        "actualMargin": 0.988226875,
+        "requiredPrice": 117731.25
+      },
+      "notes": ""
+    },
+    {
+      "testId": "PT2-07",
+      "scenario": "Many small sections",
+      "status": "PASS",
+      "actual": {
+        "netYd3": 1.0639197530864197,
+        "orderYd3": 1.5,
+        "direct": 2154,
+        "trueCost": 2455.56,
+        "actualMargin": 0.527776923076923,
+        "requiredPrice": 3558.782608695652
+      },
+      "notes": ""
+    },
+    {
+      "testId": "PT2-08",
+      "scenario": "Negative section dimension",
+      "status": "PASS",
+      "actual": {},
+      "notes": "Negative section dimension IS blocked: SectionsEditor's required/non-negative validation + the tool's own Save/Continue gate (fixed/verified in the prior pass)."
+    },
+    {
+      "testId": "PT2-09",
+      "scenario": "Blank mix rate",
+      "status": "GAP_NOT_BLOCKED",
+      "actual": {},
+      "notes": "A blank/null \"Ready mix ($/yd³)\" is NOT blocked on Estimates/Projects/Templates -- only SECTION dimensions were in scope for blocking validation in the prior pass, not cost fields. Clamps to $0 and calculates anyway (known, documented gap)."
+    },
+    {
+      "testId": "PT2-10",
+      "scenario": "Target margin exactly 100%",
+      "status": "PARTIAL_CLAMPED_NOT_ERROR",
+      "actual": {},
+      "notes": "Target margin is capped at 99% by the field's own clamp (Math.min(99,...)), so 100 can never actually be entered and Infinity can never be produced -- but this is a silent clamp, not an explicit rejection error as the case describes."
+    }
+  ],
+  "04 Rate Health": [
+    {
+      "testId": "RH2-01",
+      "scenario": "Combined cost changes",
+      "status": "PASS",
+      "actual": {
+        "scenarioTrueCost": 3112.76,
+        "scenarioMargin": 0.2588666666666667,
+        "requiredAt30Pct": 4446.8
+      },
+      "notes": ""
+    },
+    {
+      "testId": "RH2-02",
+      "scenario": "Combined cost changes",
+      "status": "PASS",
+      "actual": {
+        "scenarioTrueCost": 12370.6203125,
+        "scenarioMargin": 0.331317820945946,
+        "requiredAt30Pct": 17672.31473214286
+      },
+      "notes": ""
+    },
+    {
+      "testId": "RH2-03",
+      "scenario": "Combined cost changes",
+      "status": "PASS",
+      "actual": {
+        "scenarioTrueCost": 1633.5000000000002,
+        "scenarioMargin": 0.37173076923076914,
+        "requiredAt30Pct": 2333.571428571429
+      },
+      "notes": ""
+    },
+    {
+      "testId": "RH2-04",
+      "scenario": "Combined cost changes",
+      "status": "PASS",
+      "actual": {
+        "scenarioTrueCost": 3905.4,
+        "scenarioMargin": 0.21892,
+        "requiredAt30Pct": 5579.142857142857
+      },
+      "notes": ""
+    },
+    {
+      "testId": "RH2-05",
+      "scenario": "Combined cost changes",
+      "status": "PASS",
+      "actual": {
+        "scenarioTrueCost": 3019.2,
+        "scenarioMargin": 0.4408888888888889,
+        "requiredAt30Pct": 4313.142857142857
+      },
+      "notes": ""
+    },
+    {
+      "testId": "RH2-06",
+      "scenario": "Combined cost changes",
+      "status": "PASS",
+      "actual": {
+        "scenarioTrueCost": 567.2510624999996,
+        "scenarioMargin": 0.8818226953125001,
+        "requiredAt30Pct": 810.3586607142852
+      },
+      "notes": ""
+    },
+    {
+      "testId": "RH2-07",
+      "scenario": "Combined cost changes",
+      "status": "PASS",
+      "actual": {
+        "scenarioTrueCost": 255758.892225,
+        "scenarioMargin": 0.2692603079285714,
+        "requiredAt30Pct": 365369.84603571426
+      },
+      "notes": ""
+    },
+    {
+      "testId": "RH2-08",
+      "scenario": "Combined cost changes",
+      "status": "PASS",
+      "actual": {
+        "scenarioTrueCost": 1770.7019484374998,
+        "scenarioMargin": 0.15680859598214295,
+        "requiredAt30Pct": 2529.574212053571
+      },
+      "notes": ""
+    },
+    {
+      "testId": "RH2-09",
+      "scenario": "Blank order quantity",
+      "status": "NA_NO_UI_FIELD",
+      "actual": {},
+      "notes": "Rate Health has no direct \"Order Qty\" input at all -- it is always derived from a real template's own sections. This case assumes a field that does not exist."
+    },
+    {
+      "testId": "RH2-10",
+      "scenario": "Change below -100%",
+      "status": "GAP_NOT_BLOCKED",
+      "actual": {},
+      "notes": "A change below -100% is NOT blocked -- it produces a negative computed rate that calculateCost's safeD() silently clamps to $0 (same effective result as exactly -100%), same known gap as the original RH-08 case."
+    }
+  ],
+  "05 Scenario Compare": [
+    {
+      "testId": "SC2-01",
+      "scenario": "New A/B comparison",
+      "status": "PASS",
+      "actual": {
+        "aTrue": 2062.5,
+        "bTrue": 2073.5,
+        "trueDiffBminusA": 11,
+        "priceDiffBminusA": 200,
+        "profitDiffBminusA": 189
+      },
+      "notes": ""
+    },
+    {
+      "testId": "SC2-02",
+      "scenario": "New A/B comparison",
+      "status": "PASS",
+      "actual": {
+        "aTrue": 7794.18,
+        "bTrue": 8188.62,
+        "trueDiffBminusA": 394.4399999999996,
+        "priceDiffBminusA": 600,
+        "profitDiffBminusA": 205.5600000000004
+      },
+      "notes": ""
+    },
+    {
+      "testId": "SC2-03",
+      "scenario": "New A/B comparison",
+      "status": "PASS",
+      "actual": {
+        "aTrue": 1811.25,
+        "bTrue": 1966.5,
+        "trueDiffBminusA": 155.25,
+        "priceDiffBminusA": 300,
+        "profitDiffBminusA": 144.75
+      },
+      "notes": ""
+    },
+    {
+      "testId": "SC2-04",
+      "scenario": "New A/B comparison",
+      "status": "PASS",
+      "actual": {
+        "aTrue": 42000,
+        "bTrue": 43800,
+        "trueDiffBminusA": 1800,
+        "priceDiffBminusA": 5000,
+        "profitDiffBminusA": 3200
+      },
+      "notes": ""
+    },
+    {
+      "testId": "SC2-05",
+      "scenario": "New A/B comparison",
+      "status": "PASS",
+      "actual": {
+        "aTrue": 1402.5,
+        "bTrue": 1402.5,
+        "trueDiffBminusA": 0,
+        "priceDiffBminusA": -200,
+        "profitDiffBminusA": -200
+      },
+      "notes": ""
+    },
+    {
+      "testId": "SC2-06",
+      "scenario": "New A/B comparison",
+      "status": "PASS",
+      "actual": {
+        "aTrue": 1872.8784375,
+        "bTrue": 1942.955,
+        "trueDiffBminusA": 70.07656249999991,
+        "priceDiffBminusA": 150,
+        "profitDiffBminusA": 79.92343750000009
+      },
+      "notes": ""
+    },
+    {
+      "testId": "SC2-07",
+      "scenario": "New A/B comparison",
+      "status": "PASS",
+      "actual": {
+        "aTrue": 4030,
+        "bTrue": 2730,
+        "trueDiffBminusA": -1300,
+        "priceDiffBminusA": 0,
+        "profitDiffBminusA": 1300
+      },
+      "notes": ""
+    },
+    {
+      "testId": "SC2-08",
+      "scenario": "New A/B comparison",
+      "status": "PASS",
+      "actual": {
+        "aTrue": 367.5,
+        "bTrue": 525,
+        "trueDiffBminusA": 157.5,
+        "priceDiffBminusA": 50,
+        "profitDiffBminusA": -107.5
+      },
+      "notes": ""
+    },
+    {
+      "testId": "SC2-09",
+      "scenario": "Negative scenario component",
+      "status": "PASS",
+      "actual": {},
+      "notes": "Negative B cost IS blocked: ScenarioCompareModal's required/non-negative validation on cost fields (fixed/verified in the prior pass) disables the 'Use Scenario B' button."
+    },
+    {
+      "testId": "SC2-10",
+      "scenario": "Blank Scenario A price",
+      "status": "GAP_NOT_BLOCKED",
+      "actual": {},
+      "notes": "A null/blank selling price is NOT blocked in Scenario Compare -- only the 6 cost fields were validated in the prior pass, not the price field. Clamps to $0 and calculates anyway."
+    }
+  ],
+  "06 Actuals": [
+    {
+      "testId": "AC2-01",
+      "scenario": "New actual-cost outcome",
+      "status": "PASS",
+      "actual": {
+        "qtyVariance": 0.25,
+        "hoursVariance": 0.26666666666666666,
+        "directActual": 2630,
+        "actualOverhead": 263,
+        "actualTrueCost": 2893,
+        "actualMargin": 0.3111904761904762
+      },
+      "notes": ""
+    },
+    {
+      "testId": "AC2-02",
+      "scenario": "New actual-cost outcome",
+      "status": "PASS",
+      "actual": {
+        "qtyVariance": -0.2,
+        "hoursVariance": -0.15,
+        "directActual": 6620,
+        "actualOverhead": 1059.2,
+        "actualTrueCost": 7679.2,
+        "actualMargin": 0.16530434782608697
+      },
+      "notes": ""
+    },
+    {
+      "testId": "AC2-03",
+      "scenario": "New actual-cost outcome",
+      "status": "PASS",
+      "actual": {
+        "qtyVariance": null,
+        "hoursVariance": null,
+        "directActual": 1465,
+        "actualOverhead": 175.79999999999998,
+        "actualTrueCost": 1640.8,
+        "actualMargin": 0.2541818181818182
+      },
+      "notes": ""
+    },
+    {
+      "testId": "AC2-04",
+      "scenario": "New actual-cost outcome",
+      "status": "PASS",
+      "actual": {
+        "qtyVariance": 0,
+        "hoursVariance": 0,
+        "directActual": 0,
+        "actualOverhead": 0,
+        "actualTrueCost": 0,
+        "actualMargin": 1
+      },
+      "notes": ""
+    },
+    {
+      "testId": "AC2-05",
+      "scenario": "New actual-cost outcome",
+      "status": "PASS",
+      "actual": {
+        "qtyVariance": 0.125,
+        "hoursVariance": 0.11904761904761904,
+        "directActual": 61000,
+        "actualOverhead": 12200,
+        "actualTrueCost": 73200,
+        "actualMargin": 0.2294736842105263
+      },
+      "notes": ""
+    },
+    {
+      "testId": "AC2-06",
+      "scenario": "New actual-cost outcome",
+      "status": "PASS",
+      "actual": {
+        "qtyVariance": -0.08333333333333333,
+        "hoursVariance": -0.1111111111111111,
+        "directActual": 1579.5,
+        "actualOverhead": 118.46249999999999,
+        "actualTrueCost": 1697.9625,
+        "actualMargin": 0.3469375
+      },
+      "notes": ""
+    },
+    {
+      "testId": "AC2-07",
+      "scenario": "New actual-cost outcome",
+      "status": "PASS",
+      "actual": {
+        "qtyVariance": 0,
+        "hoursVariance": 0,
+        "directActual": 3300,
+        "actualOverhead": 3300,
+        "actualTrueCost": 6600,
+        "actualMargin": 0.175
+      },
+      "notes": ""
+    },
+    {
+      "testId": "AC2-08",
+      "scenario": "New actual-cost outcome",
+      "status": "PASS",
+      "actual": {
+        "qtyVariance": 0.4,
+        "hoursVariance": 0.5,
+        "directActual": 2225,
+        "actualOverhead": 0,
+        "actualTrueCost": 2225,
+        "actualMargin": -0.48333333333333334
+      },
+      "notes": ""
+    },
+    {
+      "testId": "AC2-09",
+      "scenario": "Blank final selling price",
+      "status": "GAP_NOT_BLOCKED",
+      "actual": {},
+      "notes": "A null/blank final selling price is NOT blocked in Actuals -- selling price was deliberately left unvalidated in the prior pass (matching the app-wide pattern of not requiring a price to be entered yet). Clamps to $0 and saves anyway."
+    },
+    {
+      "testId": "AC2-10",
+      "scenario": "Negative actual material",
+      "status": "PASS",
+      "actual": {},
+      "notes": "Negative actual material cost IS blocked: ActualsTab.tsx's required/non-negative validation on the 4 actual cost fields (the real bug fixed in the prior pass) disables Save and shows an error."
+    }
+  ]
+}

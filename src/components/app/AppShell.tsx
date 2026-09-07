@@ -2,7 +2,6 @@ import { useState } from "react";
 import {
   LayoutDashboard,
   FileText,
-  FolderKanban,
   LayoutTemplate,
   Activity,
   Boxes,
@@ -14,19 +13,17 @@ import {
 import { WorkspaceProvider } from "../../lib/workspaceContext";
 import OverviewTab from "./tabs/OverviewTab";
 import EstimatesTab from "./tabs/EstimatesTab";
-import ProjectsTab from "./tabs/ProjectsTab";
 import TemplatesTab from "./tabs/TemplatesTab";
 import RateHealthTab from "./tabs/RateHealthTab";
 import CatalogTab from "./tabs/CatalogTab";
 import ActualsTab from "./tabs/ActualsTab";
 import SettingsTab from "./tabs/SettingsTab";
 
-export type AppTab = "overview" | "estimates" | "projects" | "templates" | "rate-health" | "catalog" | "actuals" | "settings";
+export type AppTab = "overview" | "estimates" | "templates" | "rate-health" | "catalog" | "actuals" | "settings";
 
 const TAB_COMPONENTS: Record<AppTab, React.ComponentType> = {
   overview: OverviewTab,
   estimates: EstimatesTab,
-  projects: ProjectsTab,
   templates: TemplatesTab,
   "rate-health": RateHealthTab,
   catalog: CatalogTab,
@@ -36,12 +33,11 @@ const TAB_COMPONENTS: Record<AppTab, React.ComponentType> = {
 
 const NAV: { key: AppTab; label: string; href: string; icon: typeof LayoutDashboard }[] = [
   { key: "overview", label: "Overview", href: "/app", icon: LayoutDashboard },
-  { key: "estimates", label: "Estimates", href: "/app/estimates", icon: FileText },
-  { key: "projects", label: "Projects", href: "/app/projects", icon: FolderKanban },
+  { key: "estimates", label: "Current Estimate", href: "/app/estimates", icon: FileText },
   { key: "templates", label: "Templates", href: "/app/templates", icon: LayoutTemplate },
   { key: "rate-health", label: "Rate Health", href: "/app/rate-health", icon: Activity },
   { key: "catalog", label: "Catalog", href: "/app/catalog", icon: Boxes },
-  { key: "actuals", label: "Actuals", href: "/app/actuals", icon: ClipboardCheck },
+  { key: "actuals", label: "Estimate vs Actual", href: "/app/actuals", icon: ClipboardCheck },
   { key: "settings", label: "Settings", href: "/app/settings", icon: Settings },
 ];
 
@@ -111,7 +107,7 @@ function SidebarContent({ activeTab, onNavigate }: { activeTab: AppTab; onNaviga
           <img src="/icon-192.png" alt="" className="h-full w-full object-contain" width="192" height="192" />
         </span>
         <span className="text-sm font-bold">
-          Concrete Cost <span className="text-orange">Pro</span>
+          Concrete Cost <span className="text-orange-ondark">Pro</span>
         </span>
       </a>
       <nav aria-label="Application" className="flex-1 space-y-0.5 px-3">
