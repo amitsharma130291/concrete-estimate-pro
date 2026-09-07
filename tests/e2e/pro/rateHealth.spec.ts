@@ -53,6 +53,19 @@ test.describe("Pro app: Rate Health tab", () => {
     expect(newRate).toBeCloseTo(originalRate * 1.2, 5);
   });
 
+  test("a change below -100% shows an error and disables Apply to templates", async ({ page }) => {
+    await resetWorkspace(page);
+    await createTemplate(page, "E2E RH Invalid Change Template");
+    await page.goto("/app/rate-health");
+    const scenarioInputs = page.locator('input[type="number"]');
+    await scenarioInputs.nth(0).fill("-150"); // Ready mix change -150% -- more than fully eliminated
+    await expect(page.getByText(/Cannot reduce a cost by more than 100%/i)).toBeVisible();
+    await expect(page.getByRole("button", { name: /apply to templates/i })).toBeDisabled();
+
+    await scenarioInputs.nth(0).fill("-50");
+    await expect(page.getByRole("button", { name: /apply to templates/i })).toBeEnabled();
+  });
+
   test("target margin override: changing target margin updates the Target column", async ({ page }) => {
     await resetWorkspace(page);
     await createTemplate(page, "E2E RH Target Template");

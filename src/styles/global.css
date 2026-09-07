@@ -1,7 +1,26 @@
 @import "tailwindcss";
 
+/* Metric-matched fallback for Inter (published values, same technique next/font/google uses)
+ * -- ascent/descent/line-gap/size-adjust tuned so this fallback occupies the exact same box
+ * as Inter. Layout.astro loads Inter with `display=swap`, which shows the fallback
+ * immediately and swaps once the webfont arrives; without this, that swap shifts every
+ * button/label by a couple of pixels the instant it happens. Usually invisible to a human
+ * clicking, but a real, measurable layout shift -- root-caused via a live Playwright repro of
+ * a "flaky" mobile test (see tests/e2e/pro/rateHealth.spec.ts's "apply to templates" test)
+ * that turned out to be Playwright's stability check catching this exact shift, not a CSS
+ * layout bug. Fixing the shift itself (rather than just reducing the timing window) removes
+ * the underlying instability regardless of network speed or cache state. */
+@font-face {
+  font-family: "Inter Fallback";
+  src: local("Arial");
+  ascent-override: 90.44%;
+  descent-override: 22.52%;
+  line-gap-override: 0%;
+  size-adjust: 107.06%;
+}
+
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-sans: "Inter", "Inter Fallback", ui-sans-serif, system-ui, -apple-system, sans-serif;
 
   --color-charcoal: #20252b;
   --color-charcoal-light: #2b323a;
@@ -33,6 +52,20 @@
   html {
     font-family: var(--font-sans);
     -webkit-text-size-adjust: 100%;
+  }
+
+  /* Below 1200px, AppShell.tsx renders a `sticky top-0` mobile header (~64px tall) instead
+     of the desktop sidebar. Without this, scrolling an element to the top of the viewport --
+     via a real user's browser-native "scroll to focused input", or an automated test's
+     scrollIntoView -- lands it directly underneath that sticky header, where it's visible
+     but not clickable (the header intercepts the pointer event). scroll-padding-top makes
+     every native scroll-into-view respect the header's height automatically, without having
+     to annotate each individual target element. Matches AppShell.tsx's own `min-[1200px]:hidden`
+     breakpoint so it only applies while the sticky header is actually present. */
+  @media (max-width: 1199.98px) {
+    html {
+      scroll-padding-top: 4.5rem;
+    }
   }
 
   body {

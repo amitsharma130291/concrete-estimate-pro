@@ -1,56 +1,52 @@
-// Data-integrity round-trip testing for the JSON backup/restore workflow, per the audit's
-// 10-step procedure. This exercises exportWorkspaceJson/validateImport as pure data
-// transformations (no browser/localStorage — jsdom is not configured for this project's
-// vitest environment; the equivalent through-the-UI/localStorage path is a Playwright E2E
-// concern, see tests/e2e).
+// Data-integrity round-trip testing for the business-data JSON backup/restore workflow.
+// This exercises exportBackupJson/validateBackupImport as pure data transformations (no
+// browser/localStorage -- jsdom is not configured for this project's vitest environment;
+// the equivalent through-the-UI/localStorage path is a Playwright E2E concern, see
+// tests/e2e). Deliberately excludes the current estimate: per the single-current-estimate
+// product decision, the business-data backup only covers business profile, preferences,
+// catalog and templates -- see persistence.ts's module doc comment on WorkspaceBackup.
 import { describe, it, expect } from "vitest";
-import { emptyWorkspace, exportWorkspaceJson, validateImport, defaultSettings } from "../../src/lib/storage";
+import { defaultBusinessProfile, defaultPreferences, emptyCatalogBundle, exportBackupJson, validateBackupImport, type CatalogBundle } from "../../src/lib/persistence";
 import { buildSampleWorkspace } from "../../src/lib/sampleData";
-import type { Workspace } from "../../src/lib/types";
+import type { AppSettings, BusinessProfile, ProjectTemplate } from "../../src/lib/types";
 
-function fullSampleWorkspace(): Workspace {
-  const empty = emptyWorkspace();
+function fullSampleBackupInput(): { businessProfile: BusinessProfile; preferences: AppSettings; catalog: CatalogBundle; templates: ProjectTemplate[] } {
   const sample = buildSampleWorkspace();
   return {
-    ...empty,
     businessProfile: { businessName: "Acme Concrete LLC", phone: "555-0100", email: "a@acme.test", address: "123 Main St" },
-    settings: defaultSettings(),
-    ...sample,
+    preferences: defaultPreferences(),
+    catalog: sample.catalog,
+    templates: sample.templates,
   };
 }
 
-describe("JSON backup/restore round trip (10-step procedure)", () => {
-  it("1-2. export a populated workspace produces valid, parseable JSON", () => {
-    const ws = fullSampleWorkspace();
-    const json = exportWorkspaceJson(ws);
+describe("Business-data JSON backup/restore round trip", () => {
+  it("export a populated backup produces valid, parseable JSON", () => {
+    const input = fullSampleBackupInput();
+    const json = exportBackupJson(input);
     expect(() => JSON.parse(json)).not.toThrow();
   });
 
-  it("3-5. re-importing exported JSON validates ok and losslessly restores every collection", () => {
-    const ws = fullSampleWorkspace();
-    const json = exportWorkspaceJson(ws);
-    const result = validateImport(json);
+  it("re-importing exported JSON validates ok and losslessly restores every collection", () => {
+    const input = fullSampleBackupInput();
+    const json = exportBackupJson(input);
+    const result = validateBackupImport(json);
     expect(result.ok).toBe(true);
     expect(result.errors).toEqual([]);
-    expect(result.workspace).toBeDefined();
-    const restored = result.workspace!;
+    expect(result.data).toBeDefined();
+    const restored = result.data!;
 
-    expect(restored.catalog).toEqual(ws.catalog);
-    expect(restored.laborRates).toEqual(ws.laborRates);
-    expect(restored.equipment).toEqual(ws.equipment);
-    expect(restored.templates).toEqual(ws.templates);
-    expect(restored.projects).toEqual(ws.projects);
-    expect(restored.estimates).toEqual(ws.estimates);
-    expect(restored.actuals).toEqual(ws.actuals);
-    expect(restored.businessProfile).toEqual(ws.businessProfile);
-    expect(restored.settings).toEqual(ws.settings);
+    expect(restored.catalog).toEqual(input.catalog);
+    expect(restored.templates).toEqual(input.templates);
+    expect(restored.businessProfile).toEqual(input.businessProfile);
+    expect(restored.preferences).toEqual(input.preferences);
   });
 
-  it("6. re-exporting the restored workspace is stable (export -> import -> export produces the same data, modulo timestamp)", () => {
-    const ws = fullSampleWorkspace();
-    const json1 = exportWorkspaceJson(ws);
-    const restored = validateImport(json1).workspace!;
-    const json2 = exportWorkspaceJson(restored);
+  it("re-exporting the restored data is stable (export -> import -> export produces the same data, modulo timestamp)", () => {
+    const input = fullSampleBackupInput();
+    const json1 = exportBackupJson(input);
+    const restored = validateBackupImport(json1).data!;
+    const json2 = exportBackupJson(restored);
     const obj1 = JSON.parse(json1);
     const obj2 = JSON.parse(json2);
     delete obj1.exportedAt;
@@ -58,44 +54,52 @@ describe("JSON backup/restore round trip (10-step procedure)", () => {
     expect(obj2).toEqual(obj1);
   });
 
-  it("7. malformed (non-JSON) file is rejected with a clear error, not a crash", () => {
-    const result = validateImport("{not valid json,,,");
+  it("malformed (non-JSON) file is rejected with a clear error, not a crash", () => {
+    const result = validateBackupImport("{not valid json,,,");
     expect(result.ok).toBe(false);
     expect(result.errors.length).toBeGreaterThan(0);
   });
 
-  it("8. valid JSON that isn't an object (array/primitive) is rejected", () => {
-    expect(validateImport("[1,2,3]").ok).toBe(false);
-    expect(validateImport("42").ok).toBe(false);
-    expect(validateImport('"just a string"').ok).toBe(false);
+  it("valid JSON that isn't an object (array/primitive) is rejected", () => {
+    expect(validateBackupImport("[1,2,3]").ok).toBe(false);
+    expect(validateBackupImport("42").ok).toBe(false);
+    expect(validateBackupImport('"just a string"').ok).toBe(false);
   });
 
-  it("9. JSON object missing schemaVersion is rejected with a specific error", () => {
-    const result = validateImport(JSON.stringify({ catalog: [] }));
+  it("a collection field present but not an array is rejected, not silently coerced", () => {
+    const result = validateBackupImport(JSON.stringify({ schemaVersion: 2, templates: "not-an-array" }));
     expect(result.ok).toBe(false);
-    expect(result.errors.some((e) => /schemaVersion/i.test(e))).toBe(true);
+    expect(result.errors.some((e) => /templates/i.test(e))).toBe(true);
   });
 
-  it("10. a collection field present but not an array is rejected per-field, not silently coerced", () => {
-    const result = validateImport(JSON.stringify({ schemaVersion: 1, catalog: "not-an-array", estimates: [] }));
+  it("a malformed template inside an otherwise-valid array is rejected, not silently dropped or coerced", () => {
+    const result = validateBackupImport(JSON.stringify({ schemaVersion: 2, templates: [{ id: "x" }] }));
     expect(result.ok).toBe(false);
-    expect(result.errors.some((e) => /catalog/i.test(e))).toBe(true);
   });
 
-  it("empty workspace round-trips cleanly (no data is not an error)", () => {
-    const empty = emptyWorkspace();
-    const json = exportWorkspaceJson(empty);
-    const result = validateImport(json);
+  it("empty backup round-trips cleanly (no data is not an error)", () => {
+    const json = exportBackupJson({ businessProfile: defaultBusinessProfile(), preferences: defaultPreferences(), catalog: emptyCatalogBundle(), templates: [] });
+    const result = validateBackupImport(json);
     expect(result.ok).toBe(true);
-    expect(result.workspace!.catalog).toEqual([]);
+    expect(result.data!.templates).toEqual([]);
+    expect(result.data!.catalog).toEqual(emptyCatalogBundle());
   });
 
-  it("importing a workspace missing newer fields fills them from defaults via migration (forward-compat)", () => {
-    const partial = { schemaVersion: 1, catalog: [], estimates: [] };
-    const result = validateImport(JSON.stringify(partial));
+  it("importing a file missing optional collections fills them from defaults (forward-compat)", () => {
+    const partial = { schemaVersion: 2, businessProfile: defaultBusinessProfile() };
+    const result = validateBackupImport(JSON.stringify(partial));
     expect(result.ok).toBe(true);
-    expect(result.workspace!.settings).toBeDefined();
-    expect(result.workspace!.businessProfile).toBeDefined();
-    expect(result.workspace!.laborRates).toEqual([]);
+    expect(result.data!.preferences).toBeDefined();
+    expect(result.data!.catalog).toEqual(emptyCatalogBundle());
+    expect(result.data!.templates).toEqual([]);
+  });
+
+  it("does not include a current-estimate field at all -- this backup is business data only", () => {
+    const input = fullSampleBackupInput();
+    const json = exportBackupJson(input);
+    const parsed = JSON.parse(json);
+    expect(parsed.currentEstimate).toBeUndefined();
+    expect(parsed.estimates).toBeUndefined();
+    expect(parsed.projects).toBeUndefined();
   });
 });

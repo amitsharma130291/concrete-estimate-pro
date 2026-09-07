@@ -73,12 +73,12 @@ test.describe("Pro app: Settings tab", () => {
     if (ws) expect(ws.businessProfile.logoDataUrl).toBeFalsy();
   });
 
-  test("backup & restore: export JSON, wipe, import it back, data matches", async ({ page }) => {
+  test("backup & restore: export business data, wipe, import it back, data matches", async ({ page }) => {
     await resetWorkspace(page, "/app/settings");
     await page.locator('input[type="text"]').nth(0).fill("E2E Backup Co.");
     await page.waitForTimeout(100);
 
-    const [download] = await Promise.all([page.waitForEvent("download"), page.getByRole("button", { name: /export workspace/i }).click()]);
+    const [download] = await Promise.all([page.waitForEvent("download"), page.getByRole("button", { name: /export business data/i }).click()]);
     const stream = await download.createReadStream();
     const chunks: Buffer[] = [];
     for await (const chunk of stream!) chunks.push(chunk as Buffer);
@@ -93,11 +93,11 @@ test.describe("Pro app: Settings tab", () => {
     await page.evaluate(() => window.localStorage.clear());
     await page.reload();
     let ws = await getWorkspace(page);
-    expect(ws).toBeNull();
+    expect(ws.businessProfile.businessName).toBe("");
 
     await page.locator('input[type="file"][accept="application/json"]').setInputFiles(filePath);
-    // handleImportFile does window.location.reload() on success.
-    await page.waitForLoadState("networkidle");
+    // Import applies in place -- no page reload, unlike the pre-v2 behavior.
+    await expect(page.getByText(/^Imported —/)).toBeVisible();
     ws = await getWorkspace(page);
     expect(ws.businessProfile.businessName).toBe("E2E Backup Co.");
   });
@@ -142,7 +142,11 @@ test.describe("Pro app: Settings tab", () => {
 
     const ws = await getWorkspace(page);
     expect(ws.businessProfile.businessName).toBe("");
-    expect(ws.estimates).toEqual([]);
+    // Reset replaces the current estimate with a fresh, untouched blank draft -- not null --
+    // so `ready && !currentEstimate` is never true (see workspaceContext.tsx's load effect).
+    expect(ws.estimates).toHaveLength(1);
+    expect(ws.estimates[0].projectName).toBe("");
+    expect(ws.estimates[0].sellingPrice).toBe(0);
     expect(ws.projects).toEqual([]);
   });
 });

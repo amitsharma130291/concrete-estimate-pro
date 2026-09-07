@@ -2,7 +2,7 @@
 // escaping — a customerName or projectName containing a comma silently shifted every
 // column after it, corrupting the exported file. This locks in RFC 4180 escaping.
 import { describe, it, expect } from "vitest";
-import { csvField, csvRow, toCsv } from "./csv";
+import { csvField, csvRow, neutralizeFormulaInjection, toCsv } from "./csv";
 
 describe("csvField", () => {
   it("passes plain values through unchanged", () => {
@@ -20,6 +20,37 @@ describe("csvField", () => {
 
   it("quotes a value containing a newline", () => {
     expect(csvField("Line1\nLine2")).toBe('"Line1\nLine2"');
+  });
+
+  it("preserves unicode customer names", () => {
+    expect(csvField("José Núñez")).toBe("José Núñez");
+    expect(csvField("北京混凝土公司")).toBe("北京混凝土公司");
+  });
+});
+
+describe("neutralizeFormulaInjection / spreadsheet formula injection", () => {
+  it("prefixes a value starting with = so it can't execute as a formula", () => {
+    expect(neutralizeFormulaInjection("=cmd|'/c calc'!A1")).toBe("'=cmd|'/c calc'!A1");
+  });
+  it("prefixes values starting with +, -, @, tab or carriage return", () => {
+    expect(neutralizeFormulaInjection("+1+1")).toBe("'+1+1");
+    expect(neutralizeFormulaInjection("-1+1")).toBe("'-1+1");
+    expect(neutralizeFormulaInjection("@SUM(A1:A9)")).toBe("'@SUM(A1:A9)");
+    expect(neutralizeFormulaInjection("\tHIDDEN")).toBe("'\tHIDDEN");
+    expect(neutralizeFormulaInjection("\rHIDDEN")).toBe("'\rHIDDEN");
+  });
+  it("leaves an ordinary value (including one merely containing = later) untouched", () => {
+    expect(neutralizeFormulaInjection("Smith Driveway")).toBe("Smith Driveway");
+    expect(neutralizeFormulaInjection("A=B")).toBe("A=B");
+  });
+  it("leaves a negative-number-looking numeric string alone at the csvField level only if never fed through neutralization directly by callers that want real negatives -- csvField itself always neutralizes", () => {
+    // csvField is used for free-text fields (names/notes), not for pre-formatted numeric
+    // strings -- callers pass numbers through toFixed()/String() into their own columns,
+    // never through csvField, so a legitimate "-500" cost never gets this prefix in practice.
+    expect(csvField("-500")).toBe("'-500");
+  });
+  it("csvField applies neutralization before quoting, so an injection attempt that also contains a comma is both safe and correctly quoted", () => {
+    expect(csvField("=1,2")).toBe(`"'=1,2"`);
   });
 });
 

@@ -1,6 +1,6 @@
 import Decimal from "decimal.js";
 import { calculateCost, calculateEstimate, calculateMargin, calculateRequiredSellingPrice, roundQuantity, type Rounding } from "./calc";
-import type { Estimate, Project, ProjectSection } from "./types";
+import type { Estimate, ProjectSection } from "./types";
 
 export interface MultiSectionCosts {
   readyMixRatePerYd3: number;
@@ -88,10 +88,6 @@ export function evaluateEntity(entity: {
 
 export function evaluateEstimate(e: Estimate): EntityEstimateResult {
   return evaluateEntity(e);
-}
-
-export function evaluateProject(p: Project): EntityEstimateResult {
-  return evaluateEntity(p);
 }
 
 export { calculateEstimate };

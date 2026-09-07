@@ -1,7 +1,13 @@
 // Local-first data model for Concrete Cost Pro.
 // Everything here is stored client-side (localStorage). No backend, no accounts.
+//
+// v2 (single-current-estimate model): the app keeps exactly one active Estimate plus,
+// optionally, one logged Actual result for that same estimate. There is no archive and no
+// list of past estimates/projects — "Project" as a separate persisted record was removed;
+// an estimate that has been completed on-site is just an Estimate whose status progressed
+// to "completed", with one ActualJobResult attached to it.
 
-export const SCHEMA_VERSION = 1;
+export const SCHEMA_VERSION = 2;
 
 export type Units = "imperial";
 export type Rounding = "none" | "quarter" | "half" | "whole";
@@ -70,10 +76,9 @@ export interface ProjectSection {
 export type LaborMode = "flat" | "hourly" | "unit";
 
 /**
- * How labor cost was derived. `costs.laborCost` (on Estimate/Project) or
- * `defaultCosts.laborCost` (on ProjectTemplate) always holds the resolved dollar
- * amount used in every calculation — this is only kept so the editor can re-derive
- * and re-edit the inputs that produced it.
+ * How labor cost was derived. `costs.laborCost` (on Estimate) or `defaultCosts.laborCost`
+ * (on ProjectTemplate) always holds the resolved dollar amount used in every calculation —
+ * this is only kept so the editor can re-derive and re-edit the inputs that produced it.
  */
 export interface LaborInput {
   mode: LaborMode;
@@ -113,7 +118,13 @@ export interface EstimateLineItem {
   internal?: boolean; // internal-only line items never render in the customer PDF
 }
 
-export type EstimateStatus = "draft" | "sent" | "accepted" | "declined";
+/**
+ * "completed" replaces the old separate Project record: once a job that started as an
+ * estimate is finished on-site, its status moves to "completed" in place and one
+ * ActualJobResult can be logged against it (Workspace.currentActual) — no second record,
+ * no archive, and duplicating it starts a fresh replacement draft rather than a new entry.
+ */
+export type EstimateStatus = "draft" | "sent" | "accepted" | "declined" | "completed";
 
 export interface Estimate {
   id: string;
@@ -141,45 +152,15 @@ export interface Estimate {
   sellingPrice: number;
   notes?: string;
   status: EstimateStatus;
-  archived?: boolean;
-  createdAt: string;
-  updatedAt: string;
-  isSample?: boolean;
-}
-
-export type ProjectStatus = "estimate" | "sent" | "accepted" | "completed";
-
-export interface Project {
-  id: string;
-  name: string;
-  projectType: ProjectType;
-  customerName: string;
-  status: ProjectStatus;
-  estimateId?: string;
-  sections: ProjectSection[];
-  allowancePercent: number;
-  rounding: Rounding;
-  costs: {
-    readyMixRatePerYd3: number;
-    laborCost: number;
-    formsCost: number;
-    reinforcementCost: number;
-    equipmentCost: number;
-    otherCost: number;
-  };
-  /** How costs.laborCost was derived; omitted means a flat-entered amount. */
-  labor?: LaborInput;
-  overheadPercent: number;
-  targetMarginPercent: number;
-  sellingPrice: number;
+  /** Opt-in only: shows cost/overhead/margin on the printed PDF. Off unless the contractor
+   * explicitly turns it on — see EstimateDocument.tsx. */
+  showCostBreakdownOnPdf?: boolean;
   createdAt: string;
   updatedAt: string;
   isSample?: boolean;
 }
 
 export interface ActualJobResult {
-  id: string;
-  projectId: string;
   actualQuantityYd3: number;
   actualLaborHours: number;
   actualLaborCost: number;
@@ -189,7 +170,6 @@ export interface ActualJobResult {
   finalSellingPrice: number;
   completedAt: string;
   notes?: string;
-  isSample?: boolean;
 }
 
 export interface Workspace {
@@ -201,7 +181,11 @@ export interface Workspace {
   laborRates: LaborRateItem[];
   equipment: EquipmentItem[];
   templates: ProjectTemplate[];
-  projects: Project[];
-  estimates: Estimate[];
-  actuals: ActualJobResult[];
+  /** The single active estimate this browser is working on. Null when none has been
+   * started yet or the last one was explicitly replaced. There is no archive. */
+  currentEstimate: Estimate | null;
+  /** Logged actual results for currentEstimate only. Cleared whenever currentEstimate is
+   * replaced -- an actual result with no estimate to compare against has nowhere to live,
+   * and there is no historical actuals log to move it into. */
+  currentActual: ActualJobResult | null;
 }

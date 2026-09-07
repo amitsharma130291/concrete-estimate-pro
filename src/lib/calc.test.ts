@@ -7,6 +7,7 @@ import {
   calculateMarkup,
   calculateQuantity,
   calculateRequiredSellingPrice,
+  getZeroCostWarnings,
   roundQuantity,
 } from "./calc";
 
@@ -195,5 +196,34 @@ describe("calculateLaborCost", () => {
   it("treats negative or invalid inputs as zero", () => {
     const cost = calculateLaborCost({ mode: "hourly", crewSize: -4, hours: NaN, ratePerHour: 36, unitRatePerSqft: 0 }, 0);
     expect(cost).toBe(0);
+  });
+});
+
+describe("getZeroCostWarnings", () => {
+  it("flags a $0 ready-mix rate on a job with real area", () => {
+    const warnings = getZeroCostWarnings({ readyMixRatePerYd3: 0, laborCost: 500 }, 960);
+    expect(warnings).toHaveLength(1);
+    expect(warnings[0]).toMatch(/ready-mix/i);
+  });
+
+  it("flags a $0 labor cost on a job with real area", () => {
+    const warnings = getZeroCostWarnings({ readyMixRatePerYd3: 165, laborCost: 0 }, 960);
+    expect(warnings).toHaveLength(1);
+    expect(warnings[0]).toMatch(/labor/i);
+  });
+
+  it("flags both when both are $0", () => {
+    const warnings = getZeroCostWarnings({ readyMixRatePerYd3: 0, laborCost: 0 }, 960);
+    expect(warnings).toHaveLength(2);
+  });
+
+  it("does not flag a fully-priced job", () => {
+    const warnings = getZeroCostWarnings({ readyMixRatePerYd3: 165, laborCost: 500 }, 960);
+    expect(warnings).toHaveLength(0);
+  });
+
+  it("does not flag anything when there is no area yet (nothing entered)", () => {
+    const warnings = getZeroCostWarnings({ readyMixRatePerYd3: 0, laborCost: 0 }, 0);
+    expect(warnings).toHaveLength(0);
   });
 });

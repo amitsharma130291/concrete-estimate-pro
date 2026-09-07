@@ -1,7 +1,7 @@
 import { useMemo, useRef, useState } from "react";
 import { Download, PlusCircle, Trash2, Upload } from "lucide-react";
-import { useWorkspace } from "../../../lib/workspaceContext";
-import { newId, removeBy, upsertBy } from "../../../lib/storage";
+import { newId, removeBy, upsertBy, useWorkspace } from "../../../lib/workspaceContext";
+import { downloadCsv as downloadCsvRows } from "../../../lib/csv";
 import type { CatalogItem, EquipmentItem, LaborRateItem } from "../../../lib/types";
 import { Button, Card, EmptyState, NumberInput, Tabs, TextInput } from "../../ui/primitives";
 
@@ -37,24 +37,24 @@ export default function CatalogTab() {
 }
 
 function CatalogItemsPanel({ kind, title }: { kind: CatalogItem["kind"]; title: string }) {
-  const { workspace, update } = useWorkspace();
+  const { catalog, updateCatalog } = useWorkspace();
   const fileRef = useRef<HTMLInputElement>(null);
-  const items = useMemo(() => workspace.catalog.filter((c) => c.kind === kind), [workspace.catalog, kind]);
+  const items = useMemo(() => catalog.materials.filter((c) => c.kind === kind), [catalog.materials, kind]);
 
   function addRow() {
     const item: CatalogItem = { id: newId("cat"), kind, name: "New item", supplier: "", unit: kind === "readyMix" ? "yd³" : "each", unitCost: 0 };
-    update((ws) => ({ ...ws, catalog: upsertBy(ws.catalog, item) }));
+    updateCatalog((c) => ({ ...c, materials: upsertBy(c.materials, item) }));
   }
   function patch(id: string, p: Partial<CatalogItem>) {
-    update((ws) => ({ ...ws, catalog: ws.catalog.map((c) => (c.id === id ? { ...c, ...p } : c)) }));
+    updateCatalog((c) => ({ ...c, materials: c.materials.map((m) => (m.id === id ? { ...m, ...p } : m)) }));
   }
   function remove(id: string) {
-    update((ws) => ({ ...ws, catalog: removeBy(ws.catalog, id) }));
+    updateCatalog((c) => ({ ...c, materials: removeBy(c.materials, id) }));
   }
 
   function exportCsv() {
     const rows = [["name", "supplier", "unit", "unitCost"], ...items.map((i) => [i.name, i.supplier ?? "", i.unit, String(i.unitCost)])];
-    downloadCsv(`${kind}-catalog.csv`, rows);
+    downloadCsvRows(`${kind}-catalog.csv`, rows);
   }
   function importCsv(file: File) {
     file.text().then((text) => {
@@ -67,7 +67,7 @@ function CatalogItemsPanel({ kind, title }: { kind: CatalogItem["kind"]; title: 
         unit: row.unit ?? "each",
         unitCost: parseFloat(row.unitCost ?? "0") || 0,
       }));
-      update((ws) => ({ ...ws, catalog: [...ws.catalog, ...imported] }));
+      updateCatalog((c) => ({ ...c, materials: [...c.materials, ...imported] }));
     });
   }
 
@@ -134,28 +134,28 @@ function CatalogItemsPanel({ kind, title }: { kind: CatalogItem["kind"]; title: 
 }
 
 function LaborPanel() {
-  const { workspace, update } = useWorkspace();
+  const { catalog, updateCatalog, preferences } = useWorkspace();
   function addRow() {
-    const item: LaborRateItem = { id: newId("lab"), name: "New crew rate", loadedRatePerHour: workspace.settings.defaultLoadedLaborRate };
-    update((ws) => ({ ...ws, laborRates: upsertBy(ws.laborRates, item) }));
+    const item: LaborRateItem = { id: newId("lab"), name: "New crew rate", loadedRatePerHour: preferences.defaultLoadedLaborRate };
+    updateCatalog((c) => ({ ...c, laborRates: upsertBy(c.laborRates, item) }));
   }
   function patch(id: string, p: Partial<LaborRateItem>) {
-    update((ws) => ({ ...ws, laborRates: ws.laborRates.map((c) => (c.id === id ? { ...c, ...p } : c)) }));
+    updateCatalog((c) => ({ ...c, laborRates: c.laborRates.map((r) => (r.id === id ? { ...r, ...p } : r)) }));
   }
   function remove(id: string) {
-    update((ws) => ({ ...ws, laborRates: removeBy(ws.laborRates, id) }));
+    updateCatalog((c) => ({ ...c, laborRates: removeBy(c.laborRates, id) }));
   }
 
   return (
-    <Card title="Labor rates" subtitle={`${workspace.laborRates.length} rate${workspace.laborRates.length === 1 ? "" : "s"}`}>
+    <Card title="Labor rates" subtitle={`${catalog.laborRates.length} rate${catalog.laborRates.length === 1 ? "" : "s"}`}>
       <Button size="sm" onClick={addRow} className="mb-3">
         <PlusCircle size={15} /> Add labor rate
       </Button>
-      {workspace.laborRates.length === 0 ? (
+      {catalog.laborRates.length === 0 ? (
         <EmptyState title="No labor rates yet" desc="Add your loaded hourly rate to speed up job costing." />
       ) : (
         <div className="flex flex-col gap-2">
-          {workspace.laborRates.map((l) => (
+          {catalog.laborRates.map((l) => (
             <div key={l.id} className="flex items-center gap-2">
               <TextInput value={l.name} onChange={(e) => patch(l.id, { name: e.target.value })} className="flex-1" />
               <div className="flex w-36 overflow-hidden rounded-lg border border-border shadow-sm focus-within:border-orange">
@@ -175,28 +175,28 @@ function LaborPanel() {
 }
 
 function EquipmentPanel() {
-  const { workspace, update } = useWorkspace();
+  const { catalog, updateCatalog } = useWorkspace();
   function addRow() {
     const item: EquipmentItem = { id: newId("eq"), name: "New equipment", unit: "per job", cost: 0 };
-    update((ws) => ({ ...ws, equipment: upsertBy(ws.equipment, item) }));
+    updateCatalog((c) => ({ ...c, equipment: upsertBy(c.equipment, item) }));
   }
   function patch(id: string, p: Partial<EquipmentItem>) {
-    update((ws) => ({ ...ws, equipment: ws.equipment.map((c) => (c.id === id ? { ...c, ...p } : c)) }));
+    updateCatalog((c) => ({ ...c, equipment: c.equipment.map((eq) => (eq.id === id ? { ...eq, ...p } : eq)) }));
   }
   function remove(id: string) {
-    update((ws) => ({ ...ws, equipment: removeBy(ws.equipment, id) }));
+    updateCatalog((c) => ({ ...c, equipment: removeBy(c.equipment, id) }));
   }
 
   return (
-    <Card title="Equipment" subtitle={`${workspace.equipment.length} item${workspace.equipment.length === 1 ? "" : "s"}`}>
+    <Card title="Equipment" subtitle={`${catalog.equipment.length} item${catalog.equipment.length === 1 ? "" : "s"}`}>
       <Button size="sm" onClick={addRow} className="mb-3">
         <PlusCircle size={15} /> Add equipment
       </Button>
-      {workspace.equipment.length === 0 ? (
+      {catalog.equipment.length === 0 ? (
         <EmptyState title="No equipment yet" desc="Add pumps, saws or rentals you commonly bill to jobs." />
       ) : (
         <div className="flex flex-col gap-2">
-          {workspace.equipment.map((e) => (
+          {catalog.equipment.map((e) => (
             <div key={e.id} className="flex items-center gap-2">
               <TextInput value={e.name} onChange={(ev) => patch(e.id, { name: ev.target.value })} className="flex-1" />
               <select
@@ -223,30 +223,43 @@ function EquipmentPanel() {
   );
 }
 
-function downloadCsv(filename: string, rows: string[][]) {
-  const csv = rows.map((r) => r.map(csvEscape).join(",")).join("\n");
-  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
-
-function csvEscape(value: string): string {
-  if (/[",\n]/.test(value)) return `"${value.replace(/"/g, '""')}"`;
-  return value;
+/** Splits one CSV line honoring RFC 4180 quoting (a comma inside a quoted field is not a
+ * delimiter, and `""` inside a quoted field is a literal `"`) -- unlike a bare
+ * `line.split(",")`, which mis-parses any quoted field containing a comma. */
+function splitCsvLine(line: string): string[] {
+  const cells: string[] = [];
+  let cur = "";
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (inQuotes) {
+      if (ch === '"' && line[i + 1] === '"') {
+        cur += '"';
+        i++;
+      } else if (ch === '"') {
+        inQuotes = false;
+      } else {
+        cur += ch;
+      }
+    } else if (ch === '"') {
+      inQuotes = true;
+    } else if (ch === ",") {
+      cells.push(cur);
+      cur = "";
+    } else {
+      cur += ch;
+    }
+  }
+  cells.push(cur);
+  return cells;
 }
 
 function parseCsv(text: string): Record<string, string>[] {
   const lines = text.trim().split(/\r?\n/);
   if (lines.length < 2) return [];
-  const headers = lines[0].split(",").map((h) => h.trim());
+  const headers = splitCsvLine(lines[0]).map((h) => h.trim());
   return lines.slice(1).map((line) => {
-    const cells = line.split(",");
+    const cells = splitCsvLine(line);
     const row: Record<string, string> = {};
     headers.forEach((h, i) => (row[h] = (cells[i] ?? "").trim()));
     return row;

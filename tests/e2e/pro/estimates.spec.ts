@@ -1,15 +1,13 @@
 import { test, expect } from "@playwright/test";
-import { resetWorkspace, getWorkspace } from "./_helpers";
+import { resetWorkspace, getWorkspace, getCurrentEstimateRecord } from "./_helpers";
 
 test.describe.configure({ mode: "serial" });
 
-// Test estimate names deliberately avoid action-verb substrings ("Archive", "Delete",
-// "Duplicate") — the row's whole-row navigation button's accessible name includes the
-// project name, so e.g. an estimate named "Archive Test" would make a non-exact
-// getByRole("button", { name: "Archive" }) locator ALSO match that navigation button.
+// With no current estimate yet, /app/estimates *is* the wizard directly -- there is no
+// separate "New estimate" button to click first (see EstimatesTab.tsx: `!currentEstimate`
+// alone is enough to render the wizard).
 async function createEstimate(page: import("@playwright/test").Page, name: string) {
   await page.goto("/app/estimates");
-  await page.getByRole("button", { name: /new estimate/i }).first().click();
   await page.getByPlaceholder("Smith Driveway").fill(name);
   await page.getByRole("button", { name: /continue/i }).click();
   const numberInputs = page.locator('input[type="number"]');
@@ -21,11 +19,11 @@ async function createEstimate(page: import("@playwright/test").Page, name: strin
   await page.getByRole("button", { name: /continue/i }).click();
   await page.locator('input[type="text"]').first().fill("Test Customer");
   await page.getByRole("button", { name: /save & mark sent/i }).click();
-  await expect(page).toHaveURL(/\/app\/estimates/);
+  await expect(page.getByRole("heading", { name: "Current Estimate" })).toBeVisible();
 }
 
-test.describe("Pro app: Estimates tab", () => {
-  test("create: full wizard produces an estimate visible in the list and in localStorage", async ({ page }) => {
+test.describe("Pro app: Current Estimate (estimates.spec.ts)", () => {
+  test("create: full wizard produces the current estimate, persisted in localStorage", async ({ page }) => {
     await resetWorkspace(page, "/app/estimates");
     await createEstimate(page, "E2E Create Job");
     await expect(page.getByText("E2E Create Job")).toBeVisible();
@@ -33,108 +31,153 @@ test.describe("Pro app: Estimates tab", () => {
     expect(ws.estimates.some((e: any) => e.projectName === "E2E Create Job")).toBe(true);
   });
 
-  test("edit: open an estimate, change price, verify it persists", async ({ page }) => {
+  test("autosave: save status shows Saving then Saved on this device, with a timestamp", async ({ page }) => {
+    await resetWorkspace(page, "/app/estimates");
+    await page.getByPlaceholder("Smith Driveway").fill("E2E Autosave Job");
+    await expect(page.getByText(/saved on this device/i)).toBeVisible({ timeout: 3000 });
+  });
+
+  test("edit: open the current estimate, change price, verify it persists", async ({ page }) => {
     await resetWorkspace(page, "/app/estimates");
     await createEstimate(page, "E2E Edit Job");
-    await page.getByText("E2E Edit Job").click();
     await page.getByRole("button", { name: "Edit", exact: true }).click();
     for (let i = 0; i < 3; i++) await page.getByRole("button", { name: /continue/i }).click();
     const priceField = page.locator('input[type="number"]').last();
     await priceField.fill("9999");
     await page.getByRole("button", { name: /continue/i }).click();
     await page.getByRole("button", { name: /save & mark sent/i }).click();
-    await page.getByText("E2E Edit Job").click();
     await expect(page.getByText("$9,999")).toBeVisible();
     const ws = await getWorkspace(page);
     const est = ws.estimates.find((e: any) => e.projectName === "E2E Edit Job");
     expect(est.sellingPrice).toBe(9999);
   });
 
-  test("duplicate: creates a second estimate with the same project name", async ({ page }) => {
+  test("refresh restores the exact current estimate", async ({ page }) => {
     await resetWorkspace(page, "/app/estimates");
-    await createEstimate(page, "E2E Copy Source");
-    let ws = await getWorkspace(page);
-    expect(ws.estimates.filter((e: any) => e.projectName === "E2E Copy Source").length).toBe(1);
-
-    await page.goto("/app/estimates");
-    await page.getByRole("button", { name: "Duplicate", exact: true }).first().click();
-    await expect(page.getByText("E2E Copy Source")).toHaveCount(2);
-    ws = await getWorkspace(page);
-    expect(ws.estimates.filter((e: any) => e.projectName === "E2E Copy Source").length).toBe(2);
-    const ids = ws.estimates.filter((e: any) => e.projectName === "E2E Copy Source").map((e: any) => e.id);
-    expect(new Set(ids).size).toBe(2);
+    await createEstimate(page, "E2E Refresh Job");
+    const before = await getCurrentEstimateRecord(page);
+    await page.reload();
+    await expect(page.getByText("E2E Refresh Job")).toBeVisible();
+    const after = await getCurrentEstimateRecord(page);
+    expect(after.estimate).toEqual(before.estimate);
   });
 
-  test("archive / unarchive: toggles archived flag and list visibility", async ({ page }) => {
+  test("new estimate: confirmation dialog opens, Cancel preserves the current estimate", async ({ page }) => {
     await resetWorkspace(page, "/app/estimates");
-    await createEstimate(page, "E2E Stash Job");
-    // "Save & mark sent" lands on the estimate's DETAIL view (?id=...), not the list — the
-    // detail view's own Archive button toggles the same underlying flag as the list's icon
-    // button, but the detail view itself doesn't filter by archived status, so list-hiding
-    // behavior must be checked by navigating back to the list afterward.
-    await page.getByRole("button", { name: "Archive", exact: true }).first().click();
-    let ws = await getWorkspace(page);
-    expect(ws.estimates.find((e: any) => e.projectName === "E2E Stash Job").archived).toBe(true);
-
-    await page.goto("/app/estimates");
-    await expect(page.getByText("E2E Stash Job")).toHaveCount(0);
-    await page.getByLabel(/show archived/i).check();
-    await expect(page.getByText("E2E Stash Job")).toBeVisible();
-    await page.getByRole("button", { name: "Unarchive", exact: true }).click();
-    ws = await getWorkspace(page);
-    expect(ws.estimates.find((e: any) => e.projectName === "E2E Stash Job").archived).toBe(false);
-    await page.goto("/app/estimates");
-    await expect(page.getByText("E2E Stash Job")).toBeVisible();
-  });
-
-  test("delete: removes the estimate after confirmation", async ({ page }) => {
-    await resetWorkspace(page, "/app/estimates");
-    await createEstimate(page, "E2E Remove Job");
-    // Delete only exists on the list row (not the detail view createEstimate lands on).
-    await page.goto("/app/estimates");
-    await page.getByRole("button", { name: "Delete", exact: true }).first().click();
-    await expect(page.getByRole("heading", { name: "Delete estimate" })).toBeVisible();
-    await page.getByRole("button", { name: "Delete", exact: true }).last().click();
-    await expect(page.getByText("E2E Remove Job")).toHaveCount(0);
+    await createEstimate(page, "E2E Keep Job");
+    await page.getByRole("button", { name: /^new estimate$/i }).click();
+    await expect(page.getByRole("heading", { name: "Start a new estimate?" })).toBeVisible();
+    await page.getByRole("button", { name: "Cancel", exact: true }).click();
+    await expect(page.getByText("E2E Keep Job")).toBeVisible();
     const ws = await getWorkspace(page);
-    expect(ws.estimates.some((e: any) => e.projectName === "E2E Remove Job")).toBe(false);
+    expect(ws.estimates[0].projectName).toBe("E2E Keep Job");
   });
 
-  test("status change + convert to project: accepted estimate can become a project", async ({ page }) => {
+  test("new estimate: confirming replaces the current estimate, no archive remains", async ({ page }) => {
     await resetWorkspace(page, "/app/estimates");
-    // createEstimate lands directly on the new estimate's detail view.
-    await createEstimate(page, "E2E Convert Job");
-    await page.getByRole("button", { name: /mark accepted/i }).click();
-    await expect(page.getByRole("button", { name: /convert to project/i })).toBeVisible();
-    await page.getByRole("button", { name: /convert to project/i }).click();
-    await expect(page).toHaveURL(/\/app\/projects/);
-    const ws = await getWorkspace(page);
-    expect(ws.projects.some((p: any) => p.name === "E2E Convert Job")).toBe(true);
-    const est = ws.estimates.find((e: any) => e.projectName === "E2E Convert Job");
-    expect(est.status).toBe("accepted");
+    await createEstimate(page, "E2E Old Job");
+    await page.getByRole("button", { name: /^new estimate$/i }).click();
+    await page.getByRole("button", { name: /start new estimate/i }).click();
+    await expect(page.getByPlaceholder("Smith Driveway")).toHaveValue("");
+    let ws = await getWorkspace(page);
+    // Exactly one current estimate -- the old one is gone, not archived.
+    expect(ws.estimates).toHaveLength(1);
+    expect(ws.estimates[0].projectName).not.toBe("E2E Old Job");
+
+    await createEstimate(page, "E2E New Job");
+    await page.reload();
+    await expect(page.getByText("E2E New Job")).toBeVisible();
+    await expect(page.getByText("E2E Old Job")).toHaveCount(0);
+    ws = await getWorkspace(page);
+    expect(ws.estimates).toHaveLength(1);
+    expect(ws.estimates[0].projectName).toBe("E2E New Job");
   });
 
-  test("print: estimate detail print produces a non-trivial PDF (chromium)", async ({ page, browserName }) => {
+  test("duplicate current estimate: also goes through replace-confirmation, prefilled with the same values", async ({ page }) => {
+    await resetWorkspace(page, "/app/estimates");
+    await createEstimate(page, "E2E Dup Source");
+    await page.getByRole("button", { name: /duplicate current estimate/i }).click();
+    await expect(page.getByRole("heading", { name: "Start a new estimate?" })).toBeVisible();
+    await page.getByRole("button", { name: /start new estimate/i }).click();
+    await expect(page.getByPlaceholder("Smith Driveway")).toHaveValue("E2E Dup Source");
+    const ws = await getWorkspace(page);
+    // Still exactly one current estimate, not two.
+    expect(ws.estimates).toHaveLength(1);
+  });
+
+  test("status change: Save & mark sent, then Mark accepted from the status selector", async ({ page }) => {
+    await resetWorkspace(page, "/app/estimates");
+    await createEstimate(page, "E2E Status Job");
+    await page.getByLabel(/estimate status/i).selectOption("accepted");
+    await expect(page.locator("span").filter({ hasText: "Accepted" })).toBeVisible();
+    const ws = await getWorkspace(page);
+    expect(ws.estimates[0].status).toBe("accepted");
+  });
+
+  test("print: current estimate view produces a non-trivial PDF (chromium)", async ({ page, browserName }) => {
     test.skip(browserName !== "chromium", "page.pdf() is Chromium-only");
     await resetWorkspace(page, "/app/estimates");
-    // createEstimate lands directly on the new estimate's detail/document view.
     await createEstimate(page, "E2E Print Job");
     const pdf = await page.pdf();
     expect(pdf.byteLength).toBeGreaterThan(1000);
   });
 
-  test("CSV export: estimates.csv reflects the created estimate", async ({ page }) => {
+  test("customer document: shows project/customer/price, hides internal cost & margin figures by default", async ({ page }) => {
+    await resetWorkspace(page, "/app/estimates");
+    await page.goto("/app/estimates");
+    await page.getByPlaceholder("Smith Driveway").fill("E2E Document Content Job");
+    await page.getByRole("button", { name: /continue/i }).click();
+    const numberInputs = page.locator('input[type="number"]');
+    await numberInputs.nth(0).fill("40");
+    await numberInputs.nth(1).fill("20");
+    await numberInputs.nth(2).fill("4");
+    await page.getByRole("button", { name: /continue/i }).click(); // -> Costs
+    await page.getByRole("button", { name: /continue/i }).click(); // -> Price
+    await page.locator('input[type="number"]').nth(2).fill("5750"); // selling price on the Price step
+    await page.getByRole("button", { name: /continue/i }).click(); // -> Customer
+    const customerTextInputs = page.locator('input[type="text"]');
+    await customerTextInputs.nth(0).fill("PDF Content Customer");
+    await customerTextInputs.nth(2).fill("742 Evergreen Terrace");
+
+    const doc = page.getByTestId("estimate-document");
+    await expect(doc).toBeVisible();
+    await expect(doc.getByText("E2E Document Content Job")).toBeVisible();
+    await expect(doc.getByText("PDF Content Customer")).toBeVisible();
+    await expect(doc.getByText("742 Evergreen Terrace")).toBeVisible();
+    await expect(doc.getByText("40 ft")).toBeVisible();
+    await expect(doc.getByText("20 ft")).toBeVisible();
+    await expect(doc.getByText("$5,750")).toBeVisible();
+
+    const docText = (await doc.innerText()).toLowerCase();
+    expect(docText).not.toContain("margin");
+    expect(docText).not.toContain("overhead");
+    expect(docText).not.toContain("true cost");
+    expect(docText).not.toContain("markup");
+  });
+
+  test("customer document: opt-in cost breakdown shows margin only when the contractor explicitly enables it", async ({ page }) => {
+    await resetWorkspace(page, "/app/estimates");
+    await createEstimate(page, "E2E Breakdown Job");
+    await page.getByRole("button", { name: "Edit", exact: true }).click();
+    for (let i = 0; i < 3; i++) await page.getByRole("button", { name: /continue/i }).click(); // Project -> Dimensions -> Costs -> Price
+    await page.getByLabel(/show cost breakdown/i).check();
+    await page.getByRole("button", { name: /continue/i }).click();
+    await page.getByRole("button", { name: /save & mark sent/i }).click();
+    const doc = page.getByTestId("estimate-document");
+    await expect(doc.getByText("Cost breakdown")).toBeVisible();
+    await expect(doc.getByText("Margin")).toBeVisible();
+  });
+
+  test("CSV export: reflects the current estimate's fields and totals", async ({ page }) => {
     await resetWorkspace(page, "/app/estimates");
     await createEstimate(page, "E2E CSV Job");
-    // Export CSV only exists on the list view.
-    await page.goto("/app/estimates");
     const [download] = await Promise.all([page.waitForEvent("download"), page.getByRole("button", { name: /export csv/i }).click()]);
-    expect(download.suggestedFilename()).toBe("estimates.csv");
     const stream = await download.createReadStream();
     const chunks: Buffer[] = [];
     for await (const chunk of stream!) chunks.push(chunk as Buffer);
     const content = Buffer.concat(chunks).toString("utf-8");
+    expect(content).toContain("Estimate number,Date,Customer,Project / address,Section,Cost item,Quantity,Unit,Unit cost,Line total,Direct cost,Overhead,True cost,Selling price,Profit,Margin,Notes");
     expect(content).toContain("E2E CSV Job");
-    expect(content).toContain("estimateNumber,projectName,customerName,status,sellingPrice");
+    expect(content).toContain("Ready mix");
   });
 });

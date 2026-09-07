@@ -38,10 +38,42 @@ for (const route of CALCULATOR_ROUTES) {
   });
 }
 
+test("/concrete-cost-calculator: negative width blocks the result, blank thickness blocks the result", async ({ page }) => {
+  await page.goto("/concrete-cost-calculator");
+  await page.fill("#f-length", "40");
+  await page.fill("#f-width", "-20");
+  await page.fill("#f-thick", "4");
+  await expect(page.getByText("Must be zero or greater.")).toBeVisible();
+  await expect(page.getByText(/Fix the highlighted field/i)).toBeVisible();
+
+  await page.fill("#f-width", "20");
+  await expect(page.getByText(/Fix the highlighted field/i)).toHaveCount(0); // fixed -> error clears
+
+  await page.fill("#f-thick", "");
+  await expect(page.getByText("Required.")).toBeVisible();
+  await expect(page.getByText(/Fix the highlighted field/i)).toBeVisible();
+});
+
 test("/concrete-job-cost-calculator: loads and computes required selling price", async ({ page }) => {
   await page.goto("/concrete-job-cost-calculator");
   await expect(page.locator("h1")).toHaveCount(1);
   await expect(page.getByText(/Required selling price/i)).toBeVisible();
+});
+
+test("/concrete-job-cost-calculator: a negative cost or a blank required cost blocks the result", async ({ page }) => {
+  await page.goto("/concrete-job-cost-calculator");
+  const laborInput = page.locator("#jc-labor");
+  await laborInput.fill("-500");
+  await expect(page.getByText("Must be zero or greater.")).toBeVisible();
+  await expect(page.getByText(/Fix the highlighted cost field/i)).toBeVisible();
+
+  await laborInput.fill("500");
+  await expect(page.getByText(/Fix the highlighted cost field/i)).toHaveCount(0); // fixed -> error clears
+
+  const readyMixInput = page.locator("#jc-ready-mix-concrete");
+  await readyMixInput.fill("");
+  await expect(page.getByText("Required.")).toBeVisible();
+  await expect(page.getByText(/Fix the highlighted cost field/i)).toBeVisible();
 });
 
 test("/concrete-estimate-template: loads and print button is present", async ({ page }) => {

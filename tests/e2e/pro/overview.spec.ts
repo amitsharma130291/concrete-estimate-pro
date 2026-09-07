@@ -22,16 +22,18 @@ test.describe("Pro app: Overview tab (/app)", () => {
     expect(wsAfterReload.templates.length).toBe(ws.templates.length);
   });
 
-  test("KPI tiles and recent estimates list render with sample data, no console errors", async ({ page }) => {
+  test("current-estimate summary and Rate Health render with sample data, no console errors", async ({ page }) => {
     const errors: string[] = [];
     page.on("pageerror", (e) => errors.push(String(e)));
     await resetWorkspace(page);
     await page.getByRole("button", { name: /load sample data/i }).click();
-    await expect(page.getByText("Quoted")).toBeVisible();
-    await expect(page.getByText("Won")).toBeVisible();
-    await expect(page.getByText("Expected profit")).toBeVisible();
-    await expect(page.getByText("Average margin")).toBeVisible();
-    await expect(page.getByText("Recent estimates")).toBeVisible();
+    // Single-current-estimate model: Overview shows the one current estimate's own stats,
+    // not cross-estimate aggregates (Quoted/Won/Expected profit/Average margin/Recent
+    // estimates were all cross-estimate KPIs and no longer apply -- see OverviewTab.tsx).
+    await expect(page.getByRole("heading", { name: "Current estimate" })).toBeVisible();
+    await expect(page.getByText("Selling price")).toBeVisible();
+    await expect(page.getByText("Required price")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Rate Health" })).toBeVisible();
     expect(errors).toEqual([]);
   });
 });

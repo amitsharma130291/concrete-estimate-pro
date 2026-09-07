@@ -1,61 +1,17 @@
-import { test, expect } from "@playwright/test";
+// This was an early smoke-test file (predates the tests/e2e/pro/ directory) driving the
+// same 5-step wizard flow, reading back from the legacy single-blob `cep:workspace:v1` key.
+// Under the single-current-estimate rewrite:
+//   - The wizard flow itself, more thoroughly, is covered by tests/e2e/pro/estimates.spec.ts
+//     ("create: full wizard produces the current estimate, persisted in localStorage").
+//   - The Settings/Catalog smoke checks are covered, more thoroughly, by
+//     tests/e2e/pro/settings.spec.ts and tests/e2e/pro/catalog.spec.ts.
+//   - `cep:workspace:v1` is now only ever read once, for one-time legacy migration (see
+//     migrateLegacyDataIfNeeded() in src/lib/persistence.ts) -- the app never writes to it,
+//     so this file's own localStorage assertion could never pass under the new model
+//     regardless of the UI flow above it.
+// Left empty rather than adapted, to avoid maintaining the same coverage in two places.
+import { test } from "@playwright/test";
 
-test.describe.configure({ mode: "serial" });
-
-test("Pro app: create an estimate through the 5-step wizard, it persists to localStorage and survives reload", async ({ page }) => {
-  await page.goto("/app/estimates");
-  await page.evaluate(() => window.localStorage.clear());
-  await page.goto("/app/estimates");
-
-  await page.getByRole("button", { name: /new estimate/i }).first().click();
-
-  // Step 1: Project
-  await expect(page.getByRole("heading", { name: "Project" })).toBeVisible();
-  await page.getByPlaceholder("Smith Driveway").fill("QA Audit Driveway");
-  await page.getByRole("button", { name: /continue/i }).click();
-
-  // Step 2: Dimensions — SectionsEditor's first section inputs
-  await expect(page.getByRole("heading", { name: "Dimensions" })).toBeVisible();
-  const numberInputs = page.locator('input[type="number"]');
-  await numberInputs.nth(0).fill("40"); // length
-  await numberInputs.nth(1).fill("20"); // width
-  await numberInputs.nth(2).fill("4"); // thickness
-  await page.getByRole("button", { name: /continue/i }).click();
-
-  // Step 3: Costs
-  await expect(page.getByRole("heading", { name: "Costs" })).toBeVisible();
-  await page.getByRole("button", { name: /continue/i }).click();
-
-  // Step 4: Price
-  await expect(page.getByRole("heading", { name: "Price" })).toBeVisible();
-  await page.getByRole("button", { name: /continue/i }).click();
-
-  // Step 5: Customer -> Save & mark sent (customerName is required for canContinue)
-  await expect(page.getByRole("heading", { name: "Customer" })).toBeVisible();
-  await page.locator('input[type="text"]').first().fill("Jane QA");
-  await page.getByRole("button", { name: /save & mark sent/i }).click();
-
-  await expect(page).toHaveURL(/\/app\/estimates/);
-  await expect(page.getByText("QA Audit Driveway")).toBeVisible();
-
-  const stored = await page.evaluate(() => window.localStorage.getItem("cep:workspace:v1"));
-  expect(stored).toBeTruthy();
-  const ws = JSON.parse(stored!);
-  expect(ws.estimates.some((e: any) => e.projectName === "QA Audit Driveway")).toBe(true);
-
-  await page.reload();
-  await expect(page.getByText("QA Audit Driveway")).toBeVisible();
-});
-
-test("Pro app: Settings tab loads and business profile field is editable", async ({ page }) => {
-  await page.goto("/app/settings");
-  await expect(page.locator("h1, h2").first()).toBeVisible();
-});
-
-test("Pro app: Catalog tab loads without console errors", async ({ page }) => {
-  const errors: string[] = [];
-  page.on("pageerror", (e) => errors.push(String(e)));
-  await page.goto("/app/catalog");
-  await page.waitForTimeout(200);
-  expect(errors).toEqual([]);
+test.describe("Pro app workflow smoke test (superseded)", () => {
+  test.skip("superseded by tests/e2e/pro/estimates.spec.ts, settings.spec.ts, catalog.spec.ts -- see file header", () => {});
 });

@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Ruler, Coins, Calculator, TriangleAlert, ArrowRight } from "lucide-react";
 import { Card, Field, NumberInput, Select, Button, Badge } from "../ui/primitives";
-import { calculateEstimate, formatCurrency, formatPercent, formatYd3, type Rounding } from "../../lib/calc";
+import { calculateEstimate, formatCurrency, formatPercent, formatYd3, getZeroCostWarnings, type Rounding } from "../../lib/calc";
+import { numberFieldError, parseRequiredNumber } from "../../lib/validation";
 import type { CalculatorConfig } from "../../data/calculatorConfigs";
 import { track } from "../../lib/analytics";
 
@@ -71,29 +72,56 @@ export default function ProjectCalculatorIsland({ config }: { config: Calculator
 
   const marginTone = result.pricing.isBelowTarget ? "text-red" : "text-green";
 
+  const lengthError = numberFieldError(lengthFt);
+  const widthError = numberFieldError(widthValue);
+  const thicknessError = numberFieldError(thicknessIn);
+  const allowanceError = numberFieldError(allowancePercent);
+  const readyMixError = numberFieldError(readyMixRate);
+  const laborError = numberFieldError(laborCost);
+  const formsError = numberFieldError(formsCost);
+  const reinforcementError = numberFieldError(reinforcementCost);
+  const equipmentError = numberFieldError(equipmentCost);
+  const otherError = numberFieldError(otherCost);
+  // sellingPriceError deliberately excluded here -- see the note by its field below.
+  const hasBlockingError = !!(
+    lengthError ||
+    widthError ||
+    thicknessError ||
+    allowanceError ||
+    readyMixError ||
+    laborError ||
+    formsError ||
+    reinforcementError ||
+    equipmentError ||
+    otherError
+  );
+  const sellingPriceError = numberFieldError(sellingPrice);
+
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-[60%_40%] lg:items-start">
       <div className="flex flex-col gap-6">
         <Card title="Project Dimensions" icon={<Ruler size={18} />} subtitle="Calculate your concrete volume">
-          <Field label={config.length.label} hint={config.length.hint} htmlFor="f-length">
+          <Field label={config.length.label} hint={config.length.hint} error={lengthError} htmlFor="f-length">
             <div className="flex overflow-hidden rounded-lg border border-border shadow-sm focus-within:border-orange">
               <NumberInput
                 id="f-length"
                 min={0}
                 value={lengthFt}
-                onChange={(e) => setLengthFt(e.target.value === "" ? 0 : parseFloat(e.target.value))}
+                error={lengthError}
+                onChange={(e) => setLengthFt(parseRequiredNumber(e.target.value))}
                 className="rounded-none border-0 shadow-none focus:border-0"
               />
               <span className="flex items-center border-l border-border bg-warm-white px-2.5 text-sm text-muted">ft</span>
             </div>
           </Field>
-          <Field label={config.width.label} hint={config.width.hint} htmlFor="f-width">
+          <Field label={config.width.label} hint={config.width.hint} error={widthError} htmlFor="f-width">
             <div className="flex overflow-hidden rounded-lg border border-border shadow-sm focus-within:border-orange">
               <NumberInput
                 id="f-width"
                 min={0}
                 value={widthValue}
-                onChange={(e) => setWidthValue(e.target.value === "" ? 0 : parseFloat(e.target.value))}
+                error={widthError}
+                onChange={(e) => setWidthValue(parseRequiredNumber(e.target.value))}
                 className="rounded-none border-0 shadow-none focus:border-0"
               />
               {config.width.allowUnitToggle ? (
@@ -113,25 +141,26 @@ export default function ProjectCalculatorIsland({ config }: { config: Calculator
               )}
             </div>
           </Field>
-          <Field label={config.thickness.label} hint={config.thickness.hint} htmlFor="f-thick">
+          <Field label={config.thickness.label} hint={config.thickness.hint} error={thicknessError} htmlFor="f-thick">
             <div className="flex overflow-hidden rounded-lg border border-border shadow-sm focus-within:border-orange">
               <NumberInput
                 id="f-thick"
                 min={0}
                 value={thicknessIn}
-                onChange={(e) => setThicknessIn(e.target.value === "" ? 0 : parseFloat(e.target.value))}
+                error={thicknessError}
+                onChange={(e) => setThicknessIn(parseRequiredNumber(e.target.value))}
                 className="rounded-none border-0 shadow-none focus:border-0"
               />
               <span className="flex items-center border-l border-border bg-warm-white px-2.5 text-sm text-muted">in</span>
             </div>
           </Field>
-          <Field label="Order allowance" hint="Extra for waste and overage" htmlFor="f-allow">
+          <Field label="Order allowance" hint="Extra for waste and overage" htmlFor="f-allow" error={allowanceError}>
             <div className="flex overflow-hidden rounded-lg border border-border shadow-sm focus-within:border-orange">
               <NumberInput
                 id="f-allow"
-                min={0}
                 value={allowancePercent}
-                onChange={(e) => setAllowancePercent(e.target.value === "" ? 0 : parseFloat(e.target.value))}
+                error={allowanceError}
+                onChange={(e) => setAllowancePercent(parseRequiredNumber(e.target.value))}
                 className="rounded-none border-0 shadow-none focus:border-0"
               />
               <span className="flex items-center border-l border-border bg-warm-white px-2.5 text-sm text-muted">%</span>
@@ -140,42 +169,48 @@ export default function ProjectCalculatorIsland({ config }: { config: Calculator
           <Field label="Round order to" hint="How you round the ready-mix order" htmlFor="f-round">
             <Select id="f-round" value={rounding} onChange={(e) => setRounding(e.target.value as Rounding)}>
               <option value="none">Exact amount</option>
-              <option value="quarter">Nearest 0.25 yd³</option>
-              <option value="half">Nearest 0.5 yd³</option>
-              <option value="whole">Nearest 1 yd³</option>
+              <option value="quarter">Round up to next 0.25 yd³</option>
+              <option value="half">Round up to next 0.5 yd³</option>
+              <option value="whole">Round up to next whole yd³</option>
             </Select>
           </Field>
         </Card>
 
         <Card title="Cost Inputs" icon={<Coins size={18} />} subtitle="Enter your estimated costs">
-          <Field label="Ready mix concrete" hint="Cost per cubic yard" htmlFor="f-readymix">
+          <Field label="Ready mix concrete" hint="Cost per cubic yard" htmlFor="f-readymix" error={readyMixError}>
             <div className="flex overflow-hidden rounded-lg border border-border shadow-sm focus-within:border-orange">
               <span className="flex items-center border-r border-border bg-warm-white px-2.5 text-sm text-muted">$</span>
               <NumberInput
                 id="f-readymix"
-                min={0}
                 value={readyMixRate}
-                onChange={(e) => setReadyMixRate(e.target.value === "" ? 0 : parseFloat(e.target.value))}
+                error={readyMixError}
+                onChange={(e) => setReadyMixRate(parseRequiredNumber(e.target.value))}
                 className="rounded-none border-0 shadow-none focus:border-0"
               />
               <span className="flex items-center border-l border-border bg-warm-white px-2.5 text-sm text-muted">/yd³</span>
             </div>
           </Field>
-          <Field label="Labor" hint="Total labor cost" htmlFor="f-labor">
-            <DollarInput id="f-labor" value={laborCost} onChange={setLaborCost} />
+          <Field label="Labor" hint="Total labor cost" htmlFor="f-labor" error={laborError}>
+            <DollarInput id="f-labor" value={laborCost} error={laborError} onChange={setLaborCost} />
           </Field>
-          <Field label="Forms (framing)" hint="Formwork materials and setup" htmlFor="f-forms">
-            <DollarInput id="f-forms" value={formsCost} onChange={setFormsCost} />
+          <Field label="Forms (framing)" hint="Formwork materials and setup" htmlFor="f-forms" error={formsError}>
+            <DollarInput id="f-forms" value={formsCost} error={formsError} onChange={setFormsCost} />
           </Field>
-          <Field label="Reinforcement" hint="Wire mesh, rebar, etc." htmlFor="f-reinf">
-            <DollarInput id="f-reinf" value={reinforcementCost} onChange={setReinforcementCost} />
+          <Field label="Reinforcement" hint="Wire mesh, rebar, etc." htmlFor="f-reinf" error={reinforcementError}>
+            <DollarInput id="f-reinf" value={reinforcementCost} error={reinforcementError} onChange={setReinforcementCost} />
           </Field>
-          <Field label="Equipment" hint="Pump, saw, equipment rental" htmlFor="f-equip">
-            <DollarInput id="f-equip" value={equipmentCost} onChange={setEquipmentCost} />
+          <Field label="Equipment" hint="Pump, saw, equipment rental" htmlFor="f-equip" error={equipmentError}>
+            <DollarInput id="f-equip" value={equipmentCost} error={equipmentError} onChange={setEquipmentCost} />
           </Field>
-          <Field label="Other" hint="Permits, cleanup, misc." htmlFor="f-other">
-            <DollarInput id="f-other" value={otherCost} onChange={setOtherCost} />
+          <Field label="Other" hint="Permits, cleanup, misc." htmlFor="f-other" error={otherError}>
+            <DollarInput id="f-other" value={otherCost} error={otherError} onChange={setOtherCost} />
           </Field>
+          {getZeroCostWarnings({ readyMixRatePerYd3: readyMixRate, laborCost }, result.quantity.areaSqFt).map((w) => (
+            <div key={w} className="mt-1 flex items-start gap-2 rounded-lg border border-amber/30 bg-amber-light px-3 py-2.5 text-sm text-amber" role="alert">
+              <TriangleAlert size={15} className="mt-0.5 shrink-0" aria-hidden="true" />
+              <span>{w}</span>
+            </div>
+          ))}
         </Card>
 
         {config.safetyNote && (
@@ -188,6 +223,18 @@ export default function ProjectCalculatorIsland({ config }: { config: Calculator
 
       <div className="flex flex-col gap-4 lg:sticky lg:top-6">
         <Card title="Project Estimate" icon={<Calculator size={18} />} subtitle="Based on your inputs">
+          {hasBlockingError ? (
+            <div className="rounded-lg border border-red/20 bg-red-light p-4" role="alert">
+              <div className="flex items-start gap-2.5">
+                <TriangleAlert size={18} className="mt-0.5 shrink-0 text-red" aria-hidden="true" />
+                <div>
+                  <div className="text-sm font-semibold text-red">Fix the highlighted field above</div>
+                  <p className="mt-0.5 text-sm text-red">Every dimension and cost is required and can't be negative -- enter a valid amount (or 0) to see your estimate.</p>
+                </div>
+              </div>
+            </div>
+          ) : (
+          <>
           <div className="divide-y divide-border">
             <ResultRow label="Order quantity" value={formatYd3(result.quantity.orderQuantityYd3)} sub={`Including ${allowancePercent}% allowance`} />
             <ResultRow label="Project cost" value={formatCurrency(result.cost.directCost)} sub="Total direct cost" />
@@ -204,12 +251,17 @@ export default function ProjectCalculatorIsland({ config }: { config: Calculator
                 <span className="flex items-center border-r border-border bg-warm-white px-2.5 text-sm text-muted">$</span>
                 <NumberInput
                   id="f-price"
-                  min={0}
                   value={sellingPrice}
-                  onChange={(e) => setSellingPrice(e.target.value === "" ? 0 : parseFloat(e.target.value))}
+                  error={sellingPriceError}
+                  onChange={(e) => setSellingPrice(parseRequiredNumber(e.target.value))}
                   className="rounded-none border-0 text-lg font-semibold shadow-none focus:border-0"
                 />
               </div>
+              {sellingPriceError && (
+                <span role="alert" className="text-xs font-medium text-red">
+                  {sellingPriceError}
+                </span>
+              )}
             </div>
 
             <ResultRow
@@ -219,16 +271,18 @@ export default function ProjectCalculatorIsland({ config }: { config: Calculator
               tone="green"
               big
             />
-            <ResultRow
-              label="Current margin"
-              value={formatPercent(result.pricing.currentMargin, 0)}
-              sub="Based on your selling price"
-              tone={result.pricing.isBelowTarget ? "red" : "green"}
-              big
-            />
+            {!sellingPriceError && (
+              <ResultRow
+                label="Current margin"
+                value={formatPercent(result.pricing.currentMargin, 0)}
+                sub="Based on your selling price"
+                tone={result.pricing.isBelowTarget ? "red" : "green"}
+                big
+              />
+            )}
           </div>
 
-          {result.pricing.isBelowTarget ? (
+          {sellingPriceError ? null : result.pricing.isBelowTarget ? (
             <div className="mt-4 rounded-lg border border-red/20 bg-red-light p-4">
               <div className="flex items-start gap-2.5">
                 <TriangleAlert size={18} className="mt-0.5 shrink-0 text-red" aria-hidden="true" />
@@ -248,6 +302,8 @@ export default function ProjectCalculatorIsland({ config }: { config: Calculator
                 This price clears your {targetMarginPercent}% margin target by {formatPercent((result.pricing.currentMargin ?? 0) - targetMarginPercent / 100, 0)}.
               </p>
             </div>
+          )}
+          </>
           )}
 
           <a href="/pricing">
@@ -282,17 +338,11 @@ export default function ProjectCalculatorIsland({ config }: { config: Calculator
   );
 }
 
-function DollarInput({ id, value, onChange }: { id: string; value: number; onChange: (v: number) => void }) {
+function DollarInput({ id, value, error, onChange }: { id: string; value: number; error?: string | null; onChange: (v: number) => void }) {
   return (
     <div className="flex overflow-hidden rounded-lg border border-border shadow-sm focus-within:border-orange">
       <span className="flex items-center border-r border-border bg-warm-white px-2.5 text-sm text-muted">$</span>
-      <NumberInput
-        id={id}
-        min={0}
-        value={value}
-        onChange={(e) => onChange(e.target.value === "" ? 0 : parseFloat(e.target.value))}
-        className="rounded-none border-0 shadow-none focus:border-0"
-      />
+      <NumberInput id={id} value={value} error={error} onChange={(e) => onChange(parseRequiredNumber(e.target.value))} className="rounded-none border-0 shadow-none focus:border-0" />
     </div>
   );
 }

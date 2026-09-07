@@ -1,16 +1,14 @@
-import { useMemo, useState } from "react";
-import { PlusCircle, Trash2 } from "lucide-react";
+import { useState } from "react";
 import { useWorkspace } from "../../../lib/workspaceContext";
-import { newId, removeBy, upsertBy } from "../../../lib/storage";
-import { evaluateProject } from "../../../lib/estimateMath";
-import { calculateMargin, formatCurrency, formatPercent, formatYd3 } from "../../../lib/calc";
+import { evaluateEstimate } from "../../../lib/estimateMath";
+import { calculateMargin, formatCurrency, formatPercent, formatYd3, safe } from "../../../lib/calc";
+import { numberFieldError, parseRequiredNumber } from "../../../lib/validation";
 import type { ActualJobResult } from "../../../lib/types";
-import { Button, Card, EmptyState, Field, Modal, NumberInput, Select } from "../../ui/primitives";
+import { Button, Card, EmptyState, Field, Modal, NumberInput } from "../../ui/primitives";
+import SaveStatusIndicator from "../SaveStatusIndicator";
 
-function blankActual(projectId: string): ActualJobResult {
+function blankActual(): ActualJobResult {
   return {
-    id: newId("act"),
-    projectId,
     actualQuantityYd3: 0,
     actualLaborHours: 0,
     actualLaborCost: 0,
@@ -22,213 +20,113 @@ function blankActual(projectId: string): ActualJobResult {
   };
 }
 
+/** "Current Estimate vs Actual" -- compares the single current estimate against one logged
+ * actual result for it. There is no per-job history, no cross-job averages, and no archive:
+ * replacing the current estimate also clears whatever actual was logged against it (see
+ * Workspace.currentActual's doc comment in types.ts). */
 export default function ActualsTab() {
-  const { workspace, update } = useWorkspace();
-  const [creating, setCreating] = useState(false);
-  const [preselectProjectId] = useState<string | undefined>(() => {
-    if (typeof window === "undefined") return undefined;
-    return new URLSearchParams(window.location.search).get("projectId") ?? undefined;
-  });
+  const { currentEstimate, currentActual, updateCurrentActual, flushCurrentEstimateNow, estimateSaveStatus, estimateLastSavedAt, estimateSaveError, storageAvailable } = useWorkspace();
+  const [logging, setLogging] = useState(false);
 
-  const eligibleProjects = workspace.projects.filter((p) => !workspace.actuals.some((a) => a.projectId === p.id));
-
-  function save(a: ActualJobResult) {
-    update((ws) => ({ ...ws, actuals: upsertBy(ws.actuals, a) }));
-    setCreating(false);
-  }
-  function remove(id: string) {
-    update((ws) => ({ ...ws, actuals: removeBy(ws.actuals, id) }));
+  if (!currentEstimate) {
+    return (
+      <div className="flex flex-col gap-6">
+        <PageHeader />
+        <EmptyState title="No current estimate yet" desc="Start an estimate first, then come back here once it's complete to log the actual job result." />
+      </div>
+    );
   }
 
-  const rows = useMemo(
-    () =>
-      workspace.actuals
-        .map((a) => {
-          const project = workspace.projects.find((p) => p.id === a.projectId);
-          if (!project) return null;
-          const est = evaluateProject(project);
-          const actualCost = a.actualLaborCost + a.actualMaterialCost + a.actualEquipmentCost + a.actualOtherCost;
-          const actualMargin = calculateMargin(a.finalSellingPrice, actualCost);
-          const quantityVariance = est.orderQuantityYd3 > 0 ? (a.actualQuantityYd3 - est.orderQuantityYd3) / est.orderQuantityYd3 : null;
-          return { actual: a, project, est, actualCost, actualMargin, quantityVariance };
-        })
-        .filter((r): r is NonNullable<typeof r> => r !== null),
-    [workspace.actuals, workspace.projects],
-  );
-
-  const byType = useMemo(() => {
-    const groups: Record<string, { count: number; estMarginSum: number; actMarginSum: number }> = {};
-    for (const r of rows) {
-      const key = r.project.projectType;
-      groups[key] ??= { count: 0, estMarginSum: 0, actMarginSum: 0 };
-      const estMargin = calculateMargin(r.project.sellingPrice, r.est.trueCost) ?? 0;
-      groups[key].count += 1;
-      groups[key].estMarginSum += estMargin;
-      groups[key].actMarginSum += r.actualMargin ?? 0;
-    }
-    return groups;
-  }, [rows]);
-
-  // Estimated person-hours are only meaningful for projects whose labor was entered in
-  // hourly mode (crew size x hours) — flat or unit-rate labor has no hours estimate to compare.
-  const varianceByType = useMemo(() => {
-    const groups: Record<
-      string,
-      { count: number; estQtySum: number; actQtySum: number; hoursCount: number; estHoursSum: number; actHoursSum: number }
-    > = {};
-    for (const r of rows) {
-      const key = r.project.projectType;
-      groups[key] ??= { count: 0, estQtySum: 0, actQtySum: 0, hoursCount: 0, estHoursSum: 0, actHoursSum: 0 };
-      groups[key].count += 1;
-      groups[key].estQtySum += r.est.orderQuantityYd3;
-      groups[key].actQtySum += r.actual.actualQuantityYd3;
-      if (r.project.labor?.mode === "hourly") {
-        groups[key].hoursCount += 1;
-        groups[key].estHoursSum += r.project.labor.crewSize * r.project.labor.hours;
-        groups[key].actHoursSum += r.actual.actualLaborHours;
-      }
-    }
-    return groups;
-  }, [rows]);
+  const est = evaluateEstimate(currentEstimate);
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold text-ink">Actuals</h1>
-          <p className="text-sm text-muted">Log real job results and see how they compare to your estimate.</p>
-        </div>
-        <Button onClick={() => setCreating(true)} disabled={eligibleProjects.length === 0}>
-          <PlusCircle size={16} /> Log actual result
-        </Button>
-      </div>
+      <PageHeader />
 
-      {Object.keys(varianceByType).length > 0 && (
-        <Card title="Historical quantity & labor variance" subtitle={rows.length < 5 ? "Small sample — treat as directional, not statistically reliable" : undefined}>
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[640px] text-left text-sm">
-              <thead>
-                <tr className="text-xs uppercase text-muted">
-                  <th className="pb-2 font-medium">Type</th>
-                  <th className="pb-2 font-medium">Jobs</th>
-                  <th className="pb-2 font-medium">Avg. est. quantity</th>
-                  <th className="pb-2 font-medium">Avg. actual quantity</th>
-                  <th className="pb-2 font-medium">Quantity variance</th>
-                  <th className="pb-2 font-medium">Avg. est. labor hrs</th>
-                  <th className="pb-2 font-medium">Avg. actual labor hrs</th>
-                  <th className="pb-2 font-medium">Labor variance</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {Object.entries(varianceByType).map(([type, g]) => {
-                  const avgEstQty = g.estQtySum / g.count;
-                  const avgActQty = g.actQtySum / g.count;
-                  const qtyVariance = avgEstQty > 0 ? (avgActQty - avgEstQty) / avgEstQty : null;
-                  const hasHours = g.hoursCount > 0;
-                  const avgEstHours = hasHours ? g.estHoursSum / g.hoursCount : null;
-                  const avgActHours = hasHours ? g.actHoursSum / g.hoursCount : null;
-                  const hoursVariance = hasHours && avgEstHours! > 0 ? (avgActHours! - avgEstHours!) / avgEstHours! : null;
-                  return (
-                    <tr key={type}>
-                      <td className="py-2 capitalize text-ink">{type}</td>
-                      <td className="py-2 text-ink">{g.count}</td>
-                      <td className="py-2 text-ink">{formatYd3(avgEstQty)}</td>
-                      <td className="py-2 text-ink">{formatYd3(avgActQty)}</td>
-                      <td className={`py-2 font-medium ${qtyVariance !== null && qtyVariance > 0 ? "text-red" : "text-green"}`}>
-                        {qtyVariance !== null ? `${qtyVariance >= 0 ? "+" : ""}${(qtyVariance * 100).toFixed(1)}%` : "—"}
-                      </td>
-                      <td className="py-2 text-ink">{avgEstHours !== null ? `${avgEstHours.toFixed(1)} hrs` : "—"}</td>
-                      <td className="py-2 text-ink">{avgActHours !== null ? `${avgActHours.toFixed(1)} hrs` : "—"}</td>
-                      <td className={`py-2 font-medium ${hoursVariance !== null && hoursVariance > 0 ? "text-red" : "text-green"}`}>
-                        {hoursVariance !== null ? `${hoursVariance >= 0 ? "+" : ""}${(hoursVariance * 100).toFixed(1)}%` : `— ${g.hoursCount === 0 ? "(no hourly-mode jobs)" : ""}`}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+      <Card title={currentEstimate.projectName || "Current estimate"} subtitle={currentEstimate.customerName || undefined}>
+        {!currentActual ? (
+          <div className="flex flex-col items-start gap-3">
+            <p className="text-sm text-muted">
+              No actual result logged yet for this estimate. Once the job is done, log the real quantity, labor and
+              costs to see how they compared.
+            </p>
+            <Button onClick={() => setLogging(true)}>Log actual result</Button>
           </div>
-          <p className="mt-3 text-xs text-muted">
-            Labor variance only includes jobs whose labor was entered in hourly mode (crew size × hours) — flat or
-            $/ft² labor has no hours estimate to compare against.
-          </p>
-        </Card>
-      )}
-
-      {Object.keys(byType).length > 0 && (
-        <Card title="Historical profitability by project type" subtitle={rows.length < 5 ? "Small sample — treat as directional, not statistically reliable" : undefined}>
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[520px] text-left text-sm">
-              <thead>
-                <tr className="text-xs uppercase text-muted">
-                  <th className="pb-2 font-medium">Type</th>
-                  <th className="pb-2 font-medium">Jobs</th>
-                  <th className="pb-2 font-medium">Avg. expected margin</th>
-                  <th className="pb-2 font-medium">Avg. actual margin</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {Object.entries(byType).map(([type, g]) => (
-                  <tr key={type}>
-                    <td className="py-2 capitalize text-ink">{type}</td>
-                    <td className="py-2 text-ink">{g.count}</td>
-                    <td className="py-2 text-ink">{formatPercent(g.estMarginSum / g.count, 0)}</td>
-                    <td className={`py-2 font-medium ${g.actMarginSum / g.count < g.estMarginSum / g.count ? "text-red" : "text-green"}`}>
-                      {formatPercent(g.actMarginSum / g.count, 0)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </Card>
-      )}
-
-      {rows.length === 0 ? (
-        <EmptyState
-          title="No actuals logged yet"
-          desc="Mark a project as Completed, then log its actual quantity, labor and costs here to compare against your estimate."
-        />
-      ) : (
-        <div className="flex flex-col gap-3">
-          {rows.map(({ actual, project, est, actualCost, actualMargin, quantityVariance }) => (
-            <Card key={actual.id}>
-              <div className="flex flex-wrap items-start justify-between gap-3">
-                <div>
-                  <div className="font-semibold text-ink">{project.name}</div>
-                  <div className="text-xs text-muted">Completed {new Date(actual.completedAt).toLocaleDateString("en-US")}</div>
-                </div>
-                <button type="button" onClick={() => remove(actual.id)} aria-label="Delete actual" className="rounded-lg p-1.5 text-muted hover:bg-red-light hover:text-red">
-                  <Trash2 size={15} />
-                </button>
+        ) : (
+          <>
+            <div className="grid grid-cols-2 gap-4 text-sm sm:grid-cols-4">
+              <Compare
+                label="Quantity"
+                estimated={formatYd3(est.orderQuantityYd3)}
+                actual={formatYd3(currentActual.actualQuantityYd3)}
+                variancePercent={est.orderQuantityYd3 > 0 ? (safe(currentActual.actualQuantityYd3) - est.orderQuantityYd3) / est.orderQuantityYd3 : null}
+              />
+              <Compare
+                label="Cost"
+                estimated={formatCurrency(est.trueCost)}
+                actual={formatCurrency(actualCost(currentActual, currentEstimate.overheadPercent))}
+                variancePercent={est.trueCost > 0 ? (actualCost(currentActual, currentEstimate.overheadPercent) - est.trueCost) / est.trueCost : null}
+              />
+              <Compare
+                label="Margin"
+                estimated={formatPercent(calculateMargin(currentEstimate.sellingPrice, est.trueCost), 0)}
+                actual={formatPercent(calculateMargin(currentActual.finalSellingPrice, actualCost(currentActual, currentEstimate.overheadPercent)), 0)}
+                variancePercent={null}
+              />
+              <div>
+                <div className="text-xs text-muted">Final price</div>
+                <div className="font-medium text-ink">{formatCurrency(currentActual.finalSellingPrice)}</div>
               </div>
-              <div className="mt-3 grid grid-cols-2 gap-4 text-sm sm:grid-cols-4">
-                <Compare label="Quantity" estimated={formatYd3(est.orderQuantityYd3)} actual={formatYd3(actual.actualQuantityYd3)} variancePercent={quantityVariance} />
-                <Compare label="Cost" estimated={formatCurrency(est.trueCost)} actual={formatCurrency(actualCost)} variancePercent={est.trueCost > 0 ? (actualCost - est.trueCost) / est.trueCost : null} />
-                <Compare
-                  label="Margin"
-                  estimated={formatPercent(calculateMargin(project.sellingPrice, est.trueCost), 0)}
-                  actual={formatPercent(actualMargin, 0)}
-                  variancePercent={null}
-                />
-                <div>
-                  <div className="text-xs text-muted">Final price</div>
-                  <div className="font-medium text-ink">{formatCurrency(actual.finalSellingPrice)}</div>
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
-      )}
+            </div>
+            <div className="mt-4 flex gap-2">
+              <Button size="sm" variant="ghost" onClick={() => setLogging(true)}>
+                Edit actual result
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                aria-label="Remove actual result"
+                onClick={() => {
+                  updateCurrentActual(() => null);
+                  flushCurrentEstimateNow();
+                }}
+              >
+                Remove actual result
+              </Button>
+            </div>
+          </>
+        )}
+      </Card>
 
-      {creating && (
+      {logging && (
         <ActualEditor
-          projects={eligibleProjects}
-          initialProjectId={preselectProjectId}
-          onSave={save}
-          onCancel={() => setCreating(false)}
+          initial={currentActual ?? blankActual()}
+          onSave={(a) => {
+            updateCurrentActual(() => a);
+            flushCurrentEstimateNow();
+            setLogging(false);
+          }}
+          onCancel={() => setLogging(false)}
         />
       )}
+
+      <div className="no-print">
+        <SaveStatusIndicator status={estimateSaveStatus} lastSavedAt={estimateLastSavedAt} errorMessage={estimateSaveError} storageAvailable={storageAvailable} />
+      </div>
+    </div>
+  );
+}
+
+function actualCost(a: ActualJobResult, overheadPercent: number): number {
+  const direct = safe(a.actualLaborCost) + safe(a.actualMaterialCost) + safe(a.actualEquipmentCost) + safe(a.actualOtherCost);
+  return direct * (1 + overheadPercent / 100);
+}
+
+function PageHeader() {
+  return (
+    <div>
+      <h1 className="text-2xl font-bold text-ink">Current Estimate vs Actual</h1>
+      <p className="text-sm text-muted">Log the real job result and see how it compared to your estimate.</p>
     </div>
   );
 }
@@ -253,32 +151,21 @@ function Compare({ label, estimated, actual, variancePercent }: { label: string;
   );
 }
 
-function ActualEditor({
-  projects,
-  initialProjectId,
-  onSave,
-  onCancel,
-}: {
-  projects: { id: string; name: string }[];
-  initialProjectId?: string;
-  onSave: (a: ActualJobResult) => void;
-  onCancel: () => void;
-}) {
-  const defaultProjectId = initialProjectId && projects.some((p) => p.id === initialProjectId) ? initialProjectId : projects[0]?.id ?? "";
-  const [draft, setDraft] = useState<ActualJobResult>(blankActual(defaultProjectId));
+function ActualEditor({ initial, onSave, onCancel }: { initial: ActualJobResult; onSave: (a: ActualJobResult) => void; onCancel: () => void }) {
+  const [draft, setDraft] = useState<ActualJobResult>(initial);
+
+  const qtyError = numberFieldError(draft.actualQuantityYd3);
+  const hoursError = numberFieldError(draft.actualLaborHours);
+  const laborCostError = numberFieldError(draft.actualLaborCost);
+  const materialCostError = numberFieldError(draft.actualMaterialCost);
+  const equipmentCostError = numberFieldError(draft.actualEquipmentCost);
+  const otherCostError = numberFieldError(draft.actualOtherCost);
+  const sellingPriceError = numberFieldError(draft.finalSellingPrice);
+  const hasBlockingError = !!(qtyError || hoursError || laborCostError || materialCostError || equipmentCostError || otherCostError || sellingPriceError);
 
   return (
     <Modal title="Log actual job result" onClose={onCancel} wide>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <Field label="Project">
-          <Select value={draft.projectId} onChange={(e) => setDraft((d) => ({ ...d, projectId: e.target.value }))}>
-            {projects.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.name}
-              </option>
-            ))}
-          </Select>
-        </Field>
         <Field label="Completed date">
           <input
             type="date"
@@ -287,33 +174,38 @@ function ActualEditor({
             className="w-full rounded-lg border border-border px-3 py-2 text-sm shadow-sm focus:border-orange"
           />
         </Field>
-        <Field label="Actual quantity (yd³)">
-          <NumberInput value={draft.actualQuantityYd3} onChange={(e) => setDraft((d) => ({ ...d, actualQuantityYd3: parseFloat(e.target.value) || 0 }))} />
+        <Field label="Actual quantity (yd³)" error={qtyError}>
+          <NumberInput value={draft.actualQuantityYd3} error={qtyError} onChange={(e) => setDraft((d) => ({ ...d, actualQuantityYd3: parseRequiredNumber(e.target.value) }))} />
         </Field>
-        <Field label="Actual labor hours">
-          <NumberInput value={draft.actualLaborHours} onChange={(e) => setDraft((d) => ({ ...d, actualLaborHours: parseFloat(e.target.value) || 0 }))} />
+        <Field label="Actual labor hours" error={hoursError}>
+          <NumberInput value={draft.actualLaborHours} error={hoursError} onChange={(e) => setDraft((d) => ({ ...d, actualLaborHours: parseRequiredNumber(e.target.value) }))} />
         </Field>
-        <Field label="Actual labor cost ($)">
-          <NumberInput value={draft.actualLaborCost} onChange={(e) => setDraft((d) => ({ ...d, actualLaborCost: parseFloat(e.target.value) || 0 }))} />
+        <Field label="Actual labor cost ($)" error={laborCostError}>
+          <NumberInput value={draft.actualLaborCost} error={laborCostError} onChange={(e) => setDraft((d) => ({ ...d, actualLaborCost: parseRequiredNumber(e.target.value) }))} />
         </Field>
-        <Field label="Actual material cost ($)">
-          <NumberInput value={draft.actualMaterialCost} onChange={(e) => setDraft((d) => ({ ...d, actualMaterialCost: parseFloat(e.target.value) || 0 }))} />
+        <Field label="Actual material cost ($)" error={materialCostError}>
+          <NumberInput value={draft.actualMaterialCost} error={materialCostError} onChange={(e) => setDraft((d) => ({ ...d, actualMaterialCost: parseRequiredNumber(e.target.value) }))} />
         </Field>
-        <Field label="Actual equipment cost ($)">
-          <NumberInput value={draft.actualEquipmentCost} onChange={(e) => setDraft((d) => ({ ...d, actualEquipmentCost: parseFloat(e.target.value) || 0 }))} />
+        <Field label="Actual equipment cost ($)" error={equipmentCostError}>
+          <NumberInput value={draft.actualEquipmentCost} error={equipmentCostError} onChange={(e) => setDraft((d) => ({ ...d, actualEquipmentCost: parseRequiredNumber(e.target.value) }))} />
         </Field>
-        <Field label="Actual other cost ($)">
-          <NumberInput value={draft.actualOtherCost} onChange={(e) => setDraft((d) => ({ ...d, actualOtherCost: parseFloat(e.target.value) || 0 }))} />
+        <Field label="Actual other cost ($)" error={otherCostError}>
+          <NumberInput value={draft.actualOtherCost} error={otherCostError} onChange={(e) => setDraft((d) => ({ ...d, actualOtherCost: parseRequiredNumber(e.target.value) }))} />
         </Field>
-        <Field label="Final selling price ($)">
-          <NumberInput value={draft.finalSellingPrice} onChange={(e) => setDraft((d) => ({ ...d, finalSellingPrice: parseFloat(e.target.value) || 0 }))} />
+        <Field label="Final selling price ($)" error={sellingPriceError}>
+          <NumberInput value={draft.finalSellingPrice} error={sellingPriceError} onChange={(e) => setDraft((d) => ({ ...d, finalSellingPrice: parseRequiredNumber(e.target.value) }))} />
         </Field>
       </div>
+      {hasBlockingError && (
+        <p role="alert" className="mt-3 text-sm font-medium text-red">
+          Fix the highlighted field above before saving.
+        </p>
+      )}
       <div className="mt-5 flex justify-end gap-2">
         <Button variant="ghost" onClick={onCancel}>
           Cancel
         </Button>
-        <Button disabled={!draft.projectId} onClick={() => onSave(draft)}>
+        <Button disabled={hasBlockingError} onClick={() => onSave(draft)}>
           Save actual result
         </Button>
       </div>

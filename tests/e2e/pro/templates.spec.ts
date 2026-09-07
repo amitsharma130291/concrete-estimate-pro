@@ -40,6 +40,22 @@ test.describe("Pro app: Templates tab", () => {
     expect(after).not.toBe(before);
   });
 
+  test("a negative or blank section dimension shows an error and disables Save template", async ({ page }) => {
+    await resetWorkspace(page, "/app/templates");
+    await page.goto("/app/templates");
+    await page.getByRole("button", { name: /new template/i }).click();
+    await expect(page.getByRole("dialog")).toBeVisible();
+    const saveButton = page.getByRole("button", { name: /save template/i });
+    await expect(saveButton).toBeEnabled(); // valid defaults -> starts enabled
+
+    await page.getByLabel("Length (ft)").fill("-30");
+    await expect(page.getByText("Must be zero or greater.")).toBeVisible();
+    await expect(saveButton).toBeDisabled();
+
+    await page.getByLabel("Length (ft)").fill("10");
+    await expect(saveButton).toBeEnabled(); // fixed -> re-enabled
+  });
+
   test("duplicate: creates a (copy) with an independent id", async ({ page }) => {
     await resetWorkspace(page, "/app/templates");
     await createTemplate(page, "E2E Duplicable");
@@ -67,8 +83,16 @@ test.describe("Pro app: Templates tab", () => {
   test("start estimate from template: navigates to a pre-filled new estimate", async ({ page }) => {
     await resetWorkspace(page, "/app/templates");
     await createTemplate(page, "E2E Launchable Template");
+    const ws = await getWorkspace(page);
+    const template = ws.templates.find((t: any) => t.name === "E2E Launchable Template");
     await page.getByRole("button", { name: /start estimate/i }).click();
-    await expect(page).toHaveURL(/\/app\/estimates\?new=1&templateId=/);
-    await expect(page.getByText(/started from template/i)).toBeVisible();
+    // Starting from a template seeds the new current estimate and then rewrites the URL
+    // back to the canonical /app/estimates -- the query params don't linger (see
+    // EstimatesTab.tsx's window.history.replaceState after handling ?new=1&templateId=).
+    await expect(page).toHaveURL(/\/app\/estimates$/);
+    await expect(page.getByPlaceholder("Smith Driveway")).toHaveValue(template.name);
+    const estimate = (await getWorkspace(page)).estimates[0];
+    expect(estimate.projectType).toBe(template.projectType);
+    expect(estimate.costs).toEqual(template.defaultCosts);
   });
 });

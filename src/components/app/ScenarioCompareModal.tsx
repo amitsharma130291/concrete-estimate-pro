@@ -1,9 +1,17 @@
 import { useState } from "react";
-import { ArrowRight, Check } from "lucide-react";
-import { evaluateEntity } from "../../lib/estimateMath";
-import { calculateMargin, formatCurrency, formatPercent, formatYd3, type Rounding } from "../../lib/calc";
+import { ArrowRight, Check, TriangleAlert } from "lucide-react";
+import { evaluateEntity, combinedAreaSqFt } from "../../lib/estimateMath";
+import { calculateMargin, formatCurrency, formatPercent, formatYd3, getZeroCostWarnings, type Rounding } from "../../lib/calc";
+import { numberFieldError, parseRequiredNumber, targetMarginError } from "../../lib/validation";
 import type { ProjectSection } from "../../lib/types";
 import { Field, Modal, NumberInput, Select } from "../ui/primitives";
+
+const COST_FIELDS = ["readyMixRatePerYd3", "laborCost", "formsCost", "reinforcementCost", "equipmentCost", "otherCost"] as const;
+const REQUIRED_FIELDS = ["allowancePercent", "overheadPercent", "sellingPrice"] as const;
+
+function configHasError(config: ScenarioConfig): boolean {
+  return COST_FIELDS.some((f) => numberFieldError(config[f]) !== null) || REQUIRED_FIELDS.some((f) => numberFieldError(config[f]) !== null) || targetMarginError(config.targetMarginPercent) !== null;
+}
 
 export interface ScenarioConfig {
   label: string;
@@ -89,8 +97,8 @@ export default function ScenarioCompareModal({
         whichever one you want to the estimate.
       </p>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <ScenarioColumn config={a} onChange={setA} accent="border-border" />
-        <ScenarioColumn config={b} onChange={setB} accent="border-orange" />
+        <ScenarioColumn config={a} onChange={setA} accent="border-border" areaSqFt={combinedAreaSqFt(sections)} />
+        <ScenarioColumn config={b} onChange={setB} accent="border-orange" areaSqFt={combinedAreaSqFt(sections)} />
       </div>
 
       <div className="mt-6 overflow-x-auto rounded-xl border border-border">
@@ -152,21 +160,37 @@ export default function ScenarioCompareModal({
       </div>
 
       <div className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-2">
-        <button
-          type="button"
-          onClick={() => apply(a)}
-          className="flex items-center justify-center gap-2 rounded-lg border border-border bg-white px-4 py-3 text-sm font-semibold text-ink transition hover:border-ink"
-        >
-          <Check size={16} /> Use Scenario A
-        </button>
-        <button
-          type="button"
-          onClick={() => apply(b)}
-          className="flex items-center justify-center gap-2 rounded-lg bg-orange px-4 py-3 text-sm font-semibold text-white transition hover:bg-orange-dark"
-        >
-          <Check size={16} /> Use Scenario B
-          <ArrowRight size={14} />
-        </button>
+        <div>
+          <button
+            type="button"
+            onClick={() => apply(a)}
+            disabled={configHasError(a)}
+            className="flex w-full items-center justify-center gap-2 rounded-lg border border-border bg-white px-4 py-3 text-sm font-semibold text-ink transition hover:border-ink disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <Check size={16} /> Use Scenario A
+          </button>
+          {configHasError(a) && (
+            <p role="alert" className="mt-1.5 text-xs font-medium text-red">
+              Fix the highlighted field in Scenario A first.
+            </p>
+          )}
+        </div>
+        <div>
+          <button
+            type="button"
+            onClick={() => apply(b)}
+            disabled={configHasError(b)}
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-orange px-4 py-3 text-sm font-semibold text-white transition hover:bg-orange-dark disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <Check size={16} /> Use Scenario B
+            <ArrowRight size={14} />
+          </button>
+          {configHasError(b) && (
+            <p role="alert" className="mt-1.5 text-xs font-medium text-red">
+              Fix the highlighted field in Scenario B first.
+            </p>
+          )}
+        </div>
       </div>
     </Modal>
   );
@@ -176,39 +200,48 @@ function ScenarioColumn({
   config,
   onChange,
   accent,
+  areaSqFt,
 }: {
   config: ScenarioConfig;
   onChange: (c: ScenarioConfig) => void;
   accent: string;
+  areaSqFt: number;
 }) {
   function patch(p: Partial<ScenarioConfig>) {
     onChange({ ...config, ...p });
   }
+  const slug = config.label.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  const id = (field: string) => `${slug}-${field}`;
+  const allowanceError = numberFieldError(config.allowancePercent);
+  const overheadError = numberFieldError(config.overheadPercent);
+  const marginError = targetMarginError(config.targetMarginPercent);
+  const sellingPriceError = numberFieldError(config.sellingPrice);
+  const zeroCostWarnings = getZeroCostWarnings(config, areaSqFt);
 
   return (
     <div className={`rounded-xl border-2 ${accent} p-4`}>
       <div className="mb-3 text-sm font-bold text-ink">{config.label}</div>
       <div className="grid grid-cols-2 gap-2">
-        <Field label="Ready mix ($/yd³)">
-          <NumberInput min={0} value={config.readyMixRatePerYd3} onChange={(e) => patch({ readyMixRatePerYd3: parseFloat(e.target.value) || 0 })} />
+        <Field label="Ready mix ($/yd³)" htmlFor={id("ready-mix")} error={numberFieldError(config.readyMixRatePerYd3)}>
+          <NumberInput id={id("ready-mix")} min={0} value={config.readyMixRatePerYd3} error={numberFieldError(config.readyMixRatePerYd3)} onChange={(e) => patch({ readyMixRatePerYd3: parseRequiredNumber(e.target.value) })} />
         </Field>
-        <Field label="Labor ($)">
-          <NumberInput min={0} value={config.laborCost} onChange={(e) => patch({ laborCost: parseFloat(e.target.value) || 0 })} />
+        <Field label="Labor ($)" htmlFor={id("labor")} error={numberFieldError(config.laborCost)}>
+          <NumberInput id={id("labor")} min={0} value={config.laborCost} error={numberFieldError(config.laborCost)} onChange={(e) => patch({ laborCost: parseRequiredNumber(e.target.value) })} />
         </Field>
-        <Field label="Forms ($)">
-          <NumberInput min={0} value={config.formsCost} onChange={(e) => patch({ formsCost: parseFloat(e.target.value) || 0 })} />
+        <Field label="Forms ($)" htmlFor={id("forms")} error={numberFieldError(config.formsCost)}>
+          <NumberInput id={id("forms")} min={0} value={config.formsCost} error={numberFieldError(config.formsCost)} onChange={(e) => patch({ formsCost: parseRequiredNumber(e.target.value) })} />
         </Field>
-        <Field label="Reinforcement ($)">
-          <NumberInput min={0} value={config.reinforcementCost} onChange={(e) => patch({ reinforcementCost: parseFloat(e.target.value) || 0 })} />
+        <Field label="Reinforcement ($)" htmlFor={id("reinforcement")} error={numberFieldError(config.reinforcementCost)}>
+          <NumberInput id={id("reinforcement")} min={0} value={config.reinforcementCost} error={numberFieldError(config.reinforcementCost)} onChange={(e) => patch({ reinforcementCost: parseRequiredNumber(e.target.value) })} />
         </Field>
-        <Field label="Equipment ($)">
-          <NumberInput min={0} value={config.equipmentCost} onChange={(e) => patch({ equipmentCost: parseFloat(e.target.value) || 0 })} />
+        <Field label="Equipment ($)" htmlFor={id("equipment")} error={numberFieldError(config.equipmentCost)}>
+          <NumberInput id={id("equipment")} min={0} value={config.equipmentCost} error={numberFieldError(config.equipmentCost)} onChange={(e) => patch({ equipmentCost: parseRequiredNumber(e.target.value) })} />
         </Field>
-        <Field label="Other ($)">
-          <NumberInput min={0} value={config.otherCost} onChange={(e) => patch({ otherCost: parseFloat(e.target.value) || 0 })} />
+        <Field label="Other ($)" htmlFor={id("other")} error={numberFieldError(config.otherCost)}>
+          <NumberInput id={id("other")} min={0} value={config.otherCost} error={numberFieldError(config.otherCost)} onChange={(e) => patch({ otherCost: parseRequiredNumber(e.target.value) })} />
         </Field>
-        <Field label="Allowance (%)">
-          <NumberInput min={0} value={config.allowancePercent} onChange={(e) => patch({ allowancePercent: parseFloat(e.target.value) || 0 })} />
+        <Field label="Allowance (%)" error={allowanceError}>
+          <NumberInput value={config.allowancePercent} error={allowanceError} onChange={(e) => patch({ allowancePercent: parseRequiredNumber(e.target.value) })} />
         </Field>
         <Field label="Rounding">
           <Select value={config.rounding} onChange={(e) => patch({ rounding: e.target.value as Rounding })}>
@@ -218,18 +251,28 @@ function ScenarioColumn({
             <option value="whole">1 yd³</option>
           </Select>
         </Field>
-        <Field label="Overhead (%)">
-          <NumberInput min={0} value={config.overheadPercent} onChange={(e) => patch({ overheadPercent: parseFloat(e.target.value) || 0 })} />
+        <Field label="Overhead (%)" error={overheadError}>
+          <NumberInput value={config.overheadPercent} error={overheadError} onChange={(e) => patch({ overheadPercent: parseRequiredNumber(e.target.value) })} />
         </Field>
-        <Field label="Target margin (%)">
-          <NumberInput min={0} value={config.targetMarginPercent} onChange={(e) => patch({ targetMarginPercent: parseFloat(e.target.value) || 0 })} />
+        <Field label="Target margin (%)" error={marginError}>
+          <NumberInput value={config.targetMarginPercent} error={marginError} onChange={(e) => patch({ targetMarginPercent: parseRequiredNumber(e.target.value) })} />
         </Field>
         <div className="col-span-2">
-          <Field label="Selling price ($)">
-            <NumberInput min={0} value={config.sellingPrice} onChange={(e) => patch({ sellingPrice: parseFloat(e.target.value) || 0 })} />
+          <Field label="Selling price ($)" error={sellingPriceError}>
+            <NumberInput value={config.sellingPrice} error={sellingPriceError} onChange={(e) => patch({ sellingPrice: parseRequiredNumber(e.target.value) })} />
           </Field>
         </div>
       </div>
+      {zeroCostWarnings.length > 0 && (
+        <div className="mt-2 flex flex-col gap-1.5 rounded-lg border border-amber/30 bg-amber-light px-3 py-2.5 text-xs text-amber" role="alert">
+          {zeroCostWarnings.map((w) => (
+            <div key={w} className="flex items-start gap-2">
+              <TriangleAlert size={13} className="mt-0.5 shrink-0" aria-hidden="true" />
+              <span>{w}</span>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

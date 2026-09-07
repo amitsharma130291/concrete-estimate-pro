@@ -77,7 +77,11 @@ function safeD(n: number): Decimal {
   return Number.isFinite(n) && n >= 0 ? new Decimal(n) : new Decimal(0);
 }
 
-function safe(n: number): number {
+/** Clamp a raw number to 0 when negative or non-finite. Exported so callers outside this
+ * file (e.g. ActualsTab.tsx, which sums logged real-world costs that never go through
+ * calculateCost()) can apply the same input-sanitization contract as every calculation in
+ * this module, instead of silently summing an unclamped negative. */
+export function safe(n: number): number {
   return safeD(n).toNumber();
 }
 
@@ -220,6 +224,22 @@ export function calculateEstimate(input: EstimateInput): EstimateResult {
       profitAtCurrentPrice,
     },
   };
+}
+
+/**
+ * Flags cost fields that are exactly $0 while the job has real quantity/area to build —
+ * almost always a blank/mistyped field rather than a legitimate $0 cost, since ready-mix
+ * and labor are essentially never free. Deliberately does NOT flag forms/reinforcement/
+ * equipment/other: those are commonly, validly zero on many real jobs. Non-blocking — the
+ * caller decides whether to show this as a dismissible warning, since a contractor doing
+ * their own labor for free (e.g. a DIY-adjacent quote) is a real, if unusual, case.
+ */
+export function getZeroCostWarnings(costs: Pick<CostInputs, "readyMixRatePerYd3" | "laborCost">, areaSqFt: number): string[] {
+  if (!(areaSqFt > 0)) return [];
+  const warnings: string[] = [];
+  if (costs.readyMixRatePerYd3 === 0) warnings.push("Ready-mix rate is $0/yd³ — confirm this is intentional, not a blank field.");
+  if (costs.laborCost === 0) warnings.push("Labor cost is $0 — confirm this is intentional, not a blank field.");
+  return warnings;
 }
 
 // ---- Formatting helpers ----

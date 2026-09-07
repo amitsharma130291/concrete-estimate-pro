@@ -21,12 +21,12 @@ const includedGroups = [
   {
     title: "Win and track the job",
     path: "M6 3h9l3 3v15H6V3z M15 3v3h3 M9 12h6 M9 15h6 M9 9h3",
-    items: ["Branded, customer-ready estimate PDFs", "Estimate vs. actual job tracking", "Historical quantity and labor variance reports", "One-click estimate and project duplication"],
+    items: ["Branded, customer-ready estimate PDFs", "Current estimate vs. actual job tracking", "Contractor-facing CSV export for your records", "One-click duplication to start a new estimate from the current one"],
   },
   {
     title: "Your data, your control",
     path: "M12 2C6.5 2 2 4 2 6.5v11C2 20 6.5 22 12 22s10-2 10-4.5v-11C22 4 17.5 2 12 2z M2 6.5C2 9 6.5 11 12 11s10-2 10-4.5",
-    items: ["Business profile with saved defaults", "CSV export and full JSON backup/restore", "No account required — runs in your browser", "No monthly subscription, ever"],
+    items: ["Business profile with saved defaults", "Business-data JSON export for your catalog, rates and templates", "No account required — runs in your browser", "No monthly subscription, ever"],
   },
 ];
 
@@ -41,15 +41,19 @@ const faqs = [
   },
   {
     q: "Do I need an account?",
-    a: "No account is required to use the app. Your data is stored locally in your browser, with export/import for backup or moving to a new device.",
+    a: "No account is required to use the app. Concrete Cost Pro is private and local-first: your current estimate and reusable business settings (profile, catalog, rates, templates) are saved in this browser. Download completed estimates as PDFs or CSVs for your records.",
   },
   {
     q: "Does this run in the cloud or on my computer?",
-    a: "Concrete Cost Pro is local-first: everything runs in your browser and your data stays on your device. You control backups via JSON export.",
+    a: "Concrete Cost Pro is local-first: everything runs in your browser and your data stays on this device. There's no cloud project storage and no cross-device sync — clearing this browser's storage clears your data, so download a PDF or CSV of anything you want to keep.",
   },
   {
     q: "What if I switch computers?",
-    a: "Export your workspace as a JSON file from Settings, then import it on the new device. Your catalog, templates, estimates and history all come with it.",
+    a: "Export your business data (profile, catalog, rates and templates) as a JSON file from Settings, then import it on the new device. This covers your reusable business setup — it does not include your current estimate, which stays on the original device unless you also copy over the estimate details by hand or start fresh.",
+  },
+  {
+    q: "Does Concrete Cost Pro keep a history of my past estimates?",
+    a: "No. Concrete Cost Pro keeps exactly one current estimate at a time, autosaved on this device. Starting a new estimate replaces it after you confirm — download a PDF or CSV first if you want to keep a copy. There is no estimate archive or project history inside the app.",
   },
 ];
 

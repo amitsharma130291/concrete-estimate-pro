@@ -32,11 +32,16 @@ export function Card({
 export function Field({
   label,
   hint,
+  error,
   htmlFor,
   children,
 }: {
   label: string;
   hint?: string;
+  /** When set, replaces `hint` with a red error message and marks the label for screen
+   * readers -- used with NumberInput's own `error` prop to block save/calculate on
+   * required/invalid fields instead of silently treating them as zero. */
+  error?: string | null;
   htmlFor?: string;
   children: ReactNode;
 }) {
@@ -46,20 +51,39 @@ export function Field({
         {label}
       </label>
       <div>{children}</div>
-      {hint && <span className="text-xs text-muted sm:text-sm">{hint}</span>}
+      {error ? (
+        <span role="alert" className="text-xs font-medium text-red sm:text-sm">
+          {error}
+        </span>
+      ) : (
+        hint && <span className="text-xs text-muted sm:text-sm">{hint}</span>
+      )}
     </div>
   );
 }
 
 export function NumberInput({
   className = "",
+  value,
+  error,
   ...props
-}: InputHTMLAttributes<HTMLInputElement>) {
+}: InputHTMLAttributes<HTMLInputElement> & {
+  /** Error message for this field (see Field's `error`). When set, shows a red border and
+   * `aria-invalid`. When `value` is NaN (a blank required field, tracked as NaN rather
+   * than coerced to 0 so "cleared" is distinguishable from "typed 0"), the input renders
+   * empty instead of the literal text "NaN". */
+  error?: string | null;
+}) {
+  const displayValue = typeof value === "number" && !Number.isFinite(value) ? "" : value;
   return (
     <input
       type="number"
       inputMode="decimal"
-      className={`w-full rounded-lg border border-border bg-white px-3 py-2 text-sm text-ink shadow-sm transition focus:border-orange ${className}`}
+      value={displayValue}
+      aria-invalid={error ? true : undefined}
+      className={`w-full rounded-lg border bg-white px-3 py-2 text-sm text-ink shadow-sm transition ${
+        error ? "border-red focus:border-red" : "border-border focus:border-orange"
+      } ${className}`}
       {...props}
     />
   );

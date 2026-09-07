@@ -9,9 +9,51 @@
   "contrastTokensFile": "docs/CONTRAST_TOKENS.md",
   "vitestSuite": {
     "testFiles": 11,
-    "tests": 142,
-    "passed": 142,
-    "failed": 0
+    "tests": 147,
+    "passed": 147,
+    "failed": 0,
+    "note": "142 -> 147 after third-pass remediation (2026-09-07) added getZeroCostWarnings tests"
+  },
+  "thirdPassRemediation": {
+    "date": "2026-09-07",
+    "trigger": "independent third-party review (ChatGPT, given the QA report + calculator-logic doc, no repo access)",
+    "fixed": [
+      "getZeroCostWarnings() added to src/lib/calc.ts; wired into EstimateWizard, ProjectCalculatorIsland, JobCostCalculatorIsland to visibly flag $0 ready-mix rate / labor cost instead of silently accepting it",
+      "rounding option labels corrected from 'Nearest X yd3' to 'Round up to next X yd3' in EstimateWizard.tsx, SettingsTab.tsx, ProjectCalculatorIsland.tsx",
+      "target margin inputs capped at 99% (max attribute + clamping onChange) in 6 locations to keep requiredSellingPrice finite",
+      "estimate customer-document E2E test strengthened: asserts real content present and margin/overhead/true-cost/markup text absent (tests/e2e/pro/estimates.spec.ts)"
+    ],
+    "consideredNotConfirmed": [
+      "fixed additional quantity allowance (not found anywhere in the codebase)",
+      "Rate Health per-square-foot normalization (not part of this app's design)",
+      "flat labor duplicated per-caller (false - single shared LaborCostInput.tsx component)"
+    ],
+    "paymentLicenseStatus": "unchanged - still NOT_IMPLEMENTED, still release-critical, still blocked on user's provider selection"
+  },
+  "fourthPassRemediation": {
+    "date": "2026-09-07",
+    "trigger": "independent third-party review of a full per-calculator verification package (ChatGPT, 14 tool docs + generator script, still no repo access)",
+    "realProductBugFixed": [
+      "Actuals tab (src/components/app/tabs/ActualsTab.tsx) compared an overhead-inclusive estimated margin/cost against an overhead-EXCLUSIVE actual margin/cost, making every logged job look more profitable than it really was. Fixed: actual costs now apply the project's own saved overheadPercent before the comparison. New Playwright test added (tests/e2e/pro/actuals.spec.ts) asserting the corrected dollar and percent figures."
+    ],
+    "documentationErrorsFixed": [
+      "The verification package's Footing-calculator examples used a wrong simplified default-selling-price formula (a generic area*$12/sqft placeholder) instead of the real production fallback ProjectCalculatorIsland.tsx uses when marketRatePerSqft is 0. Corrected the generator script and regenerated - real default margin is +13.36%, not the -113.63% the earlier (wrong) numbers showed. This was a documentation bug, not a product bug.",
+      "Scenario Compare Example 2 omitted its underlying cost inputs, making the stated true-cost figure unreproducible by a reader. Added."
+    ],
+    "minorClarityFix": "Renamed the hourly-labor 'Hours' field to 'Job duration (hrs)' with a hint, to reduce ambiguity with per-person-hours (src/components/app/LaborCostInput.tsx)",
+    "openDecisionNotActioned": "Blocking (not just warning) validation on invalid/blank cost fields, and grouped multi-job historical worked examples for Actuals, were both raised again by this review round. Not implemented this pass - flagged back to the user as a scope decision (the third pass deliberately chose non-blocking warnings over full blocking validation across every cost field in the app)."
+  },
+  "fifthPassUserSuppliedTestSheet": {
+    "date": "2026-09-07",
+    "trigger": "user supplied an independently-authored 140-case test spreadsheet (10 cases per tool x 14 tools) with pre-computed expected results",
+    "method": "Every case executed directly against the real production functions (src/lib/calc.ts, src/lib/estimateMath.ts) via tests/oracle/runUserTestSheet.ts - not re-derived by hand.",
+    "result": { "total": 140, "pass": 111, "failRealMathMismatch": 0, "failNotBlocked_knownGap": 23, "naNotImplemented": 3, "naNoMatchingUiField": 3 },
+    "realBugFound": "ActualsTab.tsx summed actualLaborCost/actualMaterialCost/actualEquipmentCost/actualOtherCost with NO clamping at all (not even the safeD()-style clamp-negative-to-zero every other numeric field in the app has) - a negative actual cost silently reduced the true cost and inflated the reported margin (e.g. one test case: 95% instead of a realistic ~57%). Fixed: exported safe() from calc.ts, applied it to those 4 fields plus actualQuantityYd3/actualLaborHours in ActualsTab.tsx and its historical aggregation. New Playwright test added.",
+    "modelMismatchesFound": [
+      "The 6 free calculator pages hardcode overheadPercent=15 and targetMarginPercent=30 as non-editable constants (ProjectCalculatorIsland.tsx) - many test rows assumed these were adjustable inputs on those pages, which they are not; the underlying formula was still verified correct with those values.",
+      "The free 'Concrete Estimate Template' tool (EstimateTemplateIsland.tsx) has no quantity field per line at all - each line is a label + single dollar amount, summed directly. Test rows assuming a qty*price-per-line model don't match any real input in that tool.",
+      "Pro Estimates/Projects/Templates have no 'fixed extra yd3' allowance mode (only percentage allowance exists) - 3 test rows exercised this nonexistent input."
+    ]
   },
   "propertyBasedAndFixtureCasesExecuted": {
     "goldenFixtures": 50,
