@@ -27,18 +27,18 @@ const includedGroups = [
   {
     title: "Your data, your control",
     path: "M12 2C6.5 2 2 4 2 6.5v11C2 20 6.5 22 12 22s10-2 10-4.5v-11C22 4 17.5 2 12 2z M2 6.5C2 9 6.5 11 12 11s10-2 10-4.5",
-    items: ["Business profile with saved defaults", "One-click backup of your catalog, rates and templates", "No account required — runs in your browser", "No monthly subscription, ever"],
+    items: ["Business profile with saved defaults", "One-click backup of your catalog, rates and templates", "No account required, runs in your browser", "No monthly subscription, ever"],
   },
 ];
 
 const faqs = [
   {
     q: "Is $79 a permanent price?",
-    a: "$79 is the launch price. Once launch pricing ends, new purchases move to the regular $99 price — but it's a one-time payment, not a subscription, so your price never changes after you buy. Buying now locks in $79 for as long as you use the product.",
+    a: "$79 is the launch price. Once launch pricing ends, new purchases move to the regular $99 price, but it's a one-time payment, not a subscription, so your price never changes after you buy. Buying now locks in $79 for as long as you use the product.",
   },
   {
     q: "Is this a subscription?",
-    a: "No. Concrete Cost Pro is a one-time payment for lifetime access — no recurring billing, ever.",
+    a: "No. Concrete Cost Pro is a one-time payment for lifetime access. No recurring billing, ever.",
   },
   {
     q: "Do I need an account?",
@@ -46,15 +46,15 @@ const faqs = [
   },
   {
     q: "Does this run in the cloud or on my computer?",
-    a: "Concrete Cost Pro is local-first: everything runs in your browser and your data stays on this device. There's no cloud project storage and no cross-device sync — clearing this browser's storage clears your data, so download a PDF or CSV of anything you want to keep.",
+    a: "Concrete Cost Pro is local-first: everything runs in your browser and your data stays on this device. There's no cloud project storage and no cross-device sync, so clearing this browser's storage clears your data. Download a PDF or CSV of anything you want to keep.",
   },
   {
     q: "What if I switch computers?",
-    a: "Export your business data (profile, catalog, rates and templates) from Settings, then import that file on the new device. This covers your reusable business setup — it does not include your current estimate, which stays on the original device unless you also copy over the estimate details by hand or start fresh.",
+    a: "Export your business data (profile, catalog, rates and templates) from Settings, then import that file on the new device. This covers your reusable business setup; it does not include your current estimate, which stays on the original device unless you also copy over the estimate details by hand or start fresh.",
   },
   {
     q: "Does Concrete Cost Pro keep a history of my past estimates?",
-    a: "No. Concrete Cost Pro keeps exactly one current estimate at a time, autosaved on this device. Starting a new estimate replaces it after you confirm — download a PDF or CSV first if you want to keep a copy. There is no estimate archive or project history inside the app.",
+    a: "No. Concrete Cost Pro keeps exactly one current estimate at a time, autosaved on this device. Starting a new estimate replaces it after you confirm; download a PDF or CSV first if you want to keep a copy. There is no estimate archive or project history inside the app.",
   },
 ];
 
@@ -76,7 +76,7 @@ const productSchema = {
 
 <Layout
   title="Pricing | Concrete Cost Pro"
-  description="Concrete Cost Pro — $79 launch price (regularly $99), one-time payment for lifetime access. Saved rates, job costing, rate-health tracking, branded estimates and estimate-vs-actual reporting. No subscription."
+  description="Concrete Cost Pro: $79 launch price (regularly $99), one-time payment for lifetime access. Saved rates, job costing, rate-health tracking, branded estimates and estimate-vs-actual reporting. No subscription."
 >
   <Fragment slot="head">
     <script type="application/ld+json" is:inline set:html={JSON.stringify(productSchema)} />
@@ -115,7 +115,7 @@ const productSchema = {
             </div>
             <p class="mt-2 text-sm font-semibold text-orange-ondark">Save $20 — launch pricing won't last</p>
             <p class="mt-1 text-sm text-white/60">
-              One-time payment. Buy at $79 and that's your price for good — the regular price rises to $99 once launch
+              One-time payment. Buy at $79 and that's your price for good. The regular price rises to $99 once launch
               pricing ends, but it never changes for you after you buy.
             </p>
           </div>
@@ -158,7 +158,7 @@ const productSchema = {
           <div class="mt-6">
             <PurchaseButton client:load />
             <p class="mt-3 text-center text-xs text-muted">
-              Free calculators are always available with no purchase — Pro adds saved data, job costing and
+              Free calculators are always available with no purchase. Pro adds saved data, job costing and
               estimate tracking.
             </p>
             <p class="mt-2 text-center text-xs text-muted">

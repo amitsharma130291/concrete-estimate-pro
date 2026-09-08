@@ -32,7 +32,7 @@ export interface CalculatorConfig {
   marketRatePerSqft: number;
   faqs: { q: string; a: string }[];
   safetyNote?: string;
-  /** What actually moves the price — rendered as a content section below the calculator. */
+  /** What actually moves the price. Rendered as a content section below the calculator. */
   costFactors: { title: string; body: string }[];
 }
 
@@ -69,7 +69,7 @@ export const CALCULATOR_CONFIGS: Record<string, CalculatorConfig> = {
       },
       {
         q: "What thickness should my driveway be?",
-        a: "This tool doesn't set thickness for you — enter the thickness you or your engineer specified for the project. Standard residential driveways are commonly poured thicker than sidewalks to handle vehicle loads, but the correct spec depends on soil, climate and vehicle weight.",
+        a: "This tool doesn't set thickness for you. Enter the thickness you or your engineer specified for the project. Standard residential driveways are commonly poured thicker than sidewalks to handle vehicle loads, but the correct spec depends on soil, climate and vehicle weight.",
       },
       {
         q: "What's a typical order allowance?",
@@ -77,13 +77,13 @@ export const CALCULATOR_CONFIGS: Record<string, CalculatorConfig> = {
       },
       {
         q: "Does this calculator include excavation or base prep?",
-        a: "No — it calculates concrete quantity, materials, labor and equipment costs you enter. Add excavation, gravel base or removal costs to Labor, Equipment or Other as needed.",
+        a: "No. It calculates concrete quantity, materials, labor and equipment costs you enter. Add excavation, gravel base or removal costs to Labor, Equipment or Other as needed.",
       },
     ],
     costFactors: [
       {
         title: "Thickness and vehicle load",
-        body: "A driveway that only sees cars can often be thinner than one that regularly takes a truck, RV or trailer. More thickness means more concrete — and more cost — so this is usually the single biggest lever on price.",
+        body: "A driveway that only sees cars can often be thinner than one that regularly takes a truck, RV or trailer. More thickness means more concrete and more cost, so this is usually the single biggest lever on price.",
       },
       {
         title: "Base preparation and excavation",
@@ -103,7 +103,7 @@ export const CALCULATOR_CONFIGS: Record<string, CalculatorConfig> = {
       },
       {
         title: "Local ready-mix and labor rates",
-        body: "Concrete pricing per yard and crew labor rates vary significantly by region and even by supplier — enter your own numbers above rather than relying on a national average.",
+        body: "Concrete pricing per yard and crew labor rates vary significantly by region and even by supplier. Enter your own numbers above rather than relying on a national average.",
       },
     ],
   },
@@ -112,7 +112,7 @@ export const CALCULATOR_CONFIGS: Record<string, CalculatorConfig> = {
     slug: "concrete-slab-cost-calculator",
     h1: "Concrete Slab Cost Calculator",
     intro:
-      "Calculate concrete quantity and total cost for a slab pour — garage floors, shed pads, foundations and more — and see the price required to hit your target margin.",
+      "Calculate concrete quantity and total cost for a slab pour, including garage floors, shed pads and foundations, and see the price required to hit your target margin.",
     metaDescription:
       "Free concrete slab cost calculator. Get concrete volume, order quantity, total project cost and a target-margin selling price for any slab pour.",
     length: { label: "Length", hint: "Slab length", defaultUnit: "ft", allowUnitToggle: false },
@@ -139,7 +139,7 @@ export const CALCULATOR_CONFIGS: Record<string, CalculatorConfig> = {
       },
       {
         q: "Does this tool tell me what slab thickness or reinforcement I need?",
-        a: "No. Slab thickness, rebar/mesh spacing and concrete strength are structural decisions that depend on load, soil and local code. Enter the specification you or your engineer already determined — this tool only calculates quantity, cost and pricing from those numbers.",
+        a: "No. Slab thickness, rebar/mesh spacing and concrete strength are structural decisions that depend on load, soil and local code. Enter the specification you or your engineer already determined; this tool only calculates quantity, cost and pricing from those numbers.",
       },
       {
         q: "What's included in 'true cost'?",
@@ -149,7 +149,7 @@ export const CALCULATOR_CONFIGS: Record<string, CalculatorConfig> = {
     costFactors: [
       {
         title: "Intended use",
-        body: "A shed pad, a garage floor and a structural foundation slab all carry different load requirements, which drive thickness and reinforcement — and therefore concrete volume and cost.",
+        body: "A shed pad, a garage floor and a structural foundation slab all carry different load requirements, which drive thickness and reinforcement, and therefore concrete volume and cost.",
       },
       {
         title: "Base preparation",
@@ -161,7 +161,7 @@ export const CALCULATOR_CONFIGS: Record<string, CalculatorConfig> = {
       },
       {
         title: "Reinforcement",
-        body: "Wire mesh, rebar, or fiber-reinforced mix are common options, each with a different material and placement cost — and each suited to different load and crack-control needs.",
+        body: "Wire mesh, rebar, or fiber-reinforced mix are common options, each with a different material and placement cost, and each suited to different load and crack-control needs.",
       },
       {
         title: "Site access",
@@ -169,7 +169,7 @@ export const CALCULATOR_CONFIGS: Record<string, CalculatorConfig> = {
       },
       {
         title: "Local ready-mix and labor rates",
-        body: "Ready-mix pricing and crew rates vary by region and supplier — always price with your own current numbers rather than a rule of thumb.",
+        body: "Ready-mix pricing and crew rates vary by region and supplier. Always price with your own current numbers rather than a rule of thumb.",
       },
     ],
   },
@@ -201,7 +201,7 @@ export const CALCULATOR_CONFIGS: Record<string, CalculatorConfig> = {
     faqs: [
       {
         q: "Does this include stamped or decorative finish costs?",
-        a: "Stamping, coloring and sealing add labor and material cost — add those to Labor or Other so they're reflected in your total and required price.",
+        a: "Stamping, coloring and sealing add labor and material cost. Add those to Labor or Other so they're reflected in your total and required price.",
       },
       {
         q: "How much extra should I order for a patio pour?",
@@ -219,7 +219,7 @@ export const CALCULATOR_CONFIGS: Record<string, CalculatorConfig> = {
       },
       {
         title: "Base prep and drainage",
-        body: "Patios need a slight slope away from the house and a compacted base — poor drainage planning now often means costly repairs later, so this is worth pricing properly rather than rushing.",
+        body: "Patios need a slight slope away from the house and a compacted base. Poor drainage planning now often means costly repairs later, so this is worth pricing properly rather than rushing.",
       },
       {
         title: "Reinforcement",
@@ -257,11 +257,11 @@ export const CALCULATOR_CONFIGS: Record<string, CalculatorConfig> = {
     },
     marketRatePerSqft: 0,
     safetyNote:
-      "This calculator never determines footing size, depth or reinforcement. Enter your planned or design-specified dimensions — those come from your engineer, architect or local code, not from this tool.",
+      "This calculator never determines footing size, depth or reinforcement. Enter your planned or design-specified dimensions; those come from your engineer, architect or local code, not from this tool.",
     faqs: [
       {
         q: "Does this calculator tell me what size footing I need?",
-        a: "No. Footing dimensions are a structural/engineering decision based on load, soil bearing capacity and local code. Enter the length, width and depth already specified for your project — this tool only converts those into concrete volume and cost.",
+        a: "No. Footing dimensions are a structural/engineering decision based on load, soil bearing capacity and local code. Enter the length, width and depth already specified for your project; this tool only converts those into concrete volume and cost.",
       },
       {
         q: "How do I calculate footing concrete volume?",
@@ -271,7 +271,7 @@ export const CALCULATOR_CONFIGS: Record<string, CalculatorConfig> = {
     costFactors: [
       {
         title: "Depth and width, as specified",
-        body: "Footing size is set by load, soil bearing capacity, frost line and local code — never by this tool. Larger specified dimensions mean more concrete volume and cost, straightforwardly.",
+        body: "Footing size is set by load, soil bearing capacity, frost line and local code, never by this tool. Larger specified dimensions mean more concrete volume and cost, straightforwardly.",
       },
       {
         title: "Reinforcement",
@@ -325,7 +325,7 @@ export const CALCULATOR_CONFIGS: Record<string, CalculatorConfig> = {
     costFactors: [
       {
         title: "Length and required width",
-        body: "Municipal specs often set a minimum sidewalk width — check local requirements before pricing, since a wider strip directly increases concrete volume.",
+        body: "Municipal specs often set a minimum sidewalk width. Check local requirements before pricing, since a wider strip directly increases concrete volume.",
       },
       {
         title: "Control joints and finish",
@@ -341,7 +341,7 @@ export const CALCULATOR_CONFIGS: Record<string, CalculatorConfig> = {
       },
       {
         title: "Permitting and inspection",
-        body: "Work in the public right-of-way often requires permits, traffic control, and inspection sign-off — real costs that belong in your estimate.",
+        body: "Work in the public right-of-way often requires permits, traffic control, and inspection sign-off: real costs that belong in your estimate.",
       },
     ],
   },
@@ -350,7 +350,7 @@ export const CALCULATOR_CONFIGS: Record<string, CalculatorConfig> = {
     slug: "concrete-cost-calculator",
     h1: "Concrete Cost Calculator",
     intro:
-      "A flexible concrete cost calculator, estimate calculator and pricing calculator for any rectangular pour — slabs, driveways, patios, sidewalks or custom flatwork. Enter your dimensions and your ready-mix price per yard to get quantity, total cost and required selling price.",
+      "A flexible concrete cost calculator, estimate calculator and pricing calculator for any rectangular pour, including slabs, driveways, patios, sidewalks or custom flatwork. Enter your dimensions and your ready-mix price per yard to get quantity, total cost and required selling price.",
     metaDescription:
       "Free concrete cost calculator, estimate calculator and pricing calculator for any project type. Enter dimensions and your ready-mix cost per yard to get concrete quantity, total project cost and a target-margin price.",
     length: { label: "Length", hint: "Project length", defaultUnit: "ft", allowUnitToggle: false },
@@ -373,15 +373,15 @@ export const CALCULATOR_CONFIGS: Record<string, CalculatorConfig> = {
     faqs: [
       {
         q: "What project types can I use this for?",
-        a: "Any rectangular concrete pour — slabs, driveways, patios, sidewalks, pads or custom flatwork. For multi-section projects (like an L-shaped driveway), Concrete Cost Pro lets you add multiple sections to one project.",
+        a: "Any rectangular concrete pour: slabs, driveways, patios, sidewalks, pads or custom flatwork. For multi-section projects (like an L-shaped driveway), Concrete Cost Pro lets you add multiple sections to one project.",
       },
       {
         q: "How much does ready-mix concrete cost per yard?",
-        a: "Ready-mix pricing varies by region, mix strength and delivery distance — commonly somewhere in the $130–$200 per cubic yard range in the US, though local suppliers may quote higher or lower. Enter your own supplier's price per yard in the calculator above; this tool never assumes a national average for your estimate.",
+        a: "Ready-mix pricing varies by region, mix strength and delivery distance, commonly somewhere in the $130–$200 per cubic yard range in the US, though local suppliers may quote higher or lower. Enter your own supplier's price per yard in the calculator above; this tool never assumes a national average for your estimate.",
       },
       {
         q: "Is this a concrete estimate calculator, a pricing calculator, or just a quantity calculator?",
-        a: "All three — enter dimensions to get concrete quantity, then add your material, labor and equipment costs to turn that quantity into a full project cost estimate and, with Contractor Pricing, a target-margin selling price.",
+        a: "All three: enter dimensions to get concrete quantity, then add your material, labor and equipment costs to turn that quantity into a full project cost estimate and, with Contractor Pricing, a target-margin selling price.",
       },
       {
         q: "Is this the same as concrete estimating software?",
@@ -395,7 +395,7 @@ export const CALCULATOR_CONFIGS: Record<string, CalculatorConfig> = {
       },
       {
         title: "Thickness and reinforcement",
-        body: "Both are set by the project's structural requirements (load, soil, code) — never guessed by this tool. More of either means more material and labor cost.",
+        body: "Both are set by the project's structural requirements (load, soil, code), never guessed by this tool. More of either means more material and labor cost.",
       },
       {
         title: "Finish",
@@ -407,7 +407,7 @@ export const CALCULATOR_CONFIGS: Record<string, CalculatorConfig> = {
       },
       {
         title: "Regional material and labor rates",
-        body: "Ready-mix pricing per yard and crew labor rates vary widely by region — always price with your own current supplier and labor numbers.",
+        body: "Ready-mix pricing per yard and crew labor rates vary widely by region. Always price with your own current supplier and labor numbers.",
       },
     ],
   },

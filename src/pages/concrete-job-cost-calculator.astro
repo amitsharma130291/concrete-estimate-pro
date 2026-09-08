@@ -11,34 +11,34 @@ import { CALCULATOR_CONFIGS } from "../data/calculatorConfigs";
 const faqs = [
   {
     q: "How is this different from the cost calculators?",
-    a: "The cost calculators start from dimensions (length, width, thickness) and compute concrete quantity for you. This job cost calculator is for when you already know your total costs — enter them directly to see true cost, margin and the price you need to charge.",
+    a: "The cost calculators start from dimensions (length, width, thickness) and compute concrete quantity for you. This job cost calculator is for when you already know your total costs; enter them directly to see true cost, margin and the price you need to charge.",
   },
   {
     q: "Can I use this as a concrete labor cost calculator?",
-    a: "Yes — enter your labor cost on its own to see how it factors into direct cost, overhead and true cost, then see the margin impact of a labor-only change.",
+    a: "Yes. Enter your labor cost on its own to see how it factors into direct cost, overhead and true cost, then see the margin impact of a labor-only change.",
   },
   {
     q: "What's the difference between margin and markup?",
-    a: "Margin is profit divided by selling price. Markup is profit divided by cost. A 30% margin requires a larger markup than 30% — this calculator always solves for margin, since that's what determines your actual profit on the invoice total.",
+    a: "Margin is profit divided by selling price. Markup is profit divided by cost. A 30% margin requires a larger markup than 30%; this calculator always solves for margin, since that's what determines your actual profit on the invoice total.",
   },
   {
     q: "What should I include in overhead?",
-    a: "Overhead covers costs that aren't tied to one job — insurance, office costs, vehicle costs, admin time. Many contractors express it as a percentage of direct job cost; set whatever percentage reflects your business.",
+    a: "Overhead covers costs that aren't tied to one job: insurance, office costs, vehicle costs, admin time. Many contractors express it as a percentage of direct job cost; set whatever percentage reflects your business.",
   },
 ];
 
 const costFactors = [
   {
     title: "Overhead allocation",
-    body: "How much of your fixed business costs — insurance, office, vehicles, admin time — you spread across each job changes your true cost more than most contractors expect. A too-low overhead percentage quietly erodes profit across every job you price.",
+    body: "How much of your fixed business costs (insurance, office, vehicles, admin time) you spread across each job changes your true cost more than most contractors expect. A too-low overhead percentage quietly erodes profit across every job you price.",
   },
   {
     title: "Target margin, not markup",
-    body: "Pricing off markup instead of margin is a common, costly mix-up. A 30% markup on a $10,000 true cost prices at $13,000 — a 23% margin, not 30%. This tool always solves for margin.",
+    body: "Pricing off markup instead of margin is a common, costly mix-up. A 30% markup on a $10,000 true cost prices at $13,000: a 23% margin, not 30%. This tool always solves for margin.",
   },
   {
     title: "Equipment and pump rental",
-    body: "Pump rental, saws and other equipment are often the most volatile line item job to job — price them per job rather than folding them into a flat average.",
+    body: "Pump rental, saws and other equipment are often the most volatile line item job to job. Price them per job rather than folding them into a flat average.",
   },
   {
     title: "Labor accuracy",
@@ -58,13 +58,13 @@ const webApplicationSchema = {
   applicationCategory: "BusinessApplication",
   operatingSystem: "Any (web browser)",
   offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
-  description: "Enter your known concrete job costs — including as a standalone concrete labor cost calculator — to calculate true cost, overhead, target-margin pricing and required selling price.",
+  description: "Enter your known concrete job costs, including as a standalone concrete labor cost calculator, to calculate true cost, overhead, target-margin pricing and required selling price.",
 };
 ---
 
 <Layout
   title="Concrete Job Cost Calculator | Concrete Cost Pro"
-  description="Enter your known concrete job costs — including as a standalone concrete labor cost calculator — to calculate true cost, overhead, target-margin pricing and required selling price."
+  description="Enter your known concrete job costs, including as a standalone concrete labor cost calculator, to calculate true cost, overhead, target-margin pricing and required selling price."
 >
   <Fragment slot="head">
     <script type="application/ld+json" is:inline set:html={JSON.stringify(webApplicationSchema)} />
@@ -83,8 +83,8 @@ const webApplicationSchema = {
       <div class="mx-auto max-w-7xl px-4 pb-5 pt-5 sm:px-6 sm:pb-6 sm:pt-6">
         <h1 class="text-2xl font-extrabold tracking-tight text-ink sm:text-3xl">Concrete Job Cost Calculator</h1>
         <p class="mt-1.5 max-w-2xl text-base text-muted">
-          Already know your costs? Enter them directly — materials, labor, equipment, or just labor on its own as a
-          concrete labor cost calculator — to see your true job cost, current margin and the price you need to
+          Already know your costs? Enter them directly: materials, labor, equipment, or just labor on its own as a
+          concrete labor cost calculator, to see your true job cost, current margin and the price you need to
           charge to hit your target.
         </p>
       </div>
@@ -122,19 +122,19 @@ const webApplicationSchema = {
         <ol class="mt-4 flex flex-col gap-3 text-sm text-muted">
           <li class="flex gap-3">
             <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-orange/10 text-xs font-bold text-orange">1</span>
-            <span><strong class="text-ink">Direct cost</strong> — every cost line (ready mix, labor, forms, reinforcement, pump, equipment, other) is added together.</span>
+            <span><strong class="text-ink">Direct cost:</strong> every cost line (ready mix, labor, forms, reinforcement, pump, equipment, other) is added together.</span>
           </li>
           <li class="flex gap-3">
             <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-orange/10 text-xs font-bold text-orange">2</span>
-            <span><strong class="text-ink">True cost</strong> — your overhead percentage is applied on top of direct cost.</span>
+            <span><strong class="text-ink">True cost:</strong> your overhead percentage is applied on top of direct cost.</span>
           </li>
           <li class="flex gap-3">
             <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-orange/10 text-xs font-bold text-orange">3</span>
-            <span><strong class="text-ink">Required price</strong> — solved so that (price − true cost) ÷ price equals your target margin, not markup.</span>
+            <span><strong class="text-ink">Required price:</strong> solved so that (price − true cost) ÷ price equals your target margin, not markup.</span>
           </li>
           <li class="flex gap-3">
             <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-orange/10 text-xs font-bold text-orange">4</span>
-            <span><strong class="text-ink">Current margin</strong> — recalculated live against whatever selling price you enter, so you can see the gap instantly.</span>
+            <span><strong class="text-ink">Current margin:</strong> recalculated live against whatever selling price you enter, so you can see the gap instantly.</span>
           </li>
         </ol>
       </div>

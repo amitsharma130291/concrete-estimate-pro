@@ -11,11 +11,11 @@ import { CALCULATOR_CONFIGS } from "../data/calculatorConfigs";
 const faqs = [
   {
     q: "Is this an estimate template, a quote template or an invoice template?",
-    a: "It works as all three — the same line-item builder produces an estimate, a quote or, once the job is complete and you change the heading, an invoice. Fill in the fields once and print or save whichever document you need.",
+    a: "It works as all three. The same line-item builder produces an estimate, a quote or, once the job is complete and you change the heading, an invoice. Fill in the fields once and print or save whichever document you need.",
   },
   {
     q: "Can I print or save this as a PDF?",
-    a: "Yes — the Print / Save as PDF button opens your browser's print dialog with a clean, customer-ready layout. Choose \"Save as PDF\" as the destination to download it.",
+    a: "Yes. The Print / Save as PDF button opens your browser's print dialog with a clean, customer-ready layout. Choose \"Save as PDF\" as the destination to download it.",
   },
   {
     q: "Does this save my estimate?",
@@ -23,7 +23,7 @@ const faqs = [
   },
   {
     q: "Can I use this for other trades?",
-    a: "It's built for concrete flatwork, but the line-item format works for any straightforward estimate — add or remove lines as needed.",
+    a: "It's built for concrete flatwork, but the line-item format works for any straightforward estimate. Add or remove lines as needed.",
   },
 ];
 
@@ -34,11 +34,11 @@ const goodEstimateFactors = [
   },
   {
     title: "Line-item clarity",
-    body: "Breaking out materials, labor and equipment (even at a summary level) builds more trust than a single lump-sum number — customers are less likely to push back on a total they can see the shape of.",
+    body: "Breaking out materials, labor and equipment (even at a summary level) builds more trust than a single lump-sum number. Customers are less likely to push back on a total they can see the shape of.",
   },
   {
     title: "Explicit exclusions",
-    body: "State what's not included — permits, excess spoil removal, landscaping repair — in writing, before the job starts. This is the single easiest way to avoid a scope argument mid-project.",
+    body: "State what's not included, such as permits, excess spoil removal or landscaping repair, in writing before the job starts. This is the single easiest way to avoid a scope argument mid-project.",
   },
   {
     title: "A validity period",
@@ -64,7 +64,7 @@ const webApplicationSchema = {
 
 <Layout
   title="Concrete Estimate Template | Concrete Cost Pro"
-  description="Free interactive concrete estimate template — also works as a concrete quote template or invoice template. Fill in your project and line items and print a customer-ready document in minutes."
+  description="Free interactive concrete estimate template that also works as a concrete quote template or invoice template. Fill in your project and line items and print a customer-ready document in minutes."
 >
   <Fragment slot="head">
     <script type="application/ld+json" is:inline set:html={JSON.stringify(webApplicationSchema)} />
@@ -84,7 +84,7 @@ const webApplicationSchema = {
         <h1 class="text-2xl font-extrabold tracking-tight text-ink sm:text-3xl">Concrete Estimate Template</h1>
         <p class="mt-1.5 max-w-2xl text-base text-muted">
           An interactive concrete estimate template that doubles as a quote template or invoice template. Fill in
-          your project details and line items on the left — a customer-ready document builds itself on the right.
+          your project details and line items on the left; a customer-ready document builds itself on the right.
         </p>
       </div>
     </section>
@@ -145,7 +145,7 @@ const webApplicationSchema = {
       <div class="mx-auto max-w-4xl px-4 py-14 text-center sm:px-6">
         <h2 class="text-2xl font-bold text-white sm:text-3xl">Stop building estimates from scratch</h2>
         <p class="mx-auto mt-3 max-w-xl text-white/70">
-          Concrete Cost Pro fills in line items automatically from your dimensions and saved rates — and keeps
+          Concrete Cost Pro fills in line items automatically from your dimensions and saved rates, and keeps
           every estimate for next time.
         </p>
         <p class="mt-4 text-sm text-orange-ondark">

@@ -73,7 +73,7 @@ const noun =
     <section class="mx-auto max-w-4xl px-4 py-14 sm:px-6">
       <h2 class="text-2xl font-bold text-ink">What affects the cost of a concrete {noun.toLowerCase()}</h2>
       <p class="mt-2 text-muted">
-        The calculator above gives you a real number from your own inputs — here's what typically drives those
+        The calculator above gives you a real number from your own inputs. Here's what typically drives those
         numbers up or down, so you know what to look for on your specific job.
       </p>
       <div class="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2">
@@ -92,19 +92,19 @@ const noun =
         <ol class="mt-4 flex flex-col gap-3 text-sm text-muted">
           <li class="flex gap-3">
             <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-orange/10 text-xs font-bold text-orange">1</span>
-            <span><strong class="text-ink">Area</strong> — {config.length.label.toLowerCase()} × {config.width.label.toLowerCase()} gives the footprint in square feet.</span>
+            <span><strong class="text-ink">Area:</strong> {config.length.label.toLowerCase()} × {config.width.label.toLowerCase()} gives the footprint in square feet.</span>
           </li>
           <li class="flex gap-3">
             <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-orange/10 text-xs font-bold text-orange">2</span>
-            <span><strong class="text-ink">Volume</strong> — area × {config.thickness.label.toLowerCase()} (converted to feet) gives cubic feet, divided by 27 to get cubic yards.</span>
+            <span><strong class="text-ink">Volume:</strong> area × {config.thickness.label.toLowerCase()} (converted to feet) gives cubic feet, divided by 27 to get cubic yards.</span>
           </li>
           <li class="flex gap-3">
             <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-orange/10 text-xs font-bold text-orange">3</span>
-            <span><strong class="text-ink">Order quantity</strong> — your allowance percentage is added on top so you don't come up short on pour day, then rounded to whatever increment you choose.</span>
+            <span><strong class="text-ink">Order quantity:</strong> your allowance percentage is added on top so you don't come up short on pour day, then rounded to whatever increment you choose.</span>
           </li>
           <li class="flex gap-3">
             <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-orange/10 text-xs font-bold text-orange">4</span>
-            <span><strong class="text-ink">Cost and price</strong> — ready-mix, labor, forms, reinforcement and equipment costs are totaled, overhead is added for true cost, and the required price is solved for your target margin.</span>
+            <span><strong class="text-ink">Cost and price:</strong> ready-mix, labor, forms, reinforcement and equipment costs are totaled, overhead is added for true cost, and the required price is solved for your target margin.</span>
           </li>
         </ol>
       </div>
