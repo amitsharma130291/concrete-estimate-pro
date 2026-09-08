@@ -57,7 +57,7 @@ export default function ContactForm() {
     return (
       <Card>
         <p className="text-lg font-semibold text-ink">Message sent — thanks for reaching out.</p>
-        <p className="mt-1 text-sm text-muted">We usually reply within one business day.</p>
+        <p className="mt-1 text-sm text-muted">We will get in touch soon.</p>
       </Card>
     );
   }
