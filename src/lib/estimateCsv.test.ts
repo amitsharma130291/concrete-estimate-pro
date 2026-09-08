@@ -31,10 +31,26 @@ describe("estimateToCsvRows / estimateToCsv: normal export", () => {
   it("1. a normal estimate exports with the expected header and every section/cost-item row", () => {
     const estimate = baseEstimate();
     const rows = estimateToCsvRows(estimate);
-    // 1 section row + 6 cost-item rows.
-    expect(rows).toHaveLength(7);
+    // 1 section row + 5 cost-item rows (baseEstimate's otherCost is 0, so "Other" is
+    // correctly omitted -- see the dedicated zero-value test below).
+    expect(rows).toHaveLength(6);
     const csv = estimateToCsv(estimate);
     expect(csv.split("\r\n")[0]).toBe(ESTIMATE_CSV_HEADERS.join(","));
+  });
+
+  it("a cost category that's exactly $0 is omitted from the export, but Ready mix always appears", () => {
+    const estimate = baseEstimate({ costs: { readyMixRatePerYd3: 165, laborCost: 0, formsCost: 0, reinforcementCost: 0, equipmentCost: 0, otherCost: 0 } });
+    const rows = estimateToCsvRows(estimate);
+    const labelIdx = ESTIMATE_CSV_HEADERS.indexOf("Cost item");
+    const labels = rows.map((r) => r[labelIdx]);
+    // 1 section row (blank "Cost item") + exactly one cost-item row: Ready mix.
+    expect(rows).toHaveLength(2);
+    expect(labels).toContain("Ready mix");
+    expect(labels).not.toContain("Labor");
+    expect(labels).not.toContain("Forms");
+    expect(labels).not.toContain("Reinforcement");
+    expect(labels).not.toContain("Equipment");
+    expect(labels).not.toContain("Other");
   });
 
   it("9-10. multi-section rows have correct totals that reconcile exactly with the app's own math", () => {
@@ -45,8 +61,8 @@ describe("estimateToCsvRows / estimateToCsv: normal export", () => {
       ],
     });
     const rows = estimateToCsvRows(estimate);
-    // 2 sections + 6 cost items = 8 rows.
-    expect(rows).toHaveLength(8);
+    // 2 sections + 5 cost items (baseEstimate's otherCost is 0, omitted) = 7 rows.
+    expect(rows).toHaveLength(7);
 
     const netCubicYards = combinedNetCubicYards(estimate.sections);
     const orderQuantityYd3 = combinedOrderQuantity(estimate.sections, estimate.allowancePercent, estimate.rounding);

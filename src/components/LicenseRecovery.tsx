@@ -33,6 +33,10 @@ export default function LicenseRecovery() {
       await redeemLicenseKey(licenseKey.trim());
       setRedeemed(true);
       setStatus("idle");
+      // Land the customer straight in the product they already own, rather
+      // than leaving them on the pricing page they came from -- matches
+      // PurchaseButton's post-checkout redirect.
+      window.location.href = "/app";
     } catch (err) {
       setStatus("error");
       setMessage(err instanceof Error ? err.message : "Couldn't verify that license key.");

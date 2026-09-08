@@ -1,10 +1,36 @@
 import { useMemo } from "react";
-import { PlusCircle } from "lucide-react";
+import {
+  PlusCircle,
+  HelpCircle,
+  ArrowRight,
+  Settings as SettingsIcon,
+  FileText,
+  LayoutTemplate,
+  Activity,
+  Zap,
+  ShieldCheck,
+  Send,
+  TrendingUp,
+} from "lucide-react";
 import { isUntouchedBlankEstimate, useWorkspace } from "../../../lib/workspaceContext";
 import { evaluateEstimate, evaluateEntity } from "../../../lib/estimateMath";
 import { formatCurrency, formatPercent } from "../../../lib/calc";
 import { Badge, Button, Card, EmptyState, StatTile } from "../../ui/primitives";
 import SaveStatusIndicator from "../SaveStatusIndicator";
+
+const GETTING_STARTED = [
+  { icon: SettingsIcon, title: "Set up your business", desc: "Logo, contact info and default rates — appears on every estimate you send.", href: "/app/settings" },
+  { icon: FileText, title: "Build your first estimate", desc: "Dimensions, costs and pricing in one guided flow.", href: "/app/estimates?new=1" },
+  { icon: LayoutTemplate, title: "Save your standard jobs", desc: "Turn a driveway or patio job into a reusable template.", href: "/app/templates" },
+  { icon: Activity, title: "Check your Rate Health", desc: "See which standard prices are underpriced before you quote again.", href: "/app/rate-health" },
+];
+
+const FEATURE_HIGHLIGHTS = [
+  { icon: Zap, title: "Estimate faster", desc: "Saved catalog, labor rates and templates — no more rebuilding a bid from scratch." },
+  { icon: ShieldCheck, title: "Price with confidence", desc: "Overhead and target-margin pricing, plus a required-price solver for every job." },
+  { icon: Send, title: "Win the job", desc: "Branded, customer-ready PDFs your competitors' spreadsheets can't match." },
+  { icon: TrendingUp, title: "Track profitability", desc: "Log the actual job cost and see exactly where your estimate was right — or wrong." },
+];
 
 export default function OverviewTab() {
   const { currentEstimate, templates, preferences, ready, seedSample, estimateSaveStatus, estimateLastSavedAt, estimateSaveError, storageAvailable } = useWorkspace();
@@ -40,18 +66,71 @@ export default function OverviewTab() {
     return (
       <div className="flex flex-col gap-6">
         <PageHeader hasCurrentEstimate={false} />
-        <EmptyState
-          title="Welcome to Concrete Cost Pro"
-          desc="Load sample data to explore Rate Health and job costing — or start fresh with your own estimate."
-          action={
-            <div className="flex flex-wrap justify-center gap-2">
-              <Button onClick={seedSample}>Load sample data</Button>
-              <a href="/app/estimates?new=1">
-                <Button variant="ghost">Start a new estimate</Button>
+
+        <div className="overflow-hidden rounded-xl border border-border bg-charcoal text-white shadow-sm">
+          <div className="relative overflow-hidden px-6 py-10 text-center sm:px-10">
+            <div className="pointer-events-none absolute left-1/2 top-0 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-orange/25 blur-3xl" aria-hidden="true" />
+            <div className="relative">
+              <h2 className="text-2xl font-bold sm:text-3xl">Welcome to Concrete Cost Pro</h2>
+              <p className="mx-auto mt-2 max-w-lg text-sm text-white/70">
+                You're all set up — load sample data to explore Rate Health and job costing, or jump straight into your
+                own estimate.
+              </p>
+              <div className="mt-6 flex flex-wrap justify-center gap-2">
+                <Button onClick={seedSample}>Load sample data</Button>
+                <a href="/app/estimates?new=1">
+                  <Button variant="secondary">Start a new estimate</Button>
+                </a>
+              </div>
+              <a href="/how-to-use" className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-orange-ondark hover:text-white">
+                <HelpCircle size={15} />
+                Read the full how-to-use guide
+                <ArrowRight size={14} />
               </a>
             </div>
-          }
-        />
+          </div>
+        </div>
+
+        <Card title="Getting started" subtitle="Four steps to your first customer-ready estimate">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            {GETTING_STARTED.map((step, i) => {
+              const Icon = step.icon;
+              return (
+                <a
+                  key={step.title}
+                  href={step.href}
+                  className="group flex items-start gap-3 rounded-lg border border-border p-3.5 transition hover:border-orange/40 hover:bg-warm-white"
+                >
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-warm-white text-xs font-bold text-muted group-hover:bg-orange group-hover:text-white">
+                    {i + 1}
+                  </span>
+                  <span className="min-w-0">
+                    <span className="flex items-center gap-1.5 font-semibold text-ink">
+                      <Icon size={15} className="shrink-0 text-orange" aria-hidden="true" />
+                      {step.title}
+                    </span>
+                    <span className="mt-0.5 block text-sm text-muted">{step.desc}</span>
+                  </span>
+                </a>
+              );
+            })}
+          </div>
+        </Card>
+
+        <Card title="What you get with Pro">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {FEATURE_HIGHLIGHTS.map((f) => {
+              const Icon = f.icon;
+              return (
+                <div key={f.title} className="rounded-lg border border-border bg-warm-white p-4">
+                  <Icon size={18} className="text-orange" aria-hidden="true" />
+                  <div className="mt-2 font-semibold text-ink">{f.title}</div>
+                  <div className="mt-1 text-sm text-muted">{f.desc}</div>
+                </div>
+              );
+            })}
+          </div>
+        </Card>
       </div>
     );
   }

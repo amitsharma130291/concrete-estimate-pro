@@ -24,7 +24,7 @@ const PROJECT_TYPES: ProjectType[] = ["driveway", "slab", "patio", "footing", "s
  * updateCurrentEstimate); "Save draft" / "Save & mark sent" just set status and flush
  * immediately so the status change is confirmed without waiting out the debounce. */
 export default function EstimateWizard({ onDone }: { onDone: () => void }) {
-  const { currentEstimate, updateCurrentEstimate, flushCurrentEstimateNow, estimateSaveStatus, estimateLastSavedAt, estimateSaveError, storageAvailable } = useWorkspace();
+  const { currentEstimate, updateCurrentEstimate, flushCurrentEstimateNow, estimateSaveStatus, estimateLastSavedAt, estimateSaveError, storageAvailable, preferences } = useWorkspace();
   const [stepIndex, setStepIndex] = useState(0);
   const [comparingScenarios, setComparingScenarios] = useState(false);
   const hasTrackedCreate = useRef(false);
@@ -86,10 +86,10 @@ export default function EstimateWizard({ onDone }: { onDone: () => void }) {
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[58%_42%] lg:items-start">
-        <Card title={step}>
+        <Card title={step} className="no-print">
           {step === "Project" && (
             <div className="flex flex-col gap-1">
-              <Field label="Project name" htmlFor="ew-project-name">
+              <Field label="Project name" htmlFor="ew-project-name" wide>
                 <TextInput id="ew-project-name" value={draft.projectName} onChange={(e) => setDraft((d) => ({ ...d, projectName: e.target.value }))} placeholder="Smith Driveway" />
               </Field>
               <Field label="Project type" htmlFor="ew-project-type">
@@ -107,11 +107,14 @@ export default function EstimateWizard({ onDone }: { onDone: () => void }) {
           {step === "Dimensions" && (
             <div>
               <SectionsEditor sections={draft.sections} onChange={(sections) => setDraft((d) => ({ ...d, sections }))} />
-              <div className="mt-4 grid grid-cols-2 gap-3">
-                <Field label="Order allowance (%)" htmlFor="ew-allowance">
+              {/* Stacked, not a 2-column grid -- the wizard's own left pane is already
+                  capped at 58% of the page width, and Rounding's option text ("Round up to
+                  next 0.25 yd³") needs more room than half of that leaves it. */}
+              <div className="mt-4 flex flex-col gap-1">
+                <Field label="Order allowance (%)" htmlFor="ew-allowance" wide>
                   <NumberInput id="ew-allowance" value={draft.allowancePercent} onChange={(e) => setDraft((d) => ({ ...d, allowancePercent: parseFloat(e.target.value) || 0 }))} />
                 </Field>
-                <Field label="Rounding" htmlFor="ew-rounding">
+                <Field label="Rounding" htmlFor="ew-rounding" wide>
                   <Select id="ew-rounding" value={draft.rounding} onChange={(e) => setDraft((d) => ({ ...d, rounding: e.target.value as any }))}>
                     <option value="none">Exact amount</option>
                     <option value="quarter">Round up to next 0.25 yd³</option>
@@ -210,19 +213,32 @@ export default function EstimateWizard({ onDone }: { onDone: () => void }) {
 
           {step === "Customer" && (
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <Field label="Customer name">
+              <Field
+                label="Customer name"
+                required
+                error={draft.customerName.trim().length === 0 ? "Customer name is required." : null}
+                wide
+              >
                 <TextInput value={draft.customerName} onChange={(e) => setDraft((d) => ({ ...d, customerName: e.target.value }))} />
               </Field>
-              <Field label="Customer email">
+              <Field label="Customer email" wide>
                 <TextInput value={draft.customerEmail ?? ""} onChange={(e) => setDraft((d) => ({ ...d, customerEmail: e.target.value }))} />
               </Field>
+              <Field label="Estimate valid for (days)" htmlFor="ew-validity-days" hint='Shown to the customer as "Valid until"' wide>
+                <NumberInput
+                  id="ew-validity-days"
+                  min={1}
+                  value={draft.validityDays ?? preferences.estimateValidityDays}
+                  onChange={(e) => setDraft((d) => ({ ...d, validityDays: parseFloat(e.target.value) || 1 }))}
+                />
+              </Field>
               <div className="sm:col-span-2">
-                <Field label="Customer address">
+                <Field label="Customer address" wide>
                   <TextInput value={draft.customerAddress ?? ""} onChange={(e) => setDraft((d) => ({ ...d, customerAddress: e.target.value }))} />
                 </Field>
               </div>
               <div className="sm:col-span-2">
-                <Field label="Notes">
+                <Field label="Notes" wide>
                   <textarea
                     value={draft.notes ?? ""}
                     onChange={(e) => setDraft((d) => ({ ...d, notes: e.target.value }))}
@@ -231,6 +247,11 @@ export default function EstimateWizard({ onDone }: { onDone: () => void }) {
                   />
                 </Field>
               </div>
+              {!canContinue && (
+                <p className="sm:col-span-2 text-sm text-muted">
+                  Add a customer name to enable <strong>Save &amp; mark sent</strong> — or use <strong>Save draft</strong> to keep working on it first.
+                </p>
+              )}
             </div>
           )}
 
@@ -268,7 +289,7 @@ export default function EstimateWizard({ onDone }: { onDone: () => void }) {
         </Card>
 
         <div className="flex flex-col gap-4 lg:sticky lg:top-6">
-          <Card title="Live summary" subtitle="Updates as you go">
+          <Card title="Live summary" subtitle="Updates as you go" className="no-print">
             <div className="grid grid-cols-2 gap-3 text-sm">
               <SummaryStat label="Order qty" value={formatYd3(result.orderQuantityYd3)} />
               <SummaryStat label="True cost" value={formatCurrency(result.trueCost)} />
@@ -278,7 +299,11 @@ export default function EstimateWizard({ onDone }: { onDone: () => void }) {
           </Card>
           {step === "Customer" && (
             <div>
-              <div className="mb-2 flex items-center justify-between">
+              {/* Only EstimateDocument below should ever hit paper -- everything else on this
+                  page (sidebar, wizard form, Live summary, this row itself) is marked
+                  no-print, matching the same pattern EstimatesTab.tsx uses for its own Print
+                  button. Without it, window.print() here printed the entire app chrome. */}
+              <div className="mb-2 flex items-center justify-between no-print">
                 <span className="text-sm font-semibold text-ink">Document preview</span>
                 <Button size="sm" variant="ghost" onClick={() => { track("pdf_generated", { source: "wizard" }); window.print(); }}>
                   <Printer size={14} /> Print

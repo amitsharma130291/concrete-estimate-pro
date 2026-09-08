@@ -1,0 +1,272 @@
+---
+import Layout from "../layouts/Layout.astro";
+import PublicHeader from "../components/PublicHeader.astro";
+import PublicFooter from "../components/PublicFooter.astro";
+import Breadcrumbs from "../components/Breadcrumbs.astro";
+
+const flow = [
+  "Buy → get your key",
+  "Set up Profile + Catalog",
+  "Build an Estimate",
+  "Check Rate Health",
+  "Send the PDF",
+  "Log the Actual",
+];
+
+const steps = [
+  {
+    n: 1,
+    title: "Unlock your license",
+    body: "After purchase, you land back on the site already unlocked, and a welcome email arrives with your license key. That key is your only \"account\" — no password, no login. Save the email: the key is how you get back in on a new device or after clearing your browser.",
+    why: "One payment, not a monthly bill. Every job you price after this one goes straight to your margin — nothing recurring comes out of it.",
+  },
+  {
+    n: 2,
+    title: "Set up your business profile and catalog — once",
+    body: "In Settings, enter your defaults: overhead %, target margin %, allowance % and rounding. In Catalog, save your real ready-mix rate, labor rates and equipment costs. Every new estimate and template pulls from these saved numbers, so you fill them in once instead of retyping rates on every job.",
+    why: "Estimates built on guessed or remembered rates are the single most common way contractors quietly underprice a job. Real, saved numbers mean every estimate starts from what things actually cost you, not a rough memory.",
+    img: "02-settings",
+    alt: "Settings tab showing business profile fields and saved default overhead, margin, labor rate and rounding values",
+  },
+  {
+    n: 3,
+    title: "Save your standard rates in Catalog",
+    body: "Ready Mix, Materials, Labor and Equipment each get their own tab. Add the rates you actually charge — these are what populate a new estimate's Costs step automatically. Already have your rates in a spreadsheet? Export CSV once to see the exact column headers Concrete Cost Pro expects (name, supplier, unit, unitCost), then Import CSV to load them all at once instead of typing them in one by one.",
+    why: "Material and labor costs creep up quietly. A rate you haven't touched in months is a margin leak on every single job that uses it — keeping Catalog current is how you catch that before it costs you.",
+    img: "03-catalog",
+    alt: "Catalog tab, Ready Mix sub-tab, showing two saved concrete mix rates with supplier, unit and unit cost",
+  },
+  {
+    n: 4,
+    title: "Build Templates for jobs you quote often",
+    body: "If you regularly quote the same kind of job — driveways, patios, footings — save a Template with typical sections and costs pre-filled. Starting a new estimate from a template means only the dimensions usually need to change.",
+    why: "Faster quotes win more bids, and a template guarantees the same cost structure every time — no line item quietly dropped because you were quoting from the truck under deadline pressure.",
+    img: "04-templates",
+    alt: "Templates tab showing four saved templates as cards with order quantity, true cost, current rate and margin",
+  },
+  {
+    n: 5,
+    title: "Create your Current Estimate",
+    body: "One current estimate at a time, built in a 5-step wizard. It autosaves as you go — watch the status indicator at the top of the page.",
+    why: "The wizard forces every real cost line — forms, reinforcement, equipment, overhead — onto the page before you're allowed to price. That's exactly what a rushed, mental on-site estimate skips, and exactly what quietly erases margin.",
+    substeps: [
+      { label: "Project", detail: "name and project type", img: "05-wizard-project", alt: "Wizard step 1: Project name and project type fields" },
+      { label: "Dimensions", detail: "one or more sections, plus order allowance and rounding", img: "06-wizard-dimensions", alt: "Wizard step 2: section length, width, thickness, order allowance and rounding" },
+      { label: "Costs", detail: "ready-mix, labor, forms, reinforcement, equipment, other", img: "07-wizard-costs", alt: "Wizard step 3: cost fields for ready mix, labor, forms, reinforcement and equipment" },
+      { label: "Price", detail: "overhead, target margin, your selling price — or one click to use the required price the math solves for", img: "08-wizard-price", alt: "Wizard step 4: overhead percent, target margin percent, selling price, and a button to use the required price" },
+      { label: "Customer", detail: "name and contact details for the PDF" },
+    ],
+  },
+  {
+    n: 6,
+    title: "Check Rate Health before you commit to a price",
+    body: "Rate Health audits every saved template against your target margin, and lets you model a cost change — \"ready-mix up 10%\" — across all of them at once before you decide to update your saved rates.",
+    why: "This catches a rate that's already fallen below your target margin before you send a quote built on it — not after the job's finished and it's too late to do anything about it.",
+    img: "10-rate-health",
+    alt: "Rate Health tab showing a scenario analysis panel and a table of standard rates with margin and status columns",
+  },
+  {
+    n: 7,
+    title: "Send the estimate",
+    body: "From Current Estimate, print or save a customer-facing PDF — direct costs, overhead and margin are hidden by default, with an opt-in checkbox if you want to show your breakdown. Export CSV separately for your own records, not the customer's.",
+    why: "A clean, professional PDF that never exposes your internal costs to the customer lets you hold your price with confidence, instead of getting negotiated down once they can see your markup.",
+    img: "09-estimate-summary",
+    alt: "Current Estimate summary showing the customer-facing estimate, internal cost details, and Print / Download PDF and Export CSV buttons",
+  },
+  {
+    n: 8,
+    title: "Log the actual result once the job is done",
+    body: "In Estimate vs Actual, enter what the job actually cost and sold for. Concrete Cost Pro compares it against what you estimated, so you see exactly where a job ran over or under before you quote the next one.",
+    why: "This is the only way to know if a job type is chronically underpriced. Skip it, and the same pricing mistake repeats — quietly — on every similar job you quote after this one.",
+    img: "11-actuals",
+    alt: "Estimate vs Actual tab showing the current estimate name with a Log actual result button",
+  },
+  {
+    n: 9,
+    title: "Starting the next job",
+    body: "\"New Estimate\" or \"Duplicate Current Estimate\" both ask you to confirm first, with a PDF/CSV export offered before anything is replaced — since only one current estimate is kept at a time.",
+    why: "That confirm-and-export safety net means moving to the next job never accidentally destroys this one's numbers before you've captured them for your records.",
+  },
+];
+
+const faqs = [
+  {
+    q: "I cleared my browser (or switched computers) and my estimate is gone. Can I get it back?",
+    a: "No — your current estimate lives only in this browser, on this device, with no cloud backup. This is by design (nothing about your business ever leaves your device). Before clearing browser data or switching machines, export the estimate as a PDF or CSV from Current Estimate first. Your license key, business profile, catalog, rates and templates are separate from the current estimate and are recoverable — see \"Lost access?\" below.",
+  },
+  {
+    q: "My total shows $0, or a field has a red outline.",
+    a: "A required field on the Costs or Price step is blank, zero, or invalid (Concrete Cost Pro won't silently treat a blank cost as $0 — it flags it so you don't accidentally send a wrong price). Go back to that step and fill in every field with a red outline; the total updates immediately once they're valid.",
+  },
+  {
+    q: "Does my customer see my costs, overhead or margin on the PDF?",
+    a: "No, never by default. The customer PDF only shows the project scope and the total price unless you explicitly check \"Show cost breakdown\" on the Price step of the wizard.",
+  },
+  {
+    q: "Can I have more than one estimate open at a time?",
+    a: "Concrete Cost Pro intentionally keeps one current estimate, not a list. For a second job, either finish and export the current one first, or use \"Duplicate Current Estimate\" / \"New Estimate\" — both confirm first and offer a PDF/CSV export before replacing anything, so nothing is lost silently.",
+  },
+  {
+    q: "How do I back up my business data?",
+    a: "Settings → Export business data. That downloads one file covering your business profile, catalog, rates and templates — everything reusable. It does not include your current estimate; export that separately as a PDF or CSV from the Current Estimate page.",
+  },
+  {
+    q: "How do I restore my data on a new device, or after clearing my browser?",
+    a: "In Settings, use \"Import business data\" and pick the file \"Export business data\" saved earlier — it restores your business profile, catalog, rates and templates exactly as they were. This only works with a file this app exported itself; it's not a general-purpose import. Your current estimate isn't part of that file (see above), so restore it separately by starting a new estimate from your data, or referencing the PDF/CSV you exported.",
+  },
+  {
+    q: "Where is my data actually stored? Is it sent anywhere?",
+    a: "Everything lives in this browser's local storage, on this device only. Nothing is uploaded to a server — there's no account and no cloud sync, which is also why clearing site data or switching browsers loses anything you haven't exported.",
+  },
+  {
+    q: "Does it work on my phone?",
+    a: "Yes — the layout adapts down to a phone screen, including the wizard and every tab. For heavy data entry, a laptop or tablet is more comfortable, but nothing is desktop-only.",
+  },
+  {
+    q: "I lost my license key email. How do I get back in?",
+    a: "Go to Pricing → \"Already purchased? Enter your license key\" → \"Forgot your key?\", enter the email you paid with, and it's re-sent automatically — no support ticket needed.",
+  },
+];
+---
+
+<Layout
+  title="How to Use Concrete Cost Pro | Step-by-Step Guide"
+  description="A step-by-step visual guide to Concrete Cost Pro: setup, building an estimate, Rate Health, exporting, tracking actuals, and a troubleshooting FAQ."
+>
+  <PublicHeader />
+  <main>
+    <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "How to Use", href: "/how-to-use" }]} />
+    <section class="border-b border-border bg-white">
+      <div class="mx-auto max-w-3xl px-4 py-12 text-center sm:px-6">
+        <h1 class="text-3xl font-extrabold tracking-tight text-ink sm:text-4xl">How to Use Concrete Cost Pro</h1>
+        <p class="mx-auto mt-3 max-w-xl text-lg text-muted">
+          Everything runs in your browser, with no account. Here's the whole workflow, with real screenshots of
+          every step.
+        </p>
+      </div>
+    </section>
+
+    <!-- Flow diagram -->
+    <section class="border-b border-border bg-warm-white">
+      <div class="mx-auto max-w-5xl px-4 py-10 sm:px-6">
+        <div class="flex flex-col items-stretch gap-0 sm:flex-row sm:items-center sm:gap-0">
+          {flow.map((label, i) => (
+            <>
+              <div class="flex-1 rounded-lg border border-border bg-white px-4 py-3 text-center text-sm font-semibold text-ink shadow-sm">
+                {label}
+              </div>
+              {i < flow.length - 1 && (
+                <div class="flex shrink-0 items-center justify-center py-1 text-orange sm:px-2 sm:py-0">
+                  <svg class="h-5 w-5 rotate-90 sm:rotate-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                    <path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </div>
+              )}
+            </>
+          ))}
+        </div>
+        <p class="mt-3 text-center text-xs text-muted">
+          Steps 1–2 happen once. Steps 3–6 repeat for every job.
+        </p>
+      </div>
+    </section>
+
+    <!-- Step-by-step with screenshots -->
+    <section class="mx-auto max-w-3xl px-4 py-14 sm:px-6">
+      <p class="mb-8 text-xs italic text-muted">
+        The "Why it matters" notes below describe how each step is designed to help protect your margin — not a
+        guaranteed result. What you actually charge, and what a job actually costs, is always your call.
+      </p>
+      <ol class="flex flex-col gap-14">
+        {steps.map((s) => (
+          <li>
+            <div class="flex items-start gap-3">
+              <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-orange text-sm font-bold text-white">{s.n}</span>
+              <div>
+                <h2 class="font-semibold text-ink">{s.title}</h2>
+                <p class="mt-1.5 text-sm leading-relaxed text-muted">{s.body}</p>
+                {s.why && (
+                  <p class="mt-2.5 flex items-start gap-1.5 rounded-lg bg-green-light px-3 py-2 text-sm leading-relaxed text-green">
+                    <svg class="mt-0.5 h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                      <path d="M3 17l6-6 4 4 8-8M21 7v6M21 7h-6" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    <span><strong class="font-semibold">Why it matters:</strong> {s.why}</span>
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {s.img && (
+              <img
+                src={`/guide/${s.img}.png`}
+                alt={s.alt}
+                loading="lazy"
+                class="mt-4 ml-11 w-[calc(100%-2.75rem)] rounded-lg border border-border shadow-sm"
+              />
+            )}
+
+            {s.substeps && (
+              <ol class="ml-11 mt-4 flex flex-col gap-6 border-l-2 border-border pl-5">
+                {s.substeps.map((sub, i) => (
+                  <li>
+                    <p class="text-sm font-semibold text-ink">{i + 1}. {sub.label}</p>
+                    <p class="mt-0.5 text-sm text-muted">{sub.detail}</p>
+                    {sub.img && (
+                      <img src={`/guide/${sub.img}.png`} alt={sub.alt} loading="lazy" class="mt-2 w-full rounded-lg border border-border shadow-sm" />
+                    )}
+                  </li>
+                ))}
+              </ol>
+            )}
+          </li>
+        ))}
+      </ol>
+
+      <div class="mt-14 rounded-xl border border-border bg-warm-white p-5">
+        <h2 class="font-semibold text-ink">Lost access, or moved to a new device?</h2>
+        <p class="mt-1.5 text-sm text-muted">
+          Your license key works on any browser, any device — no login. Go to the
+          <a href="/pricing" class="font-medium text-orange hover:underline">pricing page</a>, open
+          <strong>"Already purchased? Enter your license key"</strong>, and paste it in. Lost the key itself? Click
+          <strong>"Forgot your key?"</strong> on that same panel and it's re-sent to the email you paid with.
+        </p>
+      </div>
+    </section>
+
+    <!-- FAQ / troubleshooting -->
+    <section class="border-t border-border bg-white">
+      <div class="mx-auto max-w-3xl px-4 py-14 sm:px-6">
+        <h2 class="text-center text-2xl font-bold text-ink">Common questions</h2>
+        <p class="mx-auto mt-2 max-w-lg text-center text-sm text-muted">
+          The things most likely to trip you up — read this before writing in.
+        </p>
+        <div class="mt-8 flex flex-col divide-y divide-border rounded-xl border border-border bg-white">
+          {faqs.map((f) => (
+            <details class="group p-5">
+              <summary class="flex cursor-pointer list-none items-center justify-between gap-3 font-medium text-ink">
+                {f.q}
+                <svg class="h-4 w-4 shrink-0 text-muted transition group-open:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                  <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </summary>
+              <p class="mt-2.5 text-sm leading-relaxed text-muted">{f.a}</p>
+            </details>
+          ))}
+        </div>
+        <p class="mt-6 text-center text-sm text-muted">
+          Still stuck? <a href="/contact" class="font-medium text-orange hover:underline">Contact us</a> — we read every message.
+        </p>
+      </div>
+    </section>
+
+    <section class="border-t border-border bg-white">
+      <div class="mx-auto max-w-3xl px-4 py-12 text-center sm:px-6">
+        <h2 class="text-xl font-bold text-ink">Haven't purchased yet?</h2>
+        <p class="mt-2 text-muted">
+          One payment, lifetime access — no subscription. See <a href="/pricing" class="font-medium text-orange hover:underline">pricing</a>.
+        </p>
+      </div>
+    </section>
+  </main>
+  <PublicFooter />
+</Layout>

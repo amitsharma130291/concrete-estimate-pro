@@ -107,6 +107,61 @@ function customerText({ licenseKey, recoveryUrl, isResend }: { licenseKey: strin
 }
 
 /**
+ * Notifies the owner that a checkout attempt did NOT succeed (declined card,
+ * cancelled session, etc.) -- there's no database, so this owner-inbox
+ * notice is the only record of a failed attempt at all. Only called from the
+ * "just came back from checkout" path in verify.ts, never from the periodic
+ * verifyAccess() re-checks, so this fires once per failed attempt rather
+ * than repeatedly on every /app page load.
+ */
+export async function sendPaymentFailedNotice({
+  status,
+  paymentId,
+  sessionId,
+  customerEmail,
+  customerName,
+  payment = null,
+}: {
+  status: string;
+  paymentId?: string | null;
+  sessionId?: string | null;
+  customerEmail?: string | null;
+  customerName?: string | null;
+  payment?: unknown;
+}) {
+  const setup = getTransporter();
+  if (!setup) {
+    console.error("Can't send payment-failed notice: GMAIL_USER/GMAIL_APP_PASSWORD not configured.");
+    return { configured: false, sent: false };
+  }
+  const { transporter, gmailUser } = setup;
+  const paymentJson = payment ? JSON.stringify(payment, null, 2) : "(no payment object available for this status)";
+  try {
+    await transporter.sendMail({
+      from: `"Concrete Cost Pro" <${gmailUser}>`,
+      to: OWNER_EMAIL,
+      subject: `[Payment failed] Concrete Cost Pro checkout -- ${status}`,
+      text: [
+        "A Concrete Cost Pro checkout did not succeed.",
+        "",
+        `Status: ${status}`,
+        `Payment ID: ${paymentId || "(none)"}`,
+        `Session ID: ${sessionId || "(none)"}`,
+        `Customer: ${customerName || "(no name given)"} <${customerEmail || "no email"}>`,
+        "",
+        "Full Dodo payment/session data:",
+        paymentJson,
+      ].join("\n"),
+      html: `<p>A Concrete Cost Pro checkout did not succeed.</p><ul><li>Status: ${escapeHtml(status)}</li><li>Payment ID: ${escapeHtml(paymentId || "(none)")}</li><li>Session ID: ${escapeHtml(sessionId || "(none)")}</li><li>Customer: ${escapeHtml(customerName || "(no name given)")} &lt;${escapeHtml(customerEmail || "no email")}&gt;</li></ul><p>Full Dodo payment/session data:</p><pre style="background:#f7f5f1;border:1px solid #d8dde3;border-radius:8px;padding:12px;font-size:12px;overflow-x:auto;white-space:pre-wrap;word-break:break-word">${escapeHtml(paymentJson)}</pre>`,
+    });
+    return { configured: true, sent: true };
+  } catch (err) {
+    console.error("Payment-failed notice email failed:", err);
+    return { configured: true, sent: false };
+  }
+}
+
+/**
  * Emails the license key + recovery steps to the customer, and a copy to the
  * site owner as a standing record (the owner's inbox doubles as the audit
  * trail there is no database for). Called from verify.ts right after a

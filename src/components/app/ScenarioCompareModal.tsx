@@ -91,7 +91,7 @@ export default function ScenarioCompareModal({
   }
 
   return (
-    <Modal title="Compare pricing scenarios" onClose={onClose} wide>
+    <Modal title="Compare pricing scenarios" onClose={onClose} size="xl">
       <p className="mb-4 text-sm text-muted">
         Model two different finishes, material choices, labor assumptions or margins for the same job, then apply
         whichever one you want to the estimate.

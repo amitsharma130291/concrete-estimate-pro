@@ -164,7 +164,7 @@ function ActualEditor({ initial, onSave, onCancel }: { initial: ActualJobResult;
   const hasBlockingError = !!(qtyError || hoursError || laborCostError || materialCostError || equipmentCostError || otherCostError || sellingPriceError);
 
   return (
-    <Modal title="Log actual job result" onClose={onCancel} wide>
+    <Modal title="Log actual job result" onClose={onCancel} size="lg">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Field label="Completed date">
           <input

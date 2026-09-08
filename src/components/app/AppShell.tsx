@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   LayoutDashboard,
   FileText,
@@ -9,8 +9,10 @@ import {
   Settings,
   Menu,
   X,
+  HelpCircle,
 } from "lucide-react";
 import { WorkspaceProvider } from "../../lib/workspaceContext";
+import { verifyAccess } from "../../lib/license";
 import OverviewTab from "./tabs/OverviewTab";
 import EstimatesTab from "./tabs/EstimatesTab";
 import TemplatesTab from "./tabs/TemplatesTab";
@@ -41,7 +43,43 @@ const NAV: { key: AppTab; label: string; href: string; icon: typeof LayoutDashbo
   { key: "settings", label: "Settings", href: "/app/settings", icon: Settings },
 ];
 
+/** The entire /app area is the paid product -- the free tools live at their own public
+ * calculator pages, not here. Every page under /app mounts this fresh (Astro does a full
+ * page load per route, not a client-side SPA nav), so this re-checks on every visit rather
+ * than trusting a client-side flag that would let someone skip straight past the gate. */
 export default function AppShell({ activeTab }: { activeTab: AppTab }) {
+  const [access, setAccess] = useState<"checking" | "allowed" | "denied">("checking");
+
+  useEffect(() => {
+    let cancelled = false;
+    verifyAccess().then((license) => {
+      if (cancelled) return;
+      setAccess(license ? "allowed" : "denied");
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (access === "denied") window.location.href = "/pricing";
+  }, [access]);
+
+  if (access !== "allowed") {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-warm-white">
+        <div className="flex items-center gap-2.5 text-sm text-muted">
+          <span className="h-4 w-4 animate-spin rounded-full border-2 border-border border-t-orange" aria-hidden="true" />
+          {access === "checking" ? "Checking access…" : "Redirecting to pricing…"}
+        </div>
+      </div>
+    );
+  }
+
+  return <AppShellContent activeTab={activeTab} />;
+}
+
+function AppShellContent({ activeTab }: { activeTab: AppTab }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const TabComponent = TAB_COMPONENTS[activeTab];
 
@@ -74,23 +112,46 @@ export default function AppShell({ activeTab }: { activeTab: AppTab }) {
           </div>
         )}
 
-        <div className="flex min-h-screen flex-1 flex-col">
+        {/* min-w-0 overrides a flex item's default min-width:auto -- without it, this column
+            refuses to shrink below the intrinsic width of whatever's inside it (a wide table,
+            a stat-card grid, unwrapped text), blowing out the whole page into a horizontal
+            scroll instead of that content wrapping or scrolling internally. */}
+        <div className="flex min-h-screen min-w-0 flex-1 flex-col">
           <header className="sticky top-0 z-30 flex items-center justify-between border-b border-border bg-white px-4 py-3 min-[1200px]:hidden no-print">
             <button
               type="button"
               onClick={() => setMobileOpen(true)}
               aria-label="Open menu"
-              className="rounded-lg border border-border p-2 text-ink"
+              className="shrink-0 rounded-lg border border-border p-2 text-ink"
             >
               <Menu size={20} />
             </button>
-            <span className="text-sm font-semibold text-ink">{NAV.find((n) => n.key === activeTab)?.label ?? "Concrete Cost Pro"}</span>
-            <a href="/" className="text-xs font-medium text-orange">
-              Site
-            </a>
+            <span className="min-w-0 flex-1 truncate px-2 text-sm font-semibold text-ink">{NAV.find((n) => n.key === activeTab)?.label ?? "Concrete Cost Pro"}</span>
+            <div className="flex shrink-0 items-center gap-3">
+              <a href="/how-to-use" aria-label="How to use Concrete Cost Pro" className="flex items-center gap-1 text-xs font-medium text-orange">
+                <HelpCircle size={15} />
+                Guide
+              </a>
+              <a href="/" className="text-xs font-medium text-orange">
+                Site
+              </a>
+            </div>
           </header>
 
-          <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8">
+          <main className="relative flex-1 px-4 py-6 sm:px-6 lg:px-8">
+            {/* Mobile/tablet already have this in the header bar above (<1200px) -- desktop's
+                sidebar has it too, but this copy sits right at the top of every tab's own
+                content, closest to where a first-time user is actually looking. Absolutely
+                positioned (not a row of its own) so it sits parallel to each tab's own
+                title/action row instead of pushing it down -- top/right match main's own
+                padding scale (py-6 / px-4 sm:px-6 lg:px-8) so it lines up with that row. */}
+            <a
+              href="/how-to-use"
+              className="absolute right-4 top-2 z-10 hidden items-center gap-1 text-[11px] font-medium text-muted hover:text-orange min-[1200px]:flex sm:right-6 lg:right-8"
+            >
+              <HelpCircle size={12} />
+              How to use Concrete Cost Pro
+            </a>
             <TabComponent />
           </main>
         </div>
@@ -102,13 +163,21 @@ export default function AppShell({ activeTab }: { activeTab: AppTab }) {
 function SidebarContent({ activeTab, onNavigate }: { activeTab: AppTab; onNavigate?: () => void }) {
   return (
     <>
-      <a href="/" className="flex items-center gap-2.5 px-5 py-5" onClick={onNavigate}>
-        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-white p-1">
-          <img src="/icon-192.png" alt="" className="h-full w-full object-contain" width="192" height="192" />
+      <a href="/" className="flex items-center px-5 py-5" onClick={onNavigate}>
+        {/* Same logo file the public site uses (PublicHeader.astro) -- its wordmark is dark
+            charcoal, so it needs a light backing to stay legible on this dark sidebar,
+            unlike on the site's white header. */}
+        <span className="flex items-center rounded-lg bg-white px-2.5 py-2">
+          <img src="/brand/logo-header.png" alt="Concrete Cost Pro" className="h-9 w-auto" width="614" height="100" />
         </span>
-        <span className="text-sm font-bold">
-          Concrete Cost <span className="text-orange-ondark">Pro</span>
-        </span>
+      </a>
+      <a
+        href="/how-to-use"
+        onClick={onNavigate}
+        className="mx-3 mb-3 flex items-center gap-2 rounded-lg bg-charcoal-light px-3 py-2 text-xs font-semibold text-orange-ondark hover:bg-charcoal-light/70"
+      >
+        <HelpCircle size={15} />
+        How to use Concrete Cost Pro
       </a>
       <nav aria-label="Application" className="flex-1 space-y-0.5 px-3">
         {NAV.map((item) => {

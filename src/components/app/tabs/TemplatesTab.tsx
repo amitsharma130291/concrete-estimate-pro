@@ -176,9 +176,9 @@ function TemplateEditor({ template, onSave, onCancel }: { template: ProjectTempl
   const zeroCostWarnings = getZeroCostWarnings(draft.defaultCosts, combinedAreaSqFt(draft.sections));
 
   return (
-    <Modal title={template.name === "New template" ? "New template" : `Edit ${template.name}`} onClose={onCancel} wide>
+    <Modal title={template.name === "New template" ? "New template" : `Edit ${template.name}`} onClose={onCancel} size="lg">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <Field label="Name">
+        <Field label="Name" wide>
           <TextInput value={draft.name} onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))} />
         </Field>
         <Field label="Project type">

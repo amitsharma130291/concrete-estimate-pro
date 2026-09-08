@@ -11,6 +11,7 @@
 export const prerender = false;
 
 import type { APIRoute } from "astro";
+import { waitUntil } from "@vercel/functions";
 import { getDodoClient, getProProductId, jsonResponse } from "../../../lib/server/dodo";
 import { buildLicenseKey, buildRecoveryUrl, sendLicenseEmails } from "../../../lib/server/license";
 
@@ -65,17 +66,25 @@ export const POST: APIRoute = async ({ request }) => {
     const matches = allPayments.filter((p) => p.customer?.email?.toLowerCase() === target);
     console.log(`License recovery for ${email}: ${allPayments.length} succeeded payment(s) checked, ${matches.length} matched.`);
 
+    // Not awaited -- the caller's "Sending..." button is waiting on this response, and the
+    // generic message below doesn't depend on whether the email has actually left yet.
+    // waitUntil keeps the serverless function alive long enough for it to go out anyway (a
+    // no-op locally, where the dev server just keeps running). See verify.ts for the same
+    // pattern -- this endpoint additionally has to page through Dodo's payment list first,
+    // so blocking on the email send too was stacking real latency on top of that.
     for (const payment of matches) {
       const licenseKey = buildLicenseKey(payment.payment_id);
       const recoveryUrl = buildRecoveryUrl({ paymentId: payment.payment_id });
-      await sendLicenseEmails({
-        customerEmail: email,
-        customerName: payment.customer?.name,
-        licenseKey,
-        recoveryUrl,
-        isResend: true,
-        payment,
-      });
+      waitUntil(
+        sendLicenseEmails({
+          customerEmail: email,
+          customerName: payment.customer?.name,
+          licenseKey,
+          recoveryUrl,
+          isResend: true,
+          payment,
+        }).catch((err) => console.error("recover.ts: license email failed:", err)),
+      );
     }
   } catch (err) {
     // Still return the generic message -- a lookup failure shouldn't reveal

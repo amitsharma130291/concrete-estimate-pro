@@ -24,6 +24,7 @@ export function createBlankEstimate(defaults: {
   allowancePercent: number;
   rounding: Estimate["rounding"];
   notes: string;
+  validityDays: number;
   readyMixRate: number;
 }): Estimate {
   const now = new Date().toISOString();
@@ -41,6 +42,7 @@ export function createBlankEstimate(defaults: {
     targetMarginPercent: defaults.targetMarginPercent,
     sellingPrice: 0,
     notes: defaults.notes,
+    validityDays: defaults.validityDays,
     status: "draft",
     createdAt: now,
     updatedAt: now,
@@ -157,6 +159,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
         allowancePercent: loadedPreferences.defaultAllowancePercent,
         rounding: loadedPreferences.defaultRounding,
         notes: loadedPreferences.defaultNotes,
+        validityDays: loadedPreferences.estimateValidityDays,
         readyMixRate: loadedCatalog.materials.find((c) => c.kind === "readyMix")?.unitCost ?? 165,
       });
       setCurrentEstimateState(blank);
@@ -328,6 +331,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
         allowancePercent: preferences.defaultAllowancePercent,
         rounding: preferences.defaultRounding,
         notes: preferences.defaultNotes,
+        validityDays: preferences.estimateValidityDays,
         readyMixRate: catalog.materials.find((c) => c.kind === "readyMix")?.unitCost ?? 165,
       });
       setCurrentEstimateState(blank);
@@ -347,6 +351,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
       allowancePercent: freshPreferences.defaultAllowancePercent,
       rounding: freshPreferences.defaultRounding,
       notes: freshPreferences.defaultNotes,
+      validityDays: freshPreferences.estimateValidityDays,
       readyMixRate: 165,
     });
     repository.saveCurrentEstimate({ estimate: blank, actual: null, savedAt: new Date().toISOString() });

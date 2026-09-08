@@ -109,16 +109,16 @@ export default function SettingsTab() {
           </div>
         </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <Field label="Business name" htmlFor="set-business-name">
+          <Field wide label="Business name" htmlFor="set-business-name">
             <TextInput id="set-business-name" value={businessProfile.businessName} onChange={(e) => updateBusinessProfile((p) => ({ ...p, businessName: e.target.value }))} />
           </Field>
-          <Field label="Phone" htmlFor="set-phone">
+          <Field wide label="Phone" htmlFor="set-phone">
             <TextInput id="set-phone" value={businessProfile.phone} onChange={(e) => updateBusinessProfile((p) => ({ ...p, phone: e.target.value }))} />
           </Field>
-          <Field label="Email" htmlFor="set-email">
+          <Field wide label="Email" htmlFor="set-email">
             <TextInput id="set-email" value={businessProfile.email} onChange={(e) => updateBusinessProfile((p) => ({ ...p, email: e.target.value }))} />
           </Field>
-          <Field label="Address" htmlFor="set-address">
+          <Field wide label="Address" htmlFor="set-address">
             <TextInput id="set-address" value={businessProfile.address} onChange={(e) => updateBusinessProfile((p) => ({ ...p, address: e.target.value }))} />
           </Field>
         </div>
@@ -126,14 +126,14 @@ export default function SettingsTab() {
 
       <Card title="Defaults" subtitle="Used to pre-fill new estimates and templates">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <Field label="Default overhead (%)" htmlFor="set-overhead">
+          <Field wide label="Default overhead (%)" htmlFor="set-overhead">
             <NumberInput
               id="set-overhead"
               value={preferences.defaultOverheadPercent}
               onChange={(e) => updatePreferences((p) => ({ ...p, defaultOverheadPercent: parseFloat(e.target.value) || 0 }))}
             />
           </Field>
-          <Field label="Default target margin (%)" htmlFor="set-target-margin">
+          <Field wide label="Default target margin (%)" htmlFor="set-target-margin">
             <NumberInput
               id="set-target-margin"
               min={0}
@@ -142,21 +142,21 @@ export default function SettingsTab() {
               onChange={(e) => updatePreferences((p) => ({ ...p, defaultTargetMarginPercent: Math.min(99, parseFloat(e.target.value) || 0) }))}
             />
           </Field>
-          <Field label="Default loaded labor rate ($/hr)" htmlFor="set-labor-rate">
+          <Field wide label="Default loaded labor rate ($/hr)" htmlFor="set-labor-rate">
             <NumberInput
               id="set-labor-rate"
               value={preferences.defaultLoadedLaborRate}
               onChange={(e) => updatePreferences((p) => ({ ...p, defaultLoadedLaborRate: parseFloat(e.target.value) || 0 }))}
             />
           </Field>
-          <Field label="Default order allowance (%)" htmlFor="set-allowance">
+          <Field wide label="Default order allowance (%)" htmlFor="set-allowance">
             <NumberInput
               id="set-allowance"
               value={preferences.defaultAllowancePercent}
               onChange={(e) => updatePreferences((p) => ({ ...p, defaultAllowancePercent: parseFloat(e.target.value) || 0 }))}
             />
           </Field>
-          <Field label="Default rounding" htmlFor="set-rounding">
+          <Field wide label="Default rounding" htmlFor="set-rounding">
             <Select id="set-rounding" value={preferences.defaultRounding} onChange={(e) => updatePreferences((p) => ({ ...p, defaultRounding: e.target.value as Rounding }))}>
               <option value="none">Exact amount</option>
               <option value="quarter">Round up to next 0.25 yd³</option>
@@ -164,15 +164,16 @@ export default function SettingsTab() {
               <option value="whole">Round up to next whole yd³</option>
             </Select>
           </Field>
-          <Field label="Estimate validity (days)" htmlFor="set-validity-days">
+          <Field wide label="Default estimate validity (days)" htmlFor="set-validity-days" hint="New estimates start with this; you can still change it per estimate.">
             <NumberInput
               id="set-validity-days"
+              min={1}
               value={preferences.estimateValidityDays}
-              onChange={(e) => updatePreferences((p) => ({ ...p, estimateValidityDays: parseFloat(e.target.value) || 0 }))}
+              onChange={(e) => updatePreferences((p) => ({ ...p, estimateValidityDays: parseFloat(e.target.value) || 1 }))}
             />
           </Field>
         </div>
-        <Field label="Default estimate notes" htmlFor="set-notes">
+        <Field wide label="Default estimate notes" htmlFor="set-notes">
           <textarea
             id="set-notes"
             value={preferences.defaultNotes}
@@ -191,7 +192,7 @@ export default function SettingsTab() {
         </p>
         <div className="flex flex-wrap gap-2">
           <Button onClick={exportJson}>
-            <Download size={16} /> Export business data (JSON)
+            <Download size={16} /> Export business data
           </Button>
           <Button variant="ghost" onClick={() => fileRef.current?.click()}>
             <Upload size={16} /> Import business data
@@ -208,7 +209,7 @@ export default function SettingsTab() {
         )}
       </Card>
 
-      <Card title="Sample data" subtitle="Danger zone">
+      <Card title="Sample data" subtitle="Danger zone" subtitleTone="red" className="border-red/30">
         <div className="flex flex-wrap gap-2">
           <Button variant="ghost" onClick={() => setConfirmingClearSample(true)}>
             Remove sample data

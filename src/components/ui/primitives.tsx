@@ -4,15 +4,23 @@ export function Card({
   title,
   icon,
   subtitle,
+  subtitleTone = "muted",
   children,
   className = "",
 }: {
   title?: string;
   icon?: ReactNode;
   subtitle?: string;
+  /** "red" is for an irreversible/destructive section (e.g. a "Danger zone" subtitle).
+   * "orange" flags an important note worth noticing but not destructive (e.g. "Never shown
+   * to the customer"). Everywhere else keeps the default neutral "muted" so this doesn't
+   * change any other card's look. */
+  subtitleTone?: "muted" | "red" | "orange";
   children: ReactNode;
   className?: string;
 }) {
+  const subtitleClass =
+    subtitleTone === "red" ? "font-semibold text-red" : subtitleTone === "orange" ? "font-semibold text-orange-dark" : "text-muted";
   return (
     <div className={`rounded-xl border border-border bg-white shadow-sm ${className}`}>
       {title && (
@@ -21,7 +29,7 @@ export function Card({
             {icon && <span className="text-orange" aria-hidden="true">{icon}</span>}
             <h3 className="font-semibold text-ink">{title}</h3>
           </div>
-          {subtitle && <span className="text-sm text-muted">{subtitle}</span>}
+          {subtitle && <span className={`text-sm ${subtitleClass}`}>{subtitle}</span>}
         </div>
       )}
       <div className="p-5">{children}</div>
@@ -33,7 +41,9 @@ export function Field({
   label,
   hint,
   error,
+  required = false,
   htmlFor,
+  wide = false,
   children,
 }: {
   label: string;
@@ -42,13 +52,51 @@ export function Field({
    * readers -- used with NumberInput's own `error` prop to block save/calculate on
    * required/invalid fields instead of silently treating them as zero. */
   error?: string | null;
+  /** Shows a red asterisk after the label -- purely a visual/screen-reader cue that this
+   * field must be filled in; validation itself still lives wherever the field is used. */
+  required?: boolean;
   htmlFor?: string;
+  /** The default 3-column grid caps the input at 140px, which is deliberately compact for
+   * the calculators' short numeric fields (dimensions, percentages) -- but the same cap
+   * makes a general text field (a name, an email, a business address) look squeezed inside
+   * a much wider card, like Settings' business-profile form. `wide` swaps to a 2-column
+   * layout (label | input, input taking all remaining space) with hint/error below instead
+   * of in a third column. */
+  wide?: boolean;
   children: ReactNode;
 }) {
+  if (wide) {
+    return (
+      <div className="py-2.5">
+        <label htmlFor={htmlFor} className="text-sm font-medium text-ink">
+          {label}
+          {required && (
+            <span className="text-red" aria-hidden="true">
+              {" "}*
+            </span>
+          )}
+        </label>
+        <div className="mt-1.5">{children}</div>
+        {error ? (
+          <span role="alert" className="mt-1 block text-xs font-medium text-red sm:text-sm">
+            {error}
+          </span>
+        ) : (
+          hint && <span className="mt-1 block text-xs text-muted sm:text-sm">{hint}</span>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className="grid grid-cols-1 items-center gap-1 py-2.5 sm:grid-cols-[minmax(0,110px)_minmax(0,140px)_1fr] sm:gap-3">
       <label htmlFor={htmlFor} className="text-sm font-medium text-ink">
         {label}
+        {required && (
+          <span className="text-red" aria-hidden="true">
+            {" "}*
+          </span>
+        )}
       </label>
       <div>{children}</div>
       {error ? (
@@ -236,20 +284,24 @@ export function Modal({
   title,
   onClose,
   children,
-  wide = false,
+  size = "md",
 }: {
   title: string;
   onClose: () => void;
   children: ReactNode;
-  wide?: boolean;
+  /** "lg" (was the old `wide` prop) fits a single form comfortably. "xl" is for content that's
+   * itself multi-column -- ScenarioCompareModal lays out two full scenario forms side by
+   * side, so even "lg" left each one squeezed to roughly a quarter of the modal's width. */
+  size?: "md" | "lg" | "xl";
 }) {
+  const maxWidthClass = size === "xl" ? "max-w-5xl" : size === "lg" ? "max-w-2xl" : "max-w-md";
   return (
     <div className="fixed inset-0 z-[60] flex items-start justify-center overflow-y-auto bg-black/40 p-4 py-8 sm:items-center">
       <div
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className={`w-full ${wide ? "max-w-2xl" : "max-w-md"} rounded-xl bg-white shadow-xl`}
+        className={`w-full ${maxWidthClass} rounded-xl bg-white shadow-xl`}
       >
         <div className="flex items-center justify-between border-b border-border px-5 py-4">
           <h3 className="font-semibold text-ink">{title}</h3>

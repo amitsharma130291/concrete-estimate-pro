@@ -12,7 +12,8 @@ import { useWorkspace } from "../../lib/workspaceContext";
  */
 export default function EstimateDocument({ estimate }: { estimate: Estimate }) {
   const { businessProfile, preferences } = useWorkspace();
-  const validUntil = new Date(new Date(estimate.createdAt).getTime() + preferences.estimateValidityDays * 86400000);
+  const validityDays = estimate.validityDays ?? preferences.estimateValidityDays;
+  const validUntil = new Date(new Date(estimate.createdAt).getTime() + validityDays * 86400000);
   const showBreakdown = estimate.showCostBreakdownOnPdf === true;
   const result = showBreakdown ? evaluateEstimate(estimate) : null;
 

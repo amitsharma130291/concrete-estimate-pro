@@ -37,7 +37,7 @@ export default function LaborCostInput({
 
   return (
     <div className="flex flex-col gap-2">
-      <Field label="Labor method">
+      <Field label="Labor method" wide>
         <Select value={labor.mode} onChange={(e) => update({ mode: e.target.value as LaborModeInput["mode"] })}>
           <option value="flat">Flat amount</option>
           <option value="hourly">Hourly (crew × hours × rate)</option>

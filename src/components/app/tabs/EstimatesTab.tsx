@@ -102,6 +102,7 @@ export default function EstimatesTab() {
           allowancePercent: preferences.defaultAllowancePercent,
           rounding: preferences.defaultRounding,
           notes: preferences.defaultNotes,
+          validityDays: preferences.estimateValidityDays,
           readyMixRate: catalog.materials.find((c) => c.kind === "readyMix")?.unitCost ?? 165,
         });
     if (currentEstimate && !isUntouchedBlankEstimate(currentEstimate)) {
@@ -160,7 +161,7 @@ export default function EstimatesTab() {
             <Copy size={15} /> Duplicate Current Estimate
           </Button>
           <Button
-            variant="ghost"
+            variant="danger"
             onClick={() =>
               setPendingSeed(
                 createBlankEstimate({
@@ -169,6 +170,7 @@ export default function EstimatesTab() {
                   allowancePercent: preferences.defaultAllowancePercent,
                   rounding: preferences.defaultRounding,
                   notes: preferences.defaultNotes,
+                  validityDays: preferences.estimateValidityDays,
                   readyMixRate: catalog.materials.find((c) => c.kind === "readyMix")?.unitCost ?? 165,
                 }),
               )
@@ -194,8 +196,22 @@ export default function EstimatesTab() {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[58%_42%]">
         <div>
           <EstimateDocument estimate={currentEstimate} />
+          {/* Edit/Print/Export all act on the document directly above -- keeping them here
+              instead of inside the unrelated "Internal details" card makes that connection
+              obvious. no-print because these are controls, not part of what gets printed. */}
+          <div className="mt-4 flex flex-wrap gap-2 no-print">
+            <Button size="sm" onClick={() => setEditing(true)}>
+              Edit
+            </Button>
+            <Button size="sm" variant="secondary" onClick={() => downloadPdf(currentEstimate)}>
+              <Printer size={14} /> Print / Download PDF
+            </Button>
+            <Button size="sm" variant="secondary" onClick={() => exportCsv(currentEstimate)}>
+              <FileDown size={14} /> Export CSV
+            </Button>
+          </div>
         </div>
-        <Card title="Internal details" subtitle="Never shown to the customer" className="no-print">
+        <Card title="Internal details" subtitle="Never shown to the customer" subtitleTone="orange" className="no-print">
           <div className="grid grid-cols-2 gap-3 text-sm">
             <Stat label="Direct cost" value={formatCurrency(result.directCost)} />
             <Stat label="Overhead" value={formatCurrency(result.overheadAmount)} />
@@ -206,16 +222,7 @@ export default function EstimatesTab() {
             <span className="text-muted">Status</span>
             <StatusBadge status={currentEstimate.status} />
           </div>
-          <div className="mt-4 flex flex-wrap gap-2">
-            <Button size="sm" onClick={() => setEditing(true)}>
-              Edit
-            </Button>
-            <Button size="sm" variant="ghost" onClick={() => downloadPdf(currentEstimate)}>
-              <Printer size={14} /> Print / Download PDF
-            </Button>
-            <Button size="sm" variant="ghost" onClick={() => exportCsv(currentEstimate)}>
-              <FileDown size={14} /> Export CSV
-            </Button>
+          <div className="mt-4">
             <StatusSelect estimate={currentEstimate} />
           </div>
         </Card>

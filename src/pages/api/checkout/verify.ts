@@ -5,8 +5,9 @@
 export const prerender = false;
 
 import type { APIRoute } from "astro";
+import { waitUntil } from "@vercel/functions";
 import { getDodoClient, isTransientDodoError, jsonResponse } from "../../../lib/server/dodo";
-import { buildLicenseKey, buildRecoveryUrl, sendLicenseEmails } from "../../../lib/server/license";
+import { buildLicenseKey, buildRecoveryUrl, sendLicenseEmails, sendPaymentFailedNotice } from "../../../lib/server/license";
 
 export const GET: APIRoute = async ({ url }) => {
   const sessionId = url.searchParams.get("sessionId");
@@ -37,7 +38,15 @@ export const GET: APIRoute = async ({ url }) => {
     if (!resolvedPaymentId) {
       const session = await client.checkoutSessions.retrieve(sessionId!);
       if (!session.payment_id) {
-        return jsonResponse({ ok: false, status: session.payment_status || "pending" });
+        const status = session.payment_status || "pending";
+        // Not awaited -- the owner-notification email doesn't need to hold up the
+        // response the browser is waiting on to redirect. waitUntil keeps the
+        // serverless function alive for it anyway (a no-op locally, where the dev
+        // server just keeps running).
+        if (sendEmail) {
+          waitUntil(sendPaymentFailedNotice({ status, sessionId }).catch((err) => console.error("verify.ts: payment-failed notice failed:", err)));
+        }
+        return jsonResponse({ ok: false, status });
       }
       resolvedPaymentId = session.payment_id;
     }
@@ -46,30 +55,43 @@ export const GET: APIRoute = async ({ url }) => {
     const status = String(payment.status ?? "").toLowerCase();
 
     if (status !== "succeeded") {
+      if (sendEmail) {
+        waitUntil(
+          sendPaymentFailedNotice({
+            status: status || "unknown",
+            paymentId: resolvedPaymentId,
+            sessionId,
+            customerEmail: payment.customer?.email ?? null,
+            customerName: payment.customer?.name ?? null,
+            payment,
+          }).catch((err) => console.error("verify.ts: payment-failed notice failed:", err)),
+        );
+      }
       return jsonResponse({ ok: false, status: status || "unknown" });
     }
 
     const licenseKey = buildLicenseKey(payment.payment_id);
 
     if (sendEmail) {
-      // Awaited, not fire-and-forget -- a serverless function can be frozen
-      // or torn down the instant the response is sent, so an un-awaited send
-      // might never actually go out. This is the primary send path (the
-      // webhook is the backstop for a closed-tab purchase, not the other way
-      // around) -- see license.ts's sendLicenseEmails comment on why an
-      // occasional duplicate with the webhook is an acceptable tradeoff
+      // Not awaited -- the customer is sitting on a redirect back to /app that's
+      // waiting on this response, and the license itself is already fully
+      // confirmed at this point, so there's nothing left for the email send to
+      // gate. waitUntil (a no-op outside Vercel, where the dev/prod Node process
+      // just keeps running) keeps the serverless function alive long enough for
+      // it to actually go out instead of being frozen mid-send. This is still the
+      // primary send path (the webhook is the backstop for a closed-tab purchase,
+      // not the other way around) -- see license.ts's sendLicenseEmails comment
+      // on why an occasional duplicate with the webhook is an acceptable tradeoff
       // against a purchase that emails nothing at all.
-      try {
-        await sendLicenseEmails({
+      waitUntil(
+        sendLicenseEmails({
           customerEmail: payment.customer?.email ?? null,
           customerName: payment.customer?.name ?? null,
           licenseKey,
           recoveryUrl: buildRecoveryUrl({ paymentId: payment.payment_id }),
           payment,
-        });
-      } catch (err) {
-        console.error("verify.ts: license email failed:", err);
-      }
+        }).catch((err) => console.error("verify.ts: license email failed:", err)),
+      );
     }
 
     return jsonResponse({
@@ -85,6 +107,9 @@ export const GET: APIRoute = async ({ url }) => {
     // A definitive rejection from Dodo -- most commonly a payment id that
     // doesn't exist at all (e.g. a forged localStorage record). This is a
     // clean "no", not an error the client should retry or fail open on.
+    if (sendEmail) {
+      waitUntil(sendPaymentFailedNotice({ status: "invalid", paymentId, sessionId }).catch((notifyErr) => console.error("verify.ts: payment-failed notice failed:", notifyErr)));
+    }
     return jsonResponse({ ok: false, status: "invalid" });
   }
 };

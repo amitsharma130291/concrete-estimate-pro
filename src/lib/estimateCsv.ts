@@ -77,6 +77,11 @@ export function estimateToCsvRows(estimate: Estimate): string[][] {
     ]);
   }
 
+  // Every category the wizard's Costs step supports -- but this is a recordkeeping export,
+  // not a fixed-schema accounting import target (see the file header), so a category the
+  // contractor never used on this job (e.g. no separate Equipment line) is left out of the
+  // file entirely rather than padded in as a $0 row. Ready mix always appears: unlike the
+  // others it's never legitimately zero for a real pour.
   const costLineItems: { label: string; amount: number; quantity?: string; unit?: string; unitCost?: string }[] = [
     { label: "Ready mix", amount: cost.readyMixCost, quantity: orderQuantityYd3.toFixed(2), unit: "yd³", unitCost: estimate.costs.readyMixRatePerYd3.toFixed(2) },
     { label: "Labor", amount: estimate.costs.laborCost },
@@ -84,7 +89,7 @@ export function estimateToCsvRows(estimate: Estimate): string[][] {
     { label: "Reinforcement", amount: estimate.costs.reinforcementCost },
     { label: "Equipment", amount: estimate.costs.equipmentCost },
     { label: "Other", amount: estimate.costs.otherCost },
-  ];
+  ].filter((item) => item.label === "Ready mix" || item.amount > 0);
 
   for (const item of costLineItems) {
     rows.push([

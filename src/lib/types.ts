@@ -150,6 +150,10 @@ export interface Estimate {
   overheadPercent: number;
   targetMarginPercent: number;
   sellingPrice: number;
+  /** How many days from createdAt this estimate stays valid, shown on the customer PDF as
+   * "Valid until". Falls back to the settings-level default when a saved estimate predates
+   * this per-estimate field. */
+  validityDays?: number;
   notes?: string;
   status: EstimateStatus;
   /** Opt-in only: shows cost/overhead/margin on the printed PDF. Off unless the contractor
