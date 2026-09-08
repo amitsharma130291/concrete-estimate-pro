@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Ruler, Coins, Calculator, TriangleAlert, ArrowRight } from "lucide-react";
+import { Ruler, Coins, Calculator, TriangleAlert } from "lucide-react";
 import { Card, Field, NumberInput, Select, Button, Badge } from "../ui/primitives";
 import { calculateEstimate, formatCurrency, formatPercent, formatYd3, getZeroCostWarnings, type Rounding } from "../../lib/calc";
 import { numberFieldError, parseRequiredNumber } from "../../lib/validation";
 import type { CalculatorConfig } from "../../data/calculatorConfigs";
 import { track } from "../../lib/analytics";
 import { usePricingCta } from "../../lib/usePricingCta";
+import VisitorTypeToggle from "./VisitorTypeToggle";
+import ProPreviewPanel from "./ProPreviewPanel";
 
 const OVERHEAD_DEFAULT = 15;
 const TARGET_MARGIN_DEFAULT = 30;
@@ -15,7 +17,6 @@ function toFeet(value: number, unit: "ft" | "in"): number {
 }
 
 export default function ProjectCalculatorIsland({ config }: { config: CalculatorConfig }) {
-  const pricingCta = usePricingCta("Fix My Pricing with Pro");
   const pricingCtaCompact = usePricingCta("View pricing");
   const d = config.defaults;
   const [lengthFt, setLengthFt] = useState(d.lengthFt);
@@ -100,8 +101,20 @@ export default function ProjectCalculatorIsland({ config }: { config: Calculator
   );
   const sellingPriceError = numberFieldError(sellingPrice);
 
+  const projectNoun = config.h1
+    .replace(/^Concrete\s+/i, "")
+    .replace(/\s*Cost Calculator\s*$/i, "")
+    .replace(/\s*Calculator\s*$/i, "")
+    .trim()
+    .toLowerCase();
+  const projectPhrase = projectNoun ? `${projectNoun} job` : "job";
+
   return (
-    <div className="grid grid-cols-1 gap-6 lg:grid-cols-[60%_40%] lg:items-start">
+    <div>
+      <div className="mb-4">
+        <VisitorTypeToggle />
+      </div>
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[60%_40%] lg:items-start">
       <div className="flex flex-col gap-6">
         <Card title="Project Dimensions" icon={<Ruler size={18} />} subtitle="Calculate your concrete volume">
           <Field label={config.length.label} hint={config.length.hint} error={lengthError} htmlFor="f-length">
@@ -309,15 +322,21 @@ export default function ProjectCalculatorIsland({ config }: { config: Calculator
           </>
           )}
 
-          <a href={pricingCta.href}>
-            <Button size="lg" className="mt-4 w-full">
-              {pricingCta.label}
-              <ArrowRight size={18} />
-            </Button>
-          </a>
-          <p className="mt-2 text-center text-xs text-muted">$79 launch price (reg. $99) • No subscription</p>
-          <p className="mt-1 text-center text-xs text-muted">Get advanced pricing tools, save estimates, and more.</p>
+          {!hasBlockingError && !sellingPriceError && (
+            <ProPreviewPanel
+              body={`Save your ready-mix, labor, forms, reinforcement and equipment rates so your next ${projectPhrase} starts pre-filled instead of retyped from scratch.`}
+              whatHappens={[
+                "Save these cost rates for every future job",
+                "Add another section for L-shaped or multi-part pours",
+                "Turn this into a customer-ready estimate",
+                "Check this rate against your target margin over time",
+              ]}
+              ctaLabel={config.proCtaLabel}
+              source={config.slug}
+            />
+          )}
         </Card>
+      </div>
       </div>
 
       {/* Mobile sticky summary */}

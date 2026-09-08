@@ -34,6 +34,9 @@ export interface CalculatorConfig {
   safetyNote?: string;
   /** What actually moves the price. Rendered as a content section below the calculator. */
   costFactors: { title: string; body: string }[];
+  /** Primary CTA label for this project type's Pro preview panel -- page-specific per the
+   * funnel plan, not one generic "Get Pro" string reused everywhere. */
+  proCtaLabel: string;
 }
 
 export const CALCULATOR_CONFIGS: Record<string, CalculatorConfig> = {
@@ -62,6 +65,7 @@ export const CALCULATOR_CONFIGS: Record<string, CalculatorConfig> = {
       otherCost: 0,
     },
     marketRatePerSqft: 9.5,
+    proCtaLabel: "Reuse These Driveway Rates",
     faqs: [
       {
         q: "How much concrete do I need for a driveway?",
@@ -132,6 +136,7 @@ export const CALCULATOR_CONFIGS: Record<string, CalculatorConfig> = {
       otherCost: 150,
     },
     marketRatePerSqft: 9.0,
+    proCtaLabel: "Save This Slab Estimate",
     faqs: [
       {
         q: "How is slab concrete volume calculated?",
@@ -198,6 +203,7 @@ export const CALCULATOR_CONFIGS: Record<string, CalculatorConfig> = {
       otherCost: 0,
     },
     marketRatePerSqft: 10.0,
+    proCtaLabel: "Turn This Patio Cost Into an Estimate",
     faqs: [
       {
         q: "Does this include stamped or decorative finish costs?",
@@ -256,6 +262,7 @@ export const CALCULATOR_CONFIGS: Record<string, CalculatorConfig> = {
       otherCost: 0,
     },
     marketRatePerSqft: 0,
+    proCtaLabel: "Save These Footing Costs",
     safetyNote:
       "This calculator never determines footing size, depth or reinforcement. Enter your planned or design-specified dimensions; those come from your engineer, architect or local code, not from this tool.",
     faqs: [
@@ -316,6 +323,7 @@ export const CALCULATOR_CONFIGS: Record<string, CalculatorConfig> = {
       otherCost: 0,
     },
     marketRatePerSqft: 8.5,
+    proCtaLabel: "Reuse These Sidewalk Rates",
     faqs: [
       {
         q: "Do municipal sidewalk jobs need different allowances?",
@@ -370,6 +378,7 @@ export const CALCULATOR_CONFIGS: Record<string, CalculatorConfig> = {
       otherCost: 0,
     },
     marketRatePerSqft: 9.5,
+    proCtaLabel: "Build the Complete Job in Pro",
     faqs: [
       {
         q: "What project types can I use this for?",

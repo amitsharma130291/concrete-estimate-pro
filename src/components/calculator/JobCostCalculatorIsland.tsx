@@ -1,15 +1,16 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Coins, Calculator, TriangleAlert, ArrowRight } from "lucide-react";
-import { Card, Field, NumberInput, Button, Badge } from "../ui/primitives";
+import { Coins, Calculator, TriangleAlert } from "lucide-react";
+import { Card, Field, NumberInput, Badge } from "../ui/primitives";
 import { calculateCost, calculateMargin, calculateRequiredSellingPrice, formatCurrency, formatPercent } from "../../lib/calc";
 import { numberFieldError, parseRequiredNumber, targetMarginError } from "../../lib/validation";
 import { track } from "../../lib/analytics";
-import { usePricingCta } from "../../lib/usePricingCta";
+import VisitorTypeToggle from "./VisitorTypeToggle";
+import ProPreviewPanel from "./ProPreviewPanel";
+import EstimateVsActualExample from "./EstimateVsActualExample";
 
 const emptyQty = { areaSqFt: 0, netCubicFeet: 0, netCubicYards: 0, orderQuantityYd3: 0 };
 
 export default function JobCostCalculatorIsland() {
-  const pricingCta = usePricingCta("Track Every Job with Pro");
   const [readyMixCost, setReadyMixCost] = useState(2640);
   const [laborCost, setLaborCost] = useState(2100);
   const [formsCost, setFormsCost] = useState(480);
@@ -63,8 +64,15 @@ export default function JobCostCalculatorIsland() {
   // that depend on it (current margin, on/below-target banner) further down.
   const hasBlockingError = [readyMixCost, laborCost, formsCost, reinforcementCost, pumpCost, equipmentCost, otherCost].some((v) => numberFieldError(v) !== null) || !!(overheadError || marginError);
 
+  const materialsCost = readyMixCost;
+  const otherDirectCost = directCost - laborCost - materialsCost;
+
   return (
-    <div className="grid grid-cols-1 gap-6 lg:grid-cols-[60%_40%] lg:items-start">
+    <div>
+      <div className="mb-4">
+        <VisitorTypeToggle />
+      </div>
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[60%_40%] lg:items-start">
       <div className="flex flex-col gap-6">
         <Card title="Job Costs" icon={<Coins size={18} />} subtitle="Enter your known project costs">
           <DollarField label="Ready mix concrete" hint="Total concrete material cost" value={readyMixCost} onChange={setReadyMixCost} />
@@ -168,15 +176,34 @@ export default function JobCostCalculatorIsland() {
           </>
           )}
 
-          <a href={pricingCta.href}>
-            <Button size="lg" className="mt-4 w-full">
-              {pricingCta.label}
-              <ArrowRight size={18} />
-            </Button>
-          </a>
-          <p className="mt-2 text-center text-xs text-muted">$79 launch price (reg. $99) • No subscription</p>
+          {!hasBlockingError && !sellingPriceError && (
+            <ProPreviewPanel
+              body="Pro saves your ready-mix, labor, forms, reinforcement, pump and equipment rates, so the next job cost starts pre-filled instead of retyped from scratch."
+              whatHappens={[
+                "Save these cost rates for every future job",
+                "Turn this into a customer-ready estimate",
+                "Keep true cost and margin out of the customer document",
+                "Log the completed job's actual cost and compare it to this estimate",
+              ]}
+              ctaLabel="Save This Estimate and Track the Actual Job"
+              source="job-cost-calculator"
+            />
+          )}
         </Card>
       </div>
+      </div>
+
+      {!hasBlockingError && !sellingPriceError && (
+        <EstimateVsActualExample
+          laborCost={laborCost}
+          materialsCost={materialsCost}
+          otherDirectCost={otherDirectCost}
+          overheadPercent={overheadPercent}
+          sellingPrice={sellingPrice}
+          estimatedTrueCost={trueCost}
+          estimatedMargin={currentMargin}
+        />
+      )}
     </div>
   );
 }
