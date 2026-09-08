@@ -14,10 +14,16 @@ const calculators = [
   { title: "General Cost Calculator", desc: "Any rectangular pour, your own inputs.", href: "/concrete-cost-calculator" },
 ];
 
-const steps = [
-  { title: "Enter dimensions", desc: "Length, width and thickness for any pour." },
-  { title: "See true cost", desc: "Materials, labor, equipment and overhead, totaled." },
-  { title: "Price for margin", desc: "Get the price you need to hit your target margin, every time." },
+// Real product screens only -- each one genuinely shows the labeled stage(s), nothing staged
+// or recreated. Dimensions and Quantity share one screen because the wizard's own live
+// summary already shows order quantity the moment dimensions are entered; True Cost and
+// Target Price share one screen for the same reason (the Price step's live summary shows
+// both at once).
+const workflow = [
+  { stage: "Dimensions → Quantity", img: "/guide/06-wizard-dimensions.png", alt: "Wizard Dimensions step showing section length, width, thickness and a live order quantity of 5.50 yd³", caption: "Enter dimensions, see your order quantity instantly." },
+  { stage: "True Cost → Target Price", img: "/guide/08-wizard-price.png", alt: "Wizard Price step showing overhead, target margin, and a live true cost and required selling price", caption: "True cost and the price required to hit your target margin." },
+  { stage: "Customer Estimate", img: "/guide/09-estimate-summary.png", alt: "Branded customer-facing estimate document with internal cost and margin kept in a separate panel", caption: "A branded estimate, customer-ready in one click." },
+  { stage: "Actual Result", img: "/guide/11-actuals.png", alt: "Estimate vs Actual tab with a button to log the real job cost once the job is complete", caption: "Log the real job cost when it's done, and compare." },
 ];
 
 const faqs = [
@@ -43,46 +49,99 @@ const faqs = [
   <PublicHeader />
   <main>
     <section class="border-b border-border bg-white">
-      <div class="mx-auto max-w-5xl px-4 py-16 text-center sm:px-6 sm:py-24">
-        <p class="text-sm font-semibold uppercase tracking-wide text-orange">Free concrete calculators</p>
-        <h1 class="mt-3 text-4xl font-extrabold tracking-tight text-ink sm:text-5xl">
-          Know what every concrete job really costs, before you quote it.
+      <div class="mx-auto max-w-4xl px-4 py-14 text-center sm:px-6 sm:py-20">
+        <h1 class="text-4xl font-extrabold tracking-tight text-ink sm:text-5xl">
+          Calculate Concrete Costs—or Price Customer Jobs With Confidence
         </h1>
         <p class="mx-auto mt-4 max-w-2xl text-lg text-muted">
-          Calculate concrete quantity, true project cost and the price you need to charge to hit your margin.
-          Free for one-off jobs. Built into Concrete Cost Pro for running your business.
+          Use the free calculators for a one-time slab, driveway, patio, sidewalk, footing, or custom pour. If you
+          estimate concrete work for customers, Concrete Cost Pro saves your business rates and turns those
+          calculations into a repeatable estimating workflow.
         </p>
         <div class="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <a
-            href="/concrete-driveway-cost-calculator"
+            href="/calculators"
             class="inline-flex items-center justify-center rounded-lg bg-orange px-6 py-3.5 text-base font-semibold text-white transition hover:bg-orange-dark"
           >
-            Try the Driveway Calculator
+            Use a Free Calculator
           </a>
           <a
-            href="/pricing"
+            href="/concrete-estimating-software"
             data-pricing-cta
             class="inline-flex items-center justify-center rounded-lg border border-border bg-white px-6 py-3.5 text-base font-semibold text-ink transition hover:bg-warm-white"
           >
-            See Concrete Cost Pro
+            <span data-pricing-cta-label>See Concrete Cost Pro</span>
           </a>
         </div>
         <TrustBadges class="mt-7" />
       </div>
     </section>
 
-    <section class="border-b border-border bg-white">
-      <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-        <div class="grid grid-cols-1 gap-8 sm:grid-cols-3">
-          {steps.map((s, i) => (
-            <div class="flex gap-4">
-              <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-orange text-sm font-bold text-white">{i + 1}</span>
-              <div>
-                <h3 class="font-semibold text-ink">{s.title}</h3>
-                <p class="mt-1 text-sm text-muted">{s.desc}</p>
-              </div>
-            </div>
-          ))}
+    <!-- Self-selection: the two audiences the brief calls out, right below the hero. -->
+    <section class="border-b border-border bg-warm-white">
+      <div class="mx-auto max-w-5xl px-4 py-14 sm:px-6">
+        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+          <div class="flex flex-col rounded-2xl border border-border bg-white p-6 shadow-sm">
+            <p class="text-xs font-bold uppercase tracking-wider text-muted">Planning one project</p>
+            <h2 class="mt-1.5 text-xl font-bold text-ink">Homeowner or DIY, one job</h2>
+            <ul class="mt-4 flex flex-1 flex-col gap-2 text-sm text-ink/80">
+              <li class="flex items-start gap-2">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="mt-0.5 shrink-0 text-green" aria-hidden="true">
+                  <path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg> Free calculators, no purchase needed
+              </li>
+              <li class="flex items-start gap-2">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="mt-0.5 shrink-0 text-green" aria-hidden="true">
+                  <path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg> No signup or account
+              </li>
+              <li class="flex items-start gap-2">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="mt-0.5 shrink-0 text-green" aria-hidden="true">
+                  <path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg> Concrete quantity and total cost result
+              </li>
+            </ul>
+            <a
+              href="/calculators"
+              class="mt-6 inline-flex items-center justify-center rounded-lg border border-border px-5 py-3 text-sm font-semibold text-ink transition hover:bg-warm-white"
+            >
+              Choose a Calculator
+            </a>
+          </div>
+
+          <div class="flex flex-col rounded-2xl border border-orange/30 bg-white p-6 shadow-sm">
+            <p class="text-xs font-bold uppercase tracking-wider text-orange">Estimating customer jobs</p>
+            <h2 class="mt-1.5 text-xl font-bold text-ink">Contractor or estimator, repeat jobs</h2>
+            <ul class="mt-4 flex flex-1 flex-col gap-2 text-sm text-ink/80">
+              <li class="flex items-start gap-2">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="mt-0.5 shrink-0 text-green" aria-hidden="true">
+                  <path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg> Saved rates and business defaults
+              </li>
+              <li class="flex items-start gap-2">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="mt-0.5 shrink-0 text-green" aria-hidden="true">
+                  <path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg> Complete-job pricing, not just quantity
+              </li>
+              <li class="flex items-start gap-2">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="mt-0.5 shrink-0 text-green" aria-hidden="true">
+                  <path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg> Customer-ready estimates
+              </li>
+              <li class="flex items-start gap-2">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="mt-0.5 shrink-0 text-green" aria-hidden="true">
+                  <path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg> Estimated-vs-actual review after the job
+              </li>
+            </ul>
+            <a
+              href="/concrete-estimating-software"
+              data-pricing-cta
+              class="mt-6 inline-flex items-center justify-center rounded-lg bg-orange px-5 py-3 text-sm font-semibold text-white transition hover:bg-orange-dark"
+            >
+              <span data-pricing-cta-label>Explore Pro</span>
+            </a>
+          </div>
         </div>
       </div>
     </section>
@@ -105,6 +164,34 @@ const faqs = [
             </span>
           </a>
         ))}
+      </div>
+    </section>
+
+    <!-- Visual product workflow -- real screens only, see the comment on `workflow` above. -->
+    <section class="border-t border-border bg-warm-white">
+      <div class="mx-auto max-w-6xl px-4 py-14 sm:px-6">
+        <div class="mx-auto max-w-2xl text-center">
+          <p class="text-xs font-bold uppercase tracking-wider text-orange">How Pro turns a calculation into a workflow</p>
+          <h2 class="mt-2 text-2xl font-extrabold text-ink sm:text-3xl">
+            Dimensions → Quantity → True Cost → Target Price → Customer Estimate → Actual Result
+          </h2>
+        </div>
+        <div class="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {workflow.map((w) => (
+            <div class="overflow-hidden rounded-xl border border-border bg-white shadow-sm">
+              <div class="flex items-center gap-1.5 border-b border-border bg-warm-white px-3 py-2.5">
+                <span class="h-2.5 w-2.5 rounded-full bg-red/50" aria-hidden="true"></span>
+                <span class="h-2.5 w-2.5 rounded-full bg-amber/50" aria-hidden="true"></span>
+                <span class="h-2.5 w-2.5 rounded-full bg-green/50" aria-hidden="true"></span>
+              </div>
+              <img src={w.img} alt={w.alt} loading="lazy" class="w-full border-b border-border" />
+              <div class="p-4">
+                <p class="text-xs font-bold uppercase tracking-wide text-orange">{w.stage}</p>
+                <p class="mt-1 text-sm text-ink/80">{w.caption}</p>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
 
@@ -186,7 +273,7 @@ const faqs = [
                 data-analytics-source="homepage_hero"
                 class="inline-flex items-center justify-center gap-2 rounded-lg bg-orange px-6 py-3.5 text-base font-semibold text-white shadow-[0_8px_30px_-8px_rgba(255,90,31,0.7)] transition hover:bg-orange-dark"
               >
-                <span data-pricing-cta-label>Get Concrete Cost Pro — $79 Launch Price</span>
+                <span data-pricing-cta-label>Get Concrete Cost Pro — $79 Once</span>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
                   <path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
@@ -194,7 +281,7 @@ const faqs = [
               <p class="inline-flex items-center gap-2 text-sm font-semibold">
                 <span class="rounded-full bg-orange/15 px-2.5 py-1 text-orange-ondark">Launch price</span>
                 <span class="text-white/55 line-through">$99</span>
-                <span class="text-white">$79 lifetime</span>
+                <span class="text-white">$79 once</span>
               </p>
             </div>
           </div>
@@ -203,7 +290,7 @@ const faqs = [
             <div class="rounded-xl border border-border bg-white p-5 shadow-lg">
               <div class="flex items-center justify-between">
                 <div class="text-xs font-semibold uppercase tracking-wide text-muted">Rate Health</div>
-                <span class="rounded-full bg-warm-white px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-muted">Live preview</span>
+                <span class="rounded-full bg-warm-white px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-muted">Example</span>
               </div>
               <table class="mt-3 w-full text-left text-sm">
                 <thead>
@@ -235,7 +322,7 @@ const faqs = [
                   </tr>
                 </tbody>
               </table>
-              <p class="mt-3 text-xs text-muted">Stamped concrete is priced below your 35% target. Rate Health flags it instantly.</p>
+              <p class="mt-3 text-xs text-muted">Illustrative example. Stamped concrete priced below a 35% target is exactly what Rate Health flags.</p>
             </div>
           </div>
         </div>
