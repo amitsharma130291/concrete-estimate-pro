@@ -5,21 +5,61 @@ import PublicFooter from "../components/PublicFooter.astro";
 import Breadcrumbs from "../components/Breadcrumbs.astro";
 import TrustBadges from "../components/TrustBadges.astro";
 import { CALCULATOR_CONFIGS } from "../data/calculatorConfigs";
+import { Calculator, Car, Square, Sun, Layers, Footprints, Receipt, FileText, ArrowRight, CheckCircle2 } from "lucide-react";
+
+const ICONS: Record<string, any> = {
+  general: Calculator,
+  driveway: Car,
+  slab: Square,
+  patio: Sun,
+  footing: Layers,
+  sidewalk: Footprints,
+};
 
 const tools = [
   ...Object.values(CALCULATOR_CONFIGS)
     .sort((a, b) => (a.projectType === "general" ? -1 : b.projectType === "general" ? 1 : 0))
-    .map((c) => ({ title: c.h1, desc: c.intro, href: `/${c.slug}` })),
+    .map((c) => ({ title: c.h1, desc: c.intro, href: `/${c.slug}`, icon: ICONS[c.projectType] })),
   {
     title: "Concrete Job Cost Calculator",
     desc: "Already know your costs? Enter them directly to see true job cost, current margin and the price you need to charge.",
     href: "/concrete-job-cost-calculator",
+    icon: Receipt,
   },
   {
     title: "Concrete Estimate Template",
     desc: "An interactive concrete estimate and quote template. Fill it in and print a customer-ready estimate in minutes.",
     href: "/concrete-estimate-template",
+    icon: FileText,
   },
+];
+
+const proof = [
+  {
+    img: "/guide/10-rate-health.png",
+    alt: "Rate Health dashboard showing standard concrete rates flagged below target margin, with required price shown for each",
+    title: "Catch underpriced rates before you send the quote",
+    body: "Rate Health checks every standard price against your real cost and target margin, and shows exactly which ones need to go up, and by how much.",
+  },
+  {
+    img: "/guide/09-estimate-summary.png",
+    alt: "Branded customer estimate document next to an internal cost, overhead and margin panel",
+    title: "Send a professional estimate, keep your numbers private",
+    body: "A clean, branded document for the customer. Cost, overhead and margin live in a separate internal panel, hidden by default.",
+  },
+  {
+    img: "/guide/04-templates.png",
+    alt: "Saved project templates for standard job types, each showing order quantity, true cost and margin status",
+    title: "Stop rebuilding the same job from scratch",
+    body: "Save a driveway, slab or patio template once. Every future job of that type starts pre-filled with your real numbers.",
+  },
+];
+
+const benefits = [
+  "Saved materials, labor and equipment rates",
+  "Rate Health audit and required-price solver",
+  "Estimate vs. actual, so you know if a job type is chronically underpriced",
+  "Branded PDFs, CSV export, JSON backup",
 ];
 
 const site = Astro.site ?? new URL("https://concretecostpro.com");
@@ -45,49 +85,117 @@ const itemListSchema = {
   <PublicHeader />
   <main>
     <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Calculators", href: "/calculators" }]} />
-    <section class="border-b border-border bg-white">
-      <div class="mx-auto max-w-4xl px-4 py-12 text-center sm:px-6">
-        <h1 class="text-3xl font-extrabold tracking-tight text-ink sm:text-4xl">Free Concrete Calculators</h1>
+
+    <section class="relative overflow-hidden border-b border-border bg-white">
+      <div
+        class="pointer-events-none absolute left-1/2 top-0 h-72 w-[36rem] -translate-x-1/2 -translate-y-1/3 rounded-full bg-orange/10 blur-3xl"
+        aria-hidden="true"
+      >
+      </div>
+      <div class="relative mx-auto max-w-4xl px-4 py-14 text-center sm:px-6 sm:py-16">
+        <p class="text-xs font-bold uppercase tracking-wider text-orange">8 free tools, no sign-up</p>
+        <h1 class="mt-2 text-4xl font-extrabold tracking-tight text-ink sm:text-5xl">Free Concrete Calculators</h1>
         <p class="mx-auto mt-3 max-w-2xl text-lg text-muted">
-          Every free calculator we build, in one place. Pick the project type below; each one calculates concrete
-          quantity, total cost and, with Contractor Pricing, the price you need to hit your target margin.
+          Pick a project type below. Every calculator gets you concrete quantity and total cost in seconds, and with
+          Contractor Pricing, the exact price required to hit your target margin.
         </p>
-        <TrustBadges class="mt-6" />
+        <TrustBadges class="mt-7" />
       </div>
     </section>
 
-    <section class="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+    <section class="mx-auto max-w-6xl px-4 py-14 sm:px-6">
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {tools.map((t) => (
-          <a href={t.href} class="group rounded-xl border border-border bg-white p-5 shadow-sm transition hover:border-orange hover:shadow-md">
-            <h2 class="font-semibold text-ink group-hover:text-orange">{t.title}</h2>
-            <p class="mt-1.5 text-sm text-muted">{t.desc}</p>
-            <span class="mt-3 inline-flex items-center gap-1 text-sm font-medium text-orange">
+          <a
+            href={t.href}
+            class="group flex flex-col rounded-xl border border-border bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-orange hover:shadow-md"
+          >
+            <span class="flex h-10 w-10 items-center justify-center rounded-lg bg-orange/10 text-orange transition group-hover:bg-orange group-hover:text-white">
+              {t.icon && <t.icon size={20} strokeWidth={2.25} aria-hidden="true" />}
+            </span>
+            <h2 class="mt-3.5 font-semibold text-ink group-hover:text-orange">{t.title}</h2>
+            <p class="mt-1.5 flex-1 text-sm text-muted">{t.desc}</p>
+            <span class="mt-3.5 inline-flex items-center gap-1 text-sm font-medium text-orange">
               Open calculator
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
-                <path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round" />
-              </svg>
+              <ArrowRight size={14} strokeWidth={2.5} aria-hidden="true" className="transition group-hover:translate-x-0.5" />
             </span>
           </a>
         ))}
       </div>
     </section>
 
-    <section class="border-t border-border bg-white">
-      <div class="mx-auto max-w-3xl px-4 py-12 text-center sm:px-6">
-        <h2 class="text-xl font-bold text-ink">Running an ongoing concrete business?</h2>
-        <p class="mt-2 text-muted">
-          <a href="/concrete-estimating-software" class="font-medium text-orange hover:underline">Concrete Cost Pro</a>
-          {" "}saves your rates, prices full jobs, tracks rate health and compares estimates to actual job results,
-          for a single payment, currently a $79 launch price (regularly $99).
-        </p>
-        <a
-          href="/pricing"
-          data-pricing-cta
-          class="mt-5 inline-flex items-center justify-center rounded-lg bg-orange px-6 py-3 text-sm font-semibold text-white transition hover:bg-orange-dark"
-        >
-          See Concrete Cost Pro
-        </a>
+    <section class="border-t border-border bg-warm-white">
+      <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+        <div class="mx-auto max-w-2xl text-center">
+          <p class="text-xs font-bold uppercase tracking-wider text-orange">Beyond the free calculators</p>
+          <h2 class="mt-2 text-2xl font-extrabold text-ink sm:text-3xl">This is what running the numbers actually looks like</h2>
+          <p class="mt-3 text-muted">
+            Real screens from Concrete Cost Pro, the $79 lifetime upgrade for contractors who price jobs every week.
+          </p>
+        </div>
+        <div class="mt-10 grid grid-cols-1 gap-6 lg:grid-cols-3">
+          {proof.map((p) => (
+            <div class="flex flex-col overflow-hidden rounded-xl border border-border bg-white shadow-sm">
+              <div class="flex items-center gap-1.5 border-b border-border bg-warm-white px-3 py-2.5">
+                <span class="h-2.5 w-2.5 rounded-full bg-red/50" aria-hidden="true"></span>
+                <span class="h-2.5 w-2.5 rounded-full bg-amber/50" aria-hidden="true"></span>
+                <span class="h-2.5 w-2.5 rounded-full bg-green/50" aria-hidden="true"></span>
+              </div>
+              <img src={p.img} alt={p.alt} loading="lazy" class="w-full border-b border-border" />
+              <div class="flex flex-1 flex-col p-5">
+                <h3 class="font-semibold text-ink">{p.title}</h3>
+                <p class="mt-1.5 text-sm text-muted">{p.body}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="border-t border-border bg-charcoal">
+      <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+        <div class="grid gap-10 lg:grid-cols-[1.05fr_1fr] lg:items-center">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-wider text-orange-ondark">For contractors running the business</p>
+            <h2 class="mt-2 text-2xl font-extrabold text-white sm:text-3xl">Stop guessing. Start pricing every job with confidence.</h2>
+            <p class="mt-3 max-w-xl text-white/70">
+              Concrete Cost Pro saves your real rates, prices full jobs in minutes, and flags underpriced work before
+              you send the quote.
+            </p>
+            <ul class="mt-6 flex flex-col gap-2.5 text-sm text-white/85">
+              {benefits.map((item) => (
+                <li class="flex items-start gap-2.5">
+                  <CheckCircle2 size={17} strokeWidth={2.25} className="mt-0.5 shrink-0 text-orange-ondark" aria-hidden="true" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+            <div class="mt-7 flex flex-wrap items-center gap-x-5 gap-y-3">
+              <a
+                href="/pricing"
+                data-pricing-cta
+                class="inline-flex items-center gap-2 rounded-lg bg-orange px-6 py-3.5 text-base font-semibold text-white transition hover:bg-orange-dark"
+              >
+                <span data-pricing-cta-label>Get Concrete Cost Pro — $79 Launch Price</span>
+                <ArrowRight size={18} aria-hidden="true" />
+              </a>
+              <span class="text-sm text-white/55">No subscription · No account · 14-day refund</span>
+            </div>
+          </div>
+          <div class="overflow-hidden rounded-xl border border-white/10 shadow-2xl">
+            <div class="flex items-center gap-1.5 border-b border-white/10 bg-charcoal-light px-3 py-2.5">
+              <span class="h-2.5 w-2.5 rounded-full bg-red/60" aria-hidden="true"></span>
+              <span class="h-2.5 w-2.5 rounded-full bg-amber/60" aria-hidden="true"></span>
+              <span class="h-2.5 w-2.5 rounded-full bg-green/60" aria-hidden="true"></span>
+            </div>
+            <img
+              src="/guide/01-overview.png"
+              alt="Concrete Cost Pro overview dashboard showing a current estimate at 19% margin, below target, and a Rate Health table"
+              loading="lazy"
+              class="w-full"
+            />
+          </div>
+        </div>
       </div>
     </section>
   </main>
