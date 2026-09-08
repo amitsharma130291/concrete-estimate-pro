@@ -4,10 +4,12 @@ import { Card, Field, NumberInput, Button, Badge } from "../ui/primitives";
 import { calculateCost, calculateMargin, calculateRequiredSellingPrice, formatCurrency, formatPercent } from "../../lib/calc";
 import { numberFieldError, parseRequiredNumber, targetMarginError } from "../../lib/validation";
 import { track } from "../../lib/analytics";
+import { usePricingCta } from "../../lib/usePricingCta";
 
 const emptyQty = { areaSqFt: 0, netCubicFeet: 0, netCubicYards: 0, orderQuantityYd3: 0 };
 
 export default function JobCostCalculatorIsland() {
+  const pricingCta = usePricingCta("Track Every Job with Pro");
   const [readyMixCost, setReadyMixCost] = useState(2640);
   const [laborCost, setLaborCost] = useState(2100);
   const [formsCost, setFormsCost] = useState(480);
@@ -166,9 +168,9 @@ export default function JobCostCalculatorIsland() {
           </>
           )}
 
-          <a href="/pricing">
+          <a href={pricingCta.href}>
             <Button size="lg" className="mt-4 w-full">
-              Track Every Job with Pro
+              {pricingCta.label}
               <ArrowRight size={18} />
             </Button>
           </a>

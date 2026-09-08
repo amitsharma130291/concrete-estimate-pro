@@ -33,3 +33,5 @@ project was judged lower value than the manual operator-coverage pass given the 
 other required testing in this audit, and is recorded as a follow-up recommendation rather
 than silently skipped. The 9/9 result should be read as "the specific mutation classes the
 audit called out are all caught by the current suite," not as a general mutation score.
+M5 | margin/markup swap: calculateMargin divides by trueCost instead of sellingPrice | KILLED (tests failed as expected)
+M6 | rounding direction flip: Math.ceil -> Math.floor in roundQuantity | SURVIVED (all tests still passed — test gap!)

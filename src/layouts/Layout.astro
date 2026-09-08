@@ -92,7 +92,9 @@ const GA_MEASUREMENT_ID = import.meta.env.PUBLIC_GA_MEASUREMENT_ID as string | u
     <slot />
     <script>
       import { initAnalyticsDelegation } from "../lib/analytics";
+      import { initPricingCtaSwap } from "../lib/pricingCtaSwap";
       initAnalyticsDelegation();
+      initPricingCtaSwap();
     </script>
   </body>
 </html>

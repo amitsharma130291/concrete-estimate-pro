@@ -5,6 +5,7 @@ import { calculateEstimate, formatCurrency, formatPercent, formatYd3, getZeroCos
 import { numberFieldError, parseRequiredNumber } from "../../lib/validation";
 import type { CalculatorConfig } from "../../data/calculatorConfigs";
 import { track } from "../../lib/analytics";
+import { usePricingCta } from "../../lib/usePricingCta";
 
 const OVERHEAD_DEFAULT = 15;
 const TARGET_MARGIN_DEFAULT = 30;
@@ -14,6 +15,8 @@ function toFeet(value: number, unit: "ft" | "in"): number {
 }
 
 export default function ProjectCalculatorIsland({ config }: { config: CalculatorConfig }) {
+  const pricingCta = usePricingCta("Fix My Pricing with Pro");
+  const pricingCtaCompact = usePricingCta("View pricing");
   const d = config.defaults;
   const [lengthFt, setLengthFt] = useState(d.lengthFt);
   const [widthValue, setWidthValue] = useState(d.widthValue);
@@ -306,9 +309,9 @@ export default function ProjectCalculatorIsland({ config }: { config: Calculator
           </>
           )}
 
-          <a href="/pricing">
+          <a href={pricingCta.href}>
             <Button size="lg" className="mt-4 w-full">
-              Fix My Pricing with Pro
+              {pricingCta.label}
               <ArrowRight size={18} />
             </Button>
           </a>
@@ -328,8 +331,8 @@ export default function ProjectCalculatorIsland({ config }: { config: Calculator
               {formatPercent(result.pricing.currentMargin, 0)} margin {result.pricing.isBelowTarget ? `(below ${targetMarginPercent}%)` : "(on target)"}
             </div>
           </div>
-          <a href="/pricing" className="shrink-0">
-            <Button size="sm">View pricing</Button>
+          <a href={pricingCtaCompact.href} className="shrink-0">
+            <Button size="sm">{pricingCtaCompact.label}</Button>
           </a>
         </div>
       </div>

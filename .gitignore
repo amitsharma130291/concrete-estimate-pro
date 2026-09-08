@@ -28,3 +28,5 @@ pnpm-debug.log*
 test-results/
 playwright-report/
 reports/e2e/results.json
+.vercel
+.env*

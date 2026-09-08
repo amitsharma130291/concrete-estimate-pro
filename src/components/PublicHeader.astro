@@ -25,6 +25,7 @@ const navItems = [
     <div class="hidden items-center gap-4 md:flex">
       <a
         href="/pricing"
+        data-pricing-cta
         class="inline-flex items-center gap-2 rounded-lg bg-orange px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-orange-dark"
       >
         $79 Launch Price
@@ -45,7 +46,7 @@ const navItems = [
               {item.label}
             </a>
           ))}
-          <a href="/pricing" class="mt-1 rounded-lg bg-orange px-3 py-2.5 text-center text-sm font-semibold text-white hover:bg-orange-dark">
+          <a href="/pricing" data-pricing-cta class="mt-1 rounded-lg bg-orange px-3 py-2.5 text-center text-sm font-semibold text-white hover:bg-orange-dark">
             $79 Launch Price
           </a>
         </nav>

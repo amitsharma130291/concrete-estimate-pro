@@ -3,6 +3,7 @@ import { Plus, Trash2, Printer, ArrowRight } from "lucide-react";
 import { Button, Card, Field, NumberInput, TextInput } from "../ui/primitives";
 import { formatCurrency } from "../../lib/calc";
 import { track } from "../../lib/analytics";
+import { usePricingCta } from "../../lib/usePricingCta";
 
 interface LineItem {
   id: string;
@@ -17,6 +18,7 @@ function newLineId() {
 }
 
 export default function EstimateTemplateIsland() {
+  const pricingCta = usePricingCta("Auto-generate this from saved rates with Pro");
   const [contractor, setContractor] = useState("ABC Concrete Co.");
   const [contractorPhone, setContractorPhone] = useState("(555) 210-4488");
   const [customer, setCustomer] = useState("Smith Residence");
@@ -173,9 +175,9 @@ export default function EstimateTemplateIsland() {
             <Button size="md" onClick={() => { track("pdf_generated", { source: "free_estimate_template" }); window.print(); }}>
               <Printer size={16} /> Print / Save as PDF
             </Button>
-            <a href="/pricing">
+            <a href={pricingCta.href}>
               <Button size="md" variant="ghost" className="w-full">
-                Auto-generate this from saved rates with Pro
+                {pricingCta.label}
                 <ArrowRight size={16} />
               </Button>
             </a>

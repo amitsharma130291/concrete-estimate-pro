@@ -6,6 +6,7 @@ import FaqAccordion from "../components/FaqAccordion.astro";
 import Breadcrumbs from "../components/Breadcrumbs.astro";
 import TrustBadges from "../components/TrustBadges.astro";
 import PurchaseButton from "../components/PurchaseButton";
+import LicenseRecovery from "../components/LicenseRecovery";
 
 const includedGroups = [
   {
@@ -164,6 +165,7 @@ const productSchema = {
               By purchasing, you agree to our <a href="/terms" class="underline hover:text-orange">Terms</a> and{" "}
               <a href="/refund" class="underline hover:text-orange">Refund Policy</a>.
             </p>
+            <LicenseRecovery client:load />
           </div>
         </div>
       </div>
