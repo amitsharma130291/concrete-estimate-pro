@@ -11,7 +11,7 @@ const PUBLIC_ROUTES = [
   "/", "/calculators", "/concrete-cost-calculator", "/concrete-driveway-cost-calculator",
   "/concrete-patio-cost-calculator", "/concrete-sidewalk-cost-calculator", "/concrete-slab-cost-calculator",
   "/concrete-footing-cost-calculator", "/concrete-job-cost-calculator", "/concrete-estimate-template",
-  "/concrete-estimating-software", "/pricing", "/terms", "/privacy", "/refund",
+  "/concrete-estimating-software", "/pricing", "/terms", "/privacy", "/refund", "/contact",
 ];
 const PRO_ROUTES = ["/app", "/app/estimates", "/app/projects", "/app/templates", "/app/rate-health", "/app/catalog", "/app/actuals", "/app/settings"];
 
