@@ -58,13 +58,13 @@ const webApplicationSchema = {
   applicationCategory: "BusinessApplication",
   operatingSystem: "Any (web browser)",
   offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
-  description: "Enter your known concrete job costs to calculate true cost, overhead, target-margin pricing and required selling price.",
+  description: "Enter your known concrete job costs — including as a standalone concrete labor cost calculator — to calculate true cost, overhead, target-margin pricing and required selling price.",
 };
 ---
 
 <Layout
   title="Concrete Job Cost Calculator | Concrete Cost Pro"
-  description="Enter your known concrete job costs to calculate true cost, overhead, target-margin pricing and required selling price."
+  description="Enter your known concrete job costs — including as a standalone concrete labor cost calculator — to calculate true cost, overhead, target-margin pricing and required selling price."
 >
   <Fragment slot="head">
     <script type="application/ld+json" is:inline set:html={JSON.stringify(webApplicationSchema)} />
@@ -83,8 +83,9 @@ const webApplicationSchema = {
       <div class="mx-auto max-w-7xl px-4 pb-5 pt-5 sm:px-6 sm:pb-6 sm:pt-6">
         <h1 class="text-2xl font-extrabold tracking-tight text-ink sm:text-3xl">Concrete Job Cost Calculator</h1>
         <p class="mt-1.5 max-w-2xl text-base text-muted">
-          Already know your costs? Enter them directly to see your true job cost, current margin and the price you
-          need to charge to hit your target.
+          Already know your costs? Enter them directly — materials, labor, equipment, or just labor on its own as a
+          concrete labor cost calculator — to see your true job cost, current margin and the price you need to
+          charge to hit your target.
         </p>
       </div>
     </section>
