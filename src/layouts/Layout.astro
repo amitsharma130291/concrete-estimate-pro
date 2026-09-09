@@ -28,9 +28,14 @@ const absoluteUrl = (path: string) => new URL(path, site).toString();
 const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
+  "@id": `${site.toString()}#organization`,
   name: "Concrete Cost Pro",
   url: site.toString(),
   logo: absoluteUrl("/icon-512.png"),
+  hasMerchantReturnPolicy: {
+    "@type": "MerchantReturnPolicy",
+    merchantReturnLink: absoluteUrl("/refund/"),
+  },
 };
 
 // GA4 measurement IDs are public client-side identifiers, not secrets -- safe to bake in

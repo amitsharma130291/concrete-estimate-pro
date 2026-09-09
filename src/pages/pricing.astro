@@ -80,18 +80,56 @@ const faqs = [
   },
 ];
 
+// This is the site's one Product entity (for Google Merchant Listings) -- the free
+// calculators' WebApplication schema elsewhere carries its own unrelated $0 Offer, not a
+// Product. Keep it that way: only this page should ever declare a Product.
+//
+// Real screenshots of the actual app, already shown on this page below -- see the
+// "A few of the tools included" section for the same three images with their own alt text.
+const productImages = [
+  "https://concretecostpro.com/guide/09-estimate-summary.png",
+  "https://concretecostpro.com/guide/10-rate-health.png",
+  "https://concretecostpro.com/guide/04-templates.png",
+];
+
+// No `review`/`aggregateRating`: there are no real customer reviews yet, and fabricating
+// either would violate Google's structured-data policy. Add them only once genuine reviews
+// exist and are visibly published on this page. The resulting Search Console warning is a
+// non-critical recommendation, not an indexing blocker.
+//
+// No `shippingDetails`: Concrete Cost Pro is unlocked in-browser after checkout, nothing is
+// physically shipped, so there's no truthful shipping information to declare. Left
+// unresolved intentionally rather than fabricate free-shipping data for a digital product.
 const productSchema = {
   "@context": "https://schema.org",
-  "@type": "Product",
+  "@type": ["Product", "SoftwareApplication"],
+  "@id": "https://concretecostpro.com/pricing/#product",
   name: "Concrete Cost Pro",
   description:
     "Concrete estimating and job-profitability software: quantities, true job costs, target-margin pricing, rate health and estimate-vs-actual reporting for concrete contractors.",
+  url: "https://concretecostpro.com/pricing/",
+  image: productImages,
+  brand: { "@type": "Brand", name: "Concrete Cost Pro" },
+  sku: "CONCRETE-COST-PRO",
+  applicationCategory: "BusinessApplication",
+  operatingSystem: "Modern web browser",
   offers: {
     "@type": "Offer",
-    url: "https://concretecostpro.com/pricing",
-    price: "79",
+    url: "https://concretecostpro.com/pricing/",
+    price: "79.00",
     priceCurrency: "USD",
     availability: "https://schema.org/InStock",
+    itemCondition: "https://schema.org/NewCondition",
+    seller: {
+      "@type": "Organization",
+      "@id": "https://concretecostpro.com/#organization",
+      name: "Concrete Cost Pro",
+      url: "https://concretecostpro.com/",
+    },
+    hasMerchantReturnPolicy: {
+      "@type": "MerchantReturnPolicy",
+      merchantReturnLink: "https://concretecostpro.com/refund/",
+    },
   },
 };
 ---
