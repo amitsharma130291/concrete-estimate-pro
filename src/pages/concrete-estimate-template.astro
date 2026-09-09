@@ -33,6 +33,10 @@ const faqs = [
     q: "Can I use this for other trades?",
     a: "It's built for concrete flatwork, but the line-item format works for any straightforward estimate. Add or remove lines as needed.",
   },
+  {
+    q: "What's the difference between Customer view and Internal view?",
+    a: "Customer view is exactly what prints: scope, line items and the total. Internal view adds an overhead and target-margin panel so you can check your true cost and required price against the total, but that panel is marked no-print and never appears in the PDF, matching how Concrete Cost Pro keeps cost and margin off the customer document by default.",
+  },
 ];
 
 const goodEstimateFactors = [
@@ -93,6 +97,7 @@ const webApplicationSchema = {
         <p class="mt-1.5 max-w-2xl text-base text-muted">
           An interactive concrete estimate template that doubles as a quote template or invoice template. Fill in
           your project details and line items on the left; a customer-ready document builds itself on the right.
+          Switch to Internal view to add overhead and target margin, kept out of the printed document.
         </p>
       </div>
     </section>
@@ -154,10 +159,10 @@ const webApplicationSchema = {
         <div class="grid gap-10 lg:grid-cols-[1.05fr_1fr] lg:items-center">
           <div>
             <p class="text-xs font-bold uppercase tracking-wider text-orange-ondark">For contractors running the business</p>
-            <h2 class="mt-2 text-2xl font-extrabold text-white sm:text-3xl">Stop building estimates from scratch</h2>
+            <h2 class="mt-2 text-2xl font-extrabold text-white sm:text-3xl">Stop re-entering the same business costs for every quote</h2>
             <p class="mt-3 max-w-xl text-white/70">
-              Concrete Cost Pro fills in line items automatically from your dimensions and saved rates, and keeps
-              every estimate for next time.
+              Concrete Cost Pro creates this same customer document automatically from your project dimensions and
+              saved materials, labor and equipment rates, and keeps every estimate for next time.
             </p>
             <ul class="mt-6 flex flex-col gap-2.5 text-sm text-white/85">
               {proBenefits.map((item) => (
@@ -175,10 +180,10 @@ const webApplicationSchema = {
                 data-analytics-source="estimate_template"
                 class="inline-flex items-center gap-2 rounded-lg bg-orange px-6 py-3.5 text-base font-semibold text-white transition hover:bg-orange-dark"
               >
-                <span data-pricing-cta-label>Get Concrete Cost Pro — $79 Launch Price</span>
+                <span data-pricing-cta-label>Build This Estimate From Saved Rates</span>
                 <ArrowRight size={18} aria-hidden="true" />
               </a>
-              <span class="text-sm text-white/55">No subscription · No account · 14-day refund</span>
+              <span class="text-sm text-white/55">$79 once · No subscription · 14-day refund</span>
             </div>
           </div>
           <div class="overflow-hidden rounded-xl border border-white/10 shadow-2xl">
