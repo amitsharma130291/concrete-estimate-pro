@@ -329,7 +329,7 @@ export default function ProjectCalculatorIsland({ config }: { config: Calculator
                 "Save these cost rates for every future job",
                 "Add another section for L-shaped or multi-part pours",
                 "Turn this into a customer-ready estimate",
-                "Check this rate against your target margin over time",
+                "Re-check this rate against your target margin any time costs change",
               ]}
               ctaLabel={config.proCtaLabel}
               source={config.slug}
