@@ -125,7 +125,7 @@ export default function PurchaseButton() {
           onClick={handleClick}
           disabled={status === "starting"}
         >
-          {status === "starting" ? "Starting checkout…" : "Get Concrete Cost Pro — $79 Launch Price"}
+          {status === "starting" ? "Starting checkout…" : "Get Concrete Cost Pro"}
           <ArrowRight size={18} />
         </Button>
         {status === "error" && errorMessage && (

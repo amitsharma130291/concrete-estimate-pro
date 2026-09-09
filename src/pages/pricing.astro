@@ -7,6 +7,41 @@ import Breadcrumbs from "../components/Breadcrumbs.astro";
 import TrustBadges from "../components/TrustBadges.astro";
 import PurchaseButton from "../components/PurchaseButton";
 import LicenseRecovery from "../components/LicenseRecovery";
+import { calculateMargin, calculateRequiredSellingPrice, formatCurrency } from "../lib/calc";
+
+const beforeYouBuy = [
+  { q: "What's included", a: "Saved rates, multi-section estimating, Rate Health, cost-change scenarios, branded PDFs, CSV export, estimate-vs-actual tracking and JSON backup. Full list below." },
+  { q: "What happens after payment", a: "You're redirected back and unlocked immediately in the browser you paid from. A welcome email with your license key also arrives within moments." },
+  { q: "How access is delivered", a: "By license key, emailed to you and stored in the browser you purchased from. No account or password to set up." },
+  { q: "Supported devices & browsers", a: "Any modern web browser, on any device: desktop, laptop, tablet or phone." },
+  { q: "Data backup", a: "Settings → Export business data downloads a JSON file of your profile, catalog, rates and templates, importable on another device." },
+  { q: "Switching computers", a: "Enter your license key (or use \"Forgot your key?\") to unlock the app on the new device, then import your JSON backup to bring your saved rates over." },
+  { q: "Refund policy", a: "Email us within 14 days of purchase for a full refund, no questions asked. See the full refund policy." },
+  { q: "Support", a: "Message us through the contact page. A person reads and replies to every message." },
+];
+
+const goodFit = [
+  "You price more than one concrete job for customers, not just a single project",
+  "You want overhead and target margin factored into every quote automatically",
+  "You're comfortable with a browser-based tool that saves data on your device, not the cloud",
+];
+
+const notAFit = [
+  "You need multiple people on different devices sharing the same saved data in real time",
+  "You need blueprint/PDF takeoff, scheduling, CRM, accounting or payroll features",
+  "You're pricing a single one-off project and don't need saved rates or repeat use (a free calculator is the better fit)",
+];
+
+// ROI illustration -- verified: a $12,000 price actually achieved at a 25% margin implies a
+// true cost of $12,000 * (1 - 0.25) = $9,000. Pricing that same $9,000 true cost at a true 30%
+// target margin requires $9,000 / (1 - 0.30) = $12,857.14. The difference is ~$857.
+const roiExamplePrice = 12000;
+const roiActualMarginPercent = 25;
+const roiTargetMarginPercent = 30;
+const roiTrueCost = roiExamplePrice * (1 - roiActualMarginPercent / 100);
+const roiTargetPrice = calculateRequiredSellingPrice(roiTrueCost, roiTargetMarginPercent);
+const roiDifference = roiTargetPrice - roiExamplePrice;
+const roiActualMarginCheck = calculateMargin(roiExamplePrice, roiTrueCost);
 
 const includedGroups = [
   {
@@ -31,26 +66,13 @@ const includedGroups = [
   },
 ];
 
+// Trimmed to what "Before you buy" above doesn't already answer -- account, cloud/device,
+// switching computers and subscription status are all covered there, so repeating them here
+// would just be the same claim twice.
 const faqs = [
   {
     q: "Is $79 a permanent price?",
     a: "$79 is the launch price. Once launch pricing ends, new purchases move to the regular $99 price, but it's a one-time payment, not a subscription, so your price never changes after you buy. Buying now locks in $79 for as long as you use the product.",
-  },
-  {
-    q: "Is this a subscription?",
-    a: "No. Concrete Cost Pro is a one-time payment for lifetime access. No recurring billing, ever.",
-  },
-  {
-    q: "Do I need an account?",
-    a: "No account is required to use the app. Concrete Cost Pro is private and local-first: your current estimate and reusable business settings (profile, catalog, rates, templates) are saved in this browser. Download completed estimates as PDFs or CSVs for your records.",
-  },
-  {
-    q: "Does this run in the cloud or on my computer?",
-    a: "Concrete Cost Pro is local-first: everything runs in your browser and your data stays on this device. There's no cloud project storage and no cross-device sync, so clearing this browser's storage clears your data. Download a PDF or CSV of anything you want to keep.",
-  },
-  {
-    q: "What if I switch computers?",
-    a: "Export your business data (profile, catalog, rates and templates) from Settings, then import that file on the new device. This covers your reusable business setup; it does not include your current estimate, which stays on the original device unless you also copy over the estimate details by hand or start fresh.",
   },
   {
     q: "Does Concrete Cost Pro keep a history of my past estimates?",
@@ -113,10 +135,10 @@ const productSchema = {
               <span class="text-7xl font-extrabold tracking-tight">$79</span>
               <span class="pb-1.5 text-white/70">lifetime</span>
             </div>
-            <p class="mt-2 text-sm font-semibold text-orange-ondark">Current launch price: $79. Planned regular price: $99.</p>
+            <p class="mt-2 text-sm font-semibold text-orange-ondark">$79 one-time purchase. No monthly subscription.</p>
             <p class="mt-1 text-sm text-white/60">
-              One-time payment. Buy at $79 and that's your price for good. The regular price rises to $99 once launch
-              pricing ends, but it never changes for you after you buy.
+              Current launch price: $79. Planned regular price: $99. Buy at $79 and that's your price for good; it
+              never changes for you after you buy, even once launch pricing ends.
             </p>
           </div>
         </div>
@@ -167,6 +189,126 @@ const productSchema = {
             </p>
             <LicenseRecovery client:load />
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Everything a buyer needs to know before checkout, verified against the actual product
+         and policies rather than assumed. -->
+    <section class="mx-auto max-w-4xl px-4 pb-14 sm:px-6">
+      <h2 class="text-center text-xl font-bold text-ink">Before you buy</h2>
+      <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        {beforeYouBuy.map((item) => (
+          <div class="rounded-xl border border-border bg-white p-4">
+            <h3 class="text-sm font-semibold text-ink">{item.q}</h3>
+            <p class="mt-1 text-sm text-muted">{item.a}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Free vs Pro, condensed -- the full feature-by-feature table lives on the software page;
+         this one is scoped to the handful of differences that actually drive the purchase
+         decision. -->
+    <section class="border-t border-border bg-white">
+      <div class="mx-auto max-w-3xl px-4 py-14 sm:px-6">
+        <h2 class="text-center text-2xl font-extrabold text-ink sm:text-3xl">Free vs. Pro, the short version</h2>
+        <div class="mt-8 overflow-hidden rounded-xl border border-border shadow-sm">
+          <div class="overflow-x-auto">
+            <table class="w-full min-w-[480px] text-left text-sm">
+              <thead>
+                <tr class="border-b border-border bg-warm-white text-xs uppercase tracking-wide text-muted">
+                  <th class="px-4 py-3 font-medium">Free calculators</th>
+                  <th class="px-4 py-3 font-medium">Concrete Cost Pro</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-border">
+                <tr>
+                  <td class="px-4 py-3 align-top text-muted">Calculate one project's quantity, cost and required price</td>
+                  <td class="px-4 py-3 align-top text-ink">All of that, plus your rates saved for next time</td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-3 align-top text-muted">Re-enter materials, labor and equipment costs every visit</td>
+                  <td class="px-4 py-3 align-top text-ink">Saved catalog and business defaults, filled in automatically</td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-3 align-top text-muted">One project at a time, nothing saved</td>
+                  <td class="px-4 py-3 align-top text-ink">Reusable templates, saved estimates, one-click duplication</td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-3 align-top text-muted">No audit of your existing standard rates</td>
+                  <td class="px-4 py-3 align-top text-ink">Rate Health flags any standard rate below target margin</td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-3 align-top text-muted">Print or save a document you build by hand</td>
+                  <td class="px-4 py-3 align-top text-ink">Branded PDF, CSV export, and estimate-vs-actual tracking</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Good fit / not a fit -->
+    <section class="border-t border-border bg-warm-white">
+      <div class="mx-auto max-w-4xl px-4 py-14 sm:px-6">
+        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+          <div class="rounded-xl border border-green/25 bg-white p-5">
+            <h2 class="font-semibold text-ink">Good fit if…</h2>
+            <ul class="mt-3 flex flex-col gap-2">
+              {goodFit.map((item) => (
+                <li class="text-sm text-ink/80">{item}</li>
+              ))}
+            </ul>
+          </div>
+          <div class="rounded-xl border border-border bg-white p-5">
+            <h2 class="font-semibold text-ink">Not a fit if…</h2>
+            <ul class="mt-3 flex flex-col gap-2">
+              {notAFit.map((item) => (
+                <li class="text-sm text-ink/80">{item}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Illustrative ROI example -- math shown in full, not just asserted. -->
+    <section class="border-t border-border bg-white">
+      <div class="mx-auto max-w-3xl px-4 py-14 sm:px-6">
+        <div class="mx-auto max-w-xl text-center">
+          <p class="text-xs font-bold uppercase tracking-wider text-orange">Illustrative example, not a promised saving</p>
+          <h2 class="mt-2 text-2xl font-extrabold text-ink sm:text-3xl">What one margin mix-up is worth</h2>
+        </div>
+        <div class="mt-8 rounded-xl border border-border bg-warm-white p-6">
+          <p class="text-sm text-ink/80">
+            Say a {formatCurrency(roiExamplePrice, { cents: false })} job was actually priced at a {roiActualMarginPercent}% margin
+            (true cost {formatCurrency(roiTrueCost, { cents: false })}) instead of the contractor's real {roiTargetMarginPercent}% target.
+            Pricing that same {formatCurrency(roiTrueCost, { cents: false })} true cost at a true {roiTargetMarginPercent}% margin
+            requires {formatCurrency(roiTargetPrice, { cents: true })} — a difference of about{" "}
+            <strong class="text-ink">{formatCurrency(roiDifference, { cents: false })}</strong> on this one job.
+          </p>
+          <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <div class="rounded-lg border border-border bg-white p-3 text-center">
+              <div class="text-xs text-muted">Priced at {roiActualMarginPercent}% margin</div>
+              <div class="text-lg font-bold text-ink">{formatCurrency(roiExamplePrice, { cents: false })}</div>
+            </div>
+            <div class="rounded-lg border border-border bg-white p-3 text-center">
+              <div class="text-xs text-muted">Priced at {roiTargetMarginPercent}% margin</div>
+              <div class="text-lg font-bold text-ink">{formatCurrency(roiTargetPrice, { cents: true })}</div>
+            </div>
+            <div class="rounded-lg border border-green/30 bg-green-light p-3 text-center">
+              <div class="text-xs text-muted">Difference</div>
+              <div class="text-lg font-bold text-green">{formatCurrency(roiDifference, { cents: false })}</div>
+            </div>
+          </div>
+          <p class="mt-4 text-xs text-muted">
+            Illustrative only: this is one example calculation, not a projection of your results. Verify: at{" "}
+            {formatCurrency(roiExamplePrice, { cents: false })} against a {formatCurrency(roiTrueCost, { cents: false })} true cost,
+            the margin is {roiActualMarginCheck !== null ? Math.round(roiActualMarginCheck * 100) : "—"}%, confirming the {roiActualMarginPercent}%
+            starting point above.
+          </p>
         </div>
       </div>
     </section>
