@@ -37,9 +37,13 @@ function setStoredVisitorType(type: VisitorType): void {
  * sticky bar) all need to react to the same choice without sharing a React tree -- the
  * window event keeps them in sync the same way license state does elsewhere in this app. */
 export function useVisitorType(): [VisitorType, (type: VisitorType) => void] {
-  const [type, setType] = useState<VisitorType>(() => getVisitorType());
+  // Starts at null (matching the server-rendered default) and picks up any stored value only
+  // after mount -- reading sessionStorage during the initial render would hydrate to a
+  // different value than the server rendered, which React flags as a mismatch.
+  const [type, setType] = useState<VisitorType>(null);
 
   useEffect(() => {
+    setType(getVisitorType());
     function onChange(e: Event) {
       setType((e as CustomEvent<VisitorType>).detail);
     }
