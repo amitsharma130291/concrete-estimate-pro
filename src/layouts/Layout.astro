@@ -14,6 +14,10 @@ export interface Props {
 }
 
 const { title, description, noIndex = false, softNav = false } = Astro.props;
+// Back-to-top button: only on the /app dashboard, where several tabs (Catalog, Templates)
+// can genuinely grow long. The public marketing pages don't get it, since they already have
+// plenty of scroll-triggered fixed elements (calculator sticky bars, contextual CTAs).
+const showBackToTop = Astro.url.pathname === "/app" || Astro.url.pathname.startsWith("/app/");
 const site = Astro.site ?? new URL("https://concretecostpro.com");
 const canonicalURL = new URL(Astro.url.pathname, site);
 
@@ -101,15 +105,17 @@ const GA_MEASUREMENT_ID = "G-F30VHD9PN2";
   </head>
   <body class="bg-warm-white text-ink antialiased">
     <slot />
-    <button
-      type="button"
-      id="back-to-top"
-      hidden
-      aria-label="Back to top"
-      class="fixed bottom-6 right-6 z-40 hidden h-11 w-11 items-center justify-center rounded-full bg-orange text-white shadow-lg transition hover:bg-orange-dark focus-visible:outline-2 focus-visible:outline-offset-2 md:flex"
-    >
-      <ArrowUp size={20} aria-hidden="true" />
-    </button>
+    {showBackToTop && (
+      <button
+        type="button"
+        id="back-to-top"
+        hidden
+        aria-label="Back to top"
+        class="fixed bottom-6 right-6 z-40 hidden h-11 w-11 items-center justify-center rounded-full bg-orange text-white shadow-lg transition hover:bg-orange-dark focus-visible:outline-2 focus-visible:outline-offset-2 md:flex"
+      >
+        <ArrowUp size={20} aria-hidden="true" />
+      </button>
+    )}
     <script>
       import { initAnalyticsDelegation } from "../lib/analytics";
       import { initPricingCtaSwap } from "../lib/pricingCtaSwap";
