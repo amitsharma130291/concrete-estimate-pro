@@ -44,9 +44,12 @@ const NAV: { key: AppTab; label: string; href: string; icon: typeof LayoutDashbo
 ];
 
 /** The entire /app area is the paid product -- the free tools live at their own public
- * calculator pages, not here. Every page under /app mounts this fresh (Astro does a full
- * page load per route, not a client-side SPA nav), so this re-checks on every visit rather
- * than trusting a client-side flag that would let someone skip straight past the gate. */
+ * calculator pages, not here. Every /app/*.astro page passes softNav to Layout.astro, which
+ * enables Astro's ClientRouter for soft (no full-reload) navigation between them -- but since
+ * this island is never marked transition:persist, Astro's default swap still fully unmounts
+ * and remounts it fresh on every navigation (same as the old hard-navigation behavior), so this
+ * re-checks on every visit rather than trusting a client-side flag that would let someone skip
+ * straight past the gate. */
 export default function AppShell({ activeTab }: { activeTab: AppTab }) {
   const [access, setAccess] = useState<"checking" | "allowed" | "denied">("checking");
 

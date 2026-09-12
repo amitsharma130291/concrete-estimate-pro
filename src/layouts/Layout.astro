@@ -1,13 +1,18 @@
 ---
 import "../styles/global.css";
+import { ClientRouter } from "astro:transitions";
 
 export interface Props {
   title: string;
   description: string;
   noIndex?: boolean;
+  /** Opt-in soft (client-side) navigation -- only the /app/* dashboard pages set this. Astro's
+   * ClientRouter only does a soft swap between two pages that BOTH include it, so every public
+   * marketing page (none of which set this) still gets a normal hard navigation, unaffected. */
+  softNav?: boolean;
 }
 
-const { title, description, noIndex = false } = Astro.props;
+const { title, description, noIndex = false, softNav = false } = Astro.props;
 const site = Astro.site ?? new URL("https://concretecostpro.com");
 const canonicalURL = new URL(Astro.url.pathname, site);
 
@@ -54,6 +59,7 @@ const GA_MEASUREMENT_ID = "G-F30VHD9PN2";
     <link rel="icon" type="image/png" href="/icon-192.png" sizes="192x192" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
+    {softNav && <ClientRouter />}
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalURL} />
