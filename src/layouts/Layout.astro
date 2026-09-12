@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import { ClientRouter } from "astro:transitions";
+import { ArrowUp } from "lucide-react";
 
 export interface Props {
   title: string;
@@ -100,11 +101,22 @@ const GA_MEASUREMENT_ID = "G-F30VHD9PN2";
   </head>
   <body class="bg-warm-white text-ink antialiased">
     <slot />
+    <button
+      type="button"
+      id="back-to-top"
+      hidden
+      aria-label="Back to top"
+      class="fixed bottom-6 right-6 z-40 hidden h-11 w-11 items-center justify-center rounded-full bg-orange text-white shadow-lg transition hover:bg-orange-dark focus-visible:outline-2 focus-visible:outline-offset-2 md:flex"
+    >
+      <ArrowUp size={20} aria-hidden="true" />
+    </button>
     <script>
       import { initAnalyticsDelegation } from "../lib/analytics";
       import { initPricingCtaSwap } from "../lib/pricingCtaSwap";
+      import { initBackToTop } from "../lib/backToTop";
       initAnalyticsDelegation();
       initPricingCtaSwap();
+      initBackToTop();
     </script>
   </body>
 </html>
