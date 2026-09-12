@@ -83,16 +83,18 @@ const noun =
       ]}
     />
 
-    <!-- Compact hero — kept short on purpose so the calculator sits as close to the fold as possible. -->
+    <!-- Compact hero — kept short on purpose so the calculator sits as close to the fold as possible.
+         The trust line pushed the calculator noticeably lower once added, so padding here is
+         trimmed tighter than a typical hero to reclaim that space. -->
     <section id="calculator" class="border-b border-border bg-white">
-      <div class="mx-auto max-w-7xl px-4 pb-5 pt-5 sm:px-6 sm:pb-6 sm:pt-6">
+      <div class="mx-auto max-w-7xl px-4 pb-3 pt-4 sm:px-6 sm:pb-4 sm:pt-5">
         <h1 class="text-2xl font-extrabold tracking-tight text-ink sm:text-3xl">{config.h1}</h1>
-        <p class="mt-1.5 max-w-2xl text-base text-muted">{config.intro}</p>
-        <p class="mt-2.5 text-sm text-muted">Free to use · No signup · Uses your own prices · Results update instantly</p>
+        <p class="mt-1.5 max-w-2xl text-sm text-muted sm:text-base">{config.intro}</p>
+        <p class="mt-1.5 text-xs text-muted sm:text-sm">Free to use · No signup · Uses your own prices · Results update instantly</p>
       </div>
     </section>
 
-    <section class="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
+    <section class="mx-auto max-w-7xl px-4 pb-6 pt-4 sm:px-6 sm:pb-8 sm:pt-5">
       <ProjectCalculatorIsland config={config} client:load />
     </section>
 
