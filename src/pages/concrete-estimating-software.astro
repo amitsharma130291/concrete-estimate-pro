@@ -5,44 +5,114 @@ import PublicFooter from "../components/PublicFooter.astro";
 import FaqAccordion from "../components/FaqAccordion.astro";
 import Breadcrumbs from "../components/Breadcrumbs.astro";
 import TrustBadges from "../components/TrustBadges.astro";
-import { CheckCircle2, ArrowRight, Check, X } from "lucide-react";
+import {
+  CheckCircle2, ArrowRight, Check, X, Wallet, Layers, LayoutGrid, Clock, Target,
+  FileStack, CopyPlus, SlidersHorizontal, FileText, GitCompare, BarChart3, DatabaseBackup,
+} from "lucide-react";
 
-const workflow = [
-  "Project", "Dimensions", "Concrete quantity", "Purchase allowance", "Materials",
-  "Labor", "Equipment, forms & reinforcement", "True cost", "Target margin", "Estimate", "Actual job",
+// Hero product mockup -- a coded recreation of the real app's estimate panel (same
+// ResultRow/Badge styling as ProjectCalculatorIsland.tsx and RateHealthTab.tsx), not a raw
+// screenshot, so it can show one deliberately chosen, labeled example project. Math verified
+// against src/lib/calc.ts: trueCost / (1 - targetMargin) = 8729 / 0.70 = 12,470.00 exactly.
+const heroExample = {
+  project: "Smith Driveway",
+  quantityYd3: 16,
+  trueCost: 8729,
+  targetMarginPercent: 30,
+  requiredPrice: 12470,
+};
+
+// Problem-section comparison. Both cards are labeled "Example" -- illustrative, not a real
+// job. Guesswork card: sellingPrice $10,500 at 18% margin implies trueCost = 10500*(1-0.18) =
+// $8,610, consistent with a $1,120 forgotten-overhead component. True-cost card matches the
+// hero's own verified numbers.
+const guesswork = { price: 10500, forgottenOverhead: 1120, actualMarginPercent: 18 };
+const trueCostCard = { trueCost: 8729, targetMarginPercent: 30, requiredPrice: 12470 };
+
+const workflowSteps = [
+  {
+    n: 1,
+    title: "Enter the job",
+    body: "Add dimensions and combine multiple slabs, driveway sections, patios, aprons, sidewalks or footings into one project.",
+    img: "/guide/06-wizard-dimensions.png",
+    alt: "Wizard step showing project dimensions entry for length, width and thickness",
+  },
+  {
+    n: 2,
+    title: "Apply your costs",
+    body: "Pull in your saved concrete, reinforcement, labor, formwork, equipment, delivery and overhead rates instead of retyping them.",
+    img: "/guide/07-wizard-costs.png",
+    alt: "Wizard step showing material, labor and equipment cost entry pulled from saved rates",
+  },
+  {
+    n: 3,
+    title: "Price for your margin",
+    body: "See true job cost and the exact selling price required to hit your target margin, not a rough markup guess.",
+    img: "/guide/08-wizard-price.png",
+    alt: "Wizard step showing true cost, target margin and required selling price",
+  },
+  {
+    n: 4,
+    title: "Send and learn",
+    body: "Create a customer-ready estimate, then log actual costs afterward to see where future pricing needs adjusting.",
+    img: "/guide/09-estimate-summary.png",
+    alt: "Branded customer estimate document next to an internal cost, overhead and margin panel",
+  },
 ];
 
-// Generic role-based scenarios, not real customers -- see the "Example" labeling on each
-// card. No names, no companies, no results attributed to an actual person.
-const useCases = [
-  {
-    title: "Pricing a one-off driveway job",
-    body: "A contractor quoting a 60 ft × 20 ft driveway enters the dimensions once. Concrete Cost Pro calculates the order quantity, true cost with overhead included, and the price required to hit a 30% margin.",
-  },
-  {
-    title: "Catching an underpriced standard rate",
-    body: "A contractor's standard $9.50/sq ft slab rate stops clearing a 30% margin after a ready-mix price increase. Rate Health flags it and shows the price needed to get back on target.",
-  },
-  {
-    title: "Comparing a finished job to the estimate",
-    body: "After a patio job wraps, the contractor logs the actual labor and material costs. Concrete Cost Pro shows the estimated margin next to the actual margin, so the next quote can be adjusted.",
-  },
+// Illustrative Rate Health rows -- example templates, not a real customer's saved rates.
+// Target margin 35% matches this feature's default target-margin workspace setting.
+const rateHealthRows = [
+  { name: "Basic slab", margin: 38.9, status: "healthy" },
+  { name: "Driveway", margin: 36.4, status: "healthy" },
+  { name: "Patio", margin: 38.0, status: "healthy" },
+  { name: "Stamped", margin: 25.3, status: "review" },
+];
+
+// Illustrative cost-change scenario. Grounded in the real Rate Health feature
+// (src/components/app/tabs/RateHealthTab.tsx), which re-prices every saved template against a
+// hypothetical rate change and counts how many fall below target margin -- it does not touch
+// "open estimates" (the app keeps exactly one current estimate, never an archive; see
+// src/lib/persistence.ts's model comment), so that concept doesn't apply here.
+const scenario = { from: 165, to: 185, templatesChecked: 6, nowBelowTarget: 3 };
+
+// Estimated-vs-actual example, continuing the same "Smith Driveway" project as the hero.
+// Verified: at the hero's $12,470 selling price, actual cost $9,980 gives a margin of
+// (12470-9980)/12470 = 19.97%, which rounds to 20%.
+const estVsActual = {
+  estimated: { concreteYd3: 16, laborHours: 52, cost: 8729, marginPercent: 30 },
+  actual: { concreteYd3: 17.2, laborHours: 61, cost: 9980, marginPercent: 20 },
+};
+
+const featureGrid = [
+  { icon: Wallet, title: "Saved business costs", body: "Enter your ready-mix, labor, equipment and overhead rates once, reuse them on every job." },
+  { icon: Layers, title: "Material and equipment catalog", body: "Keep a running list of the rates you actually pay, ready to pull into any project." },
+  { icon: LayoutGrid, title: "Multi-section projects", body: "Combine a driveway, an apron and a sidewalk into a single job estimate." },
+  { icon: Clock, title: "Hourly or unit-based labor", body: "Price a crew by the hour or by the square foot, whichever matches how you actually bid." },
+  { icon: Target, title: "Overhead and target-margin pricing", body: "True cost includes your overhead, and the required price is solved for the margin you set." },
+  { icon: FileStack, title: "Reusable project templates", body: "Save a standard slab, driveway or patio setup once and start every similar job from it." },
+  { icon: CopyPlus, title: "Project duplication", body: "Start a new estimate from a close match instead of building every job from zero." },
+  { icon: SlidersHorizontal, title: "Cost-change scenarios", body: "Test a material or labor rate increase against your saved templates before it hits a real quote." },
+  { icon: FileText, title: "Branded customer estimates", body: "Hand off a clean, professional document with your company details, scope and pricing." },
+  { icon: GitCompare, title: "Estimate-versus-actual tracking", body: "Log what a job actually cost and compare it against what you estimated." },
+  { icon: BarChart3, title: "Historical profitability", body: "See margin trends across past jobs instead of guessing which job types run thin." },
+  { icon: DatabaseBackup, title: "CSV export and workspace backup", body: "Pull your numbers into a spreadsheet, or export a full backup you control." },
 ];
 
 const comparison = [
   { label: "Cost", free: "Free", pro: "$79 once" },
-  { label: "Account required", free: "No", pro: "No" },
-  { label: "Calculate one project's quantity and cost", free: true, pro: true },
+  { label: "Concrete quantity and cost calculations", free: true, pro: true },
   { label: "Solve for a target-margin selling price", free: "One project at a time", pro: "Saved as your default, every job" },
-  { label: "Save materials, labor and equipment rates", free: false, pro: true },
+  { label: "Save material, labor and equipment rates", free: false, pro: true },
   { label: "Multi-section projects", free: false, pro: true },
   { label: "Reusable project templates", free: false, pro: true },
+  { label: "Project duplication", free: false, pro: true },
   { label: "Rate Health audit across your standard rates", free: false, pro: true },
-  { label: "Material/labor/equipment cost-change scenarios", free: false, pro: true },
-  { label: "Branded, customer-ready estimate PDF", free: false, pro: true },
+  { label: "Material, labor and equipment cost-change scenarios", free: false, pro: true },
+  { label: "Branded, customer-ready estimate PDF", free: "Basic template", pro: "Branded, with company details" },
+  { label: "Estimate-versus-actual tracking", free: false, pro: true },
   { label: "CSV export", free: false, pro: true },
-  { label: "Estimate vs. actual job tracking", free: false, pro: true },
-  { label: "JSON backup and restore", free: false, pro: true },
+  { label: "Workspace backup and restore", free: false, pro: true },
 ];
 
 const builtFor = [
@@ -63,28 +133,48 @@ const notBuiltFor = [
 
 const faqs = [
   {
+    q: "Is this a monthly subscription?",
+    a: "No. Concrete Cost Pro is a single one-time purchase: $79 at the current launch price, regularly $99, with no recurring billing.",
+  },
+  {
+    q: "Does it calculate concrete quantity?",
+    a: "Yes. Enter dimensions and it converts them to cubic yards, with your order allowance added, the same math the free calculators use, plus everything below.",
+  },
+  {
+    q: "Can I use my own material and labor costs?",
+    a: "Yes. Save your ready-mix, labor, forms, reinforcement, equipment and overhead rates once, then reuse them on every estimate instead of retyping them.",
+  },
+  {
+    q: "Can I estimate projects with multiple sections?",
+    a: "Yes. Combine slabs, driveway sections, patios, aprons, sidewalks and footings into a single project estimate.",
+  },
+  {
+    q: "Can I create a customer-ready estimate?",
+    a: "Yes. Build a branded estimate document with your company details, scope and customer-visible pricing. Your internal cost and margin numbers stay private unless you choose to show them.",
+  },
+  {
+    q: "Does it track estimated versus actual costs?",
+    a: "Yes. Log what a job actually cost after it wraps and compare it to your original estimate, so you can see which job types are consistently under- or over-estimated.",
+  },
+  {
+    q: "Where is my data stored, and can I back it up?",
+    a: "Everything lives in this browser's local storage on this device only, there's no account and no cloud sync. Settings → Export business data downloads a JSON file covering your business profile, catalog, rates and templates, importable on another device. Local storage isn't automatically backed up anywhere, so export regularly if you want a copy you control.",
+  },
+  {
+    q: "Does the software determine slab thickness or structural requirements?",
+    a: "Concrete Cost Pro does not provide engineering, structural-design, or building-code recommendations. The contractor supplies the project dimensions, thickness, reinforcement, strength, and other job specifications. The application calculates quantities, costs, margins, and prices from those inputs.",
+  },
+  {
+    q: "Why not just use a spreadsheet?",
+    a: "You can, and plenty of contractors start there. What a spreadsheet doesn't do on its own: catch a forgotten overhead line before you send the quote, warn you when a standing rate has drifted below your target margin, or hold a reusable template per job type without you rebuilding formulas each time. Concrete Cost Pro is that spreadsheet's math, already built and reusable.",
+  },
+  {
     q: "Is this concrete takeoff software?",
     a: "No. Concrete Cost Pro is manual quantity and cost estimating software for project dimensions you already know. It does not read blueprints or PDF plans automatically.",
   },
   {
-    q: "Does it determine engineering specifications?",
-    a: "No. Slab thickness, footing size, reinforcement, concrete strength, load capacity and code compliance are never generated by this software. You supply those specifications and the app calculates quantity, cost and pricing from them.",
-  },
-  {
-    q: "Do I need internet access to use it?",
-    a: "No. It's local-first: your data lives in your browser, and estimating works without a live connection once the app is loaded.",
-  },
-  {
-    q: "Is there a monthly fee?",
-    a: "No. Concrete Cost Pro is a single one-time purchase with no subscription: $79 at the current launch price, regularly $99.",
-  },
-  {
     q: "Is this the same as concrete contractor software or bidding software?",
     a: "Concrete Cost Pro covers the estimating and bidding side of running a concrete contracting business, sometimes searched as concrete estimator software, concrete contractor software or concrete bidding software. It doesn't include scheduling, invoicing/accounting integrations or crew management.",
-  },
-  {
-    q: "Where is my data stored, and can I back it up?",
-    a: "Everything lives in this browser's local storage on this device only -- there's no account and no cloud sync. Settings → Export business data downloads a JSON file covering your business profile, catalog, rates and templates, which you can import on another device. Your current estimate is not included in that file; export it separately as a PDF or CSV first if you want a copy.",
   },
   {
     q: "What if I want a refund?",
@@ -98,7 +188,7 @@ const softwareApplicationSchema = {
   name: "Concrete Cost Pro",
   applicationCategory: "BusinessApplication",
   operatingSystem: "Any (web browser)",
-  url: "https://concretecostpro.com/concrete-estimating-software",
+  url: "https://concretecostpro.com/concrete-estimating-software/",
   offers: {
     "@type": "Offer",
     price: "79",
@@ -108,6 +198,10 @@ const softwareApplicationSchema = {
   description:
     "Concrete estimating and job-profitability software: quantities, true job costs, target-margin pricing, rate health and estimate-vs-actual reporting for concrete contractors. $79 launch price (regularly $99), no subscription.",
 };
+
+function money(n: number): string {
+  return `$${n.toLocaleString("en-US")}`;
+}
 ---
 
 <Layout
@@ -121,166 +215,298 @@ const softwareApplicationSchema = {
   <main>
     <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Concrete Estimating Software", href: "/concrete-estimating-software" }]} />
 
-    <!-- 1-2. Outcome-based hero + price + primary CTA -->
-    <section class="border-b border-border bg-white">
-      <div class="mx-auto max-w-4xl px-4 py-14 text-center sm:px-6">
-        <h1 class="text-3xl font-extrabold tracking-tight text-ink sm:text-5xl">
-          Price Concrete Jobs From True Cost—not Guesswork
-        </h1>
-        <p class="mx-auto mt-4 max-w-2xl text-lg text-muted">
-          Save your rates, estimate multi-section projects, solve for your target margin, create customer-ready
-          estimates, and compare actual job costs with your original estimate. One payment, without another
-          monthly subscription.
-        </p>
-        <p class="mt-4 inline-flex items-center gap-2 text-sm font-semibold">
-          <span class="text-muted line-through">$99</span>
-          <span class="rounded-full bg-orange/10 px-2.5 py-1 text-orange">$79 launch price</span>
-        </p>
-        <div class="mt-4 flex flex-wrap items-center justify-center gap-3">
-          <a
-            href="/pricing"
-            data-pricing-cta
-            data-analytics-event="pro_cta_clicked"
-            data-analytics-source="estimating_software_hero"
-            class="inline-flex items-center justify-center rounded-lg bg-orange px-6 py-3.5 text-base font-semibold text-white transition hover:bg-orange-dark"
-          >
-            <span data-pricing-cta-label>Get Concrete Cost Pro — $79 Once</span>
-          </a>
-          <a
-            href="#screenshots"
-            class="inline-flex items-center justify-center rounded-lg border border-border bg-white px-6 py-3.5 text-base font-semibold text-ink transition hover:bg-warm-white"
-          >
-            See a Complete Estimate
-          </a>
-        </div>
-        <TrustBadges class="mt-7" />
-      </div>
-    </section>
-
-    <!-- 4. Complete estimating workflow -->
-    <section class="border-b border-border bg-white">
-      <div class="mx-auto max-w-5xl px-4 py-12 sm:px-6">
-        <h2 class="text-center text-xl font-semibold text-ink">One workflow, start to finish</h2>
-        <div class="mt-6 flex flex-wrap items-center justify-center gap-2">
-          {workflow.map((step, i) => (
-            <>
-              <span class="rounded-full border border-border bg-warm-white px-3 py-1.5 text-xs font-medium text-ink">{step}</span>
-              {i < workflow.length - 1 && <span class="text-muted" aria-hidden="true">&rarr;</span>}
-            </>
-          ))}
-        </div>
-      </div>
-    </section>
-
-    <!-- 5. Three contractor use cases -->
-    <section class="mx-auto max-w-6xl px-4 py-14 sm:px-6">
-      <div class="mx-auto max-w-xl text-center">
-        <p class="text-xs font-bold uppercase tracking-wider text-orange">Example scenarios</p>
-        <h2 class="mt-2 text-2xl font-extrabold text-ink sm:text-3xl">How contractors use it</h2>
-        <p class="mt-3 text-muted">Illustrative examples, not real customer stories.</p>
-      </div>
-      <div class="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-3">
-        {useCases.map((u) => (
-          <div class="rounded-xl border border-border bg-white p-5 shadow-sm">
-            <p class="text-xs font-bold uppercase tracking-wide text-muted">Example</p>
-            <h3 class="mt-1.5 font-semibold text-ink">{u.title}</h3>
-            <p class="mt-2 text-sm text-muted">{u.body}</p>
+    <!-- HERO -->
+    <section id="hero" class="border-b border-border bg-white">
+      <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16">
+        <div class="grid grid-cols-1 items-center gap-10 lg:grid-cols-[1fr_1.05fr] lg:gap-14">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-wider text-orange">Concrete estimating & job-profitability software</p>
+            <h1 class="mt-3 text-3xl font-extrabold tracking-tight text-ink sm:text-5xl">
+              Know What Every Concrete Job Really Costs Before You Quote It
+            </h1>
+            <p class="mt-4 max-w-xl text-lg text-muted">
+              Build complete estimates using your own material, labor, equipment, overhead and margin numbers, then
+              compare the estimate with what the job actually cost.
+            </p>
+            <p class="mt-5 inline-flex items-center gap-2 text-sm font-semibold">
+              <span class="text-muted line-through">$99</span>
+              <span class="rounded-full bg-orange/10 px-2.5 py-1 text-orange">$79 Lifetime Launch Price</span>
+            </p>
+            <p class="mt-1.5 text-sm text-muted">One payment. No monthly subscription.</p>
+            <div class="mt-6 flex flex-wrap items-center gap-3">
+              <a
+                href="/pricing"
+                data-pricing-cta
+                data-analytics-event="pro_cta_clicked"
+                data-analytics-source="estimating_software_hero"
+                class="inline-flex items-center justify-center rounded-lg bg-orange px-6 py-3.5 text-base font-semibold text-white transition hover:bg-orange-dark"
+              >
+                <span data-pricing-cta-label>Get Concrete Cost Pro — $79 Once</span>
+              </a>
+              <a
+                href="#customer-estimate"
+                class="inline-flex items-center justify-center rounded-lg border border-border bg-white px-6 py-3.5 text-base font-semibold text-ink transition hover:bg-warm-white"
+              >
+                View a Real Estimate
+              </a>
+            </div>
+            <p class="mt-3 text-sm text-muted">Instant access · No account required · Your data stays on your device</p>
+            <p class="mt-1 text-sm text-muted">Not right for you? Email us within 14 days for a full refund, no questions asked.</p>
           </div>
-        ))}
-      </div>
-    </section>
 
-    <!-- 6. Free vs Pro comparison -->
-    <section class="border-t border-border bg-warm-white">
-      <div class="mx-auto max-w-4xl px-4 py-14 sm:px-6">
-        <div class="mx-auto max-w-xl text-center">
-          <p class="text-xs font-bold uppercase tracking-wider text-orange">Free vs. Pro</p>
-          <h2 class="mt-2 text-2xl font-extrabold text-ink sm:text-3xl">What upgrading actually changes</h2>
-        </div>
-        <div class="mt-8 overflow-hidden rounded-xl border border-border bg-white shadow-sm">
-          <div class="overflow-x-auto">
-            <table class="w-full min-w-[520px] text-left text-sm">
-              <thead>
-                <tr class="border-b border-border bg-warm-white text-xs uppercase tracking-wide text-muted">
-                  <th class="px-4 py-3 font-medium">Feature</th>
-                  <th class="px-4 py-3 font-medium">Free calculators</th>
-                  <th class="px-4 py-3 font-medium">Concrete Cost Pro</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-border">
-                {comparison.map((row) => (
-                  <tr>
-                    <td class="px-4 py-3 text-ink">{row.label}</td>
-                    <td class="px-4 py-3 text-muted">
-                      {typeof row.free === "boolean" ? (
-                        row.free ? <Check size={16} className="text-green" aria-label="Included" /> : <X size={16} className="text-muted/50" aria-label="Not included" />
-                      ) : (
-                        row.free
-                      )}
-                    </td>
-                    <td class="px-4 py-3 font-medium text-ink">
-                      {typeof row.pro === "boolean" ? (
-                        row.pro ? <Check size={16} className="text-green" aria-label="Included" /> : <X size={16} className="text-muted/50" aria-label="Not included" />
-                      ) : (
-                        row.pro
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 7. Real product screenshots -->
-    <section id="screenshots" class="scroll-mt-20 border-t border-border bg-white">
-      <div class="mx-auto max-w-6xl px-4 py-14 sm:px-6">
-        <div class="mx-auto max-w-xl text-center">
-          <p class="text-xs font-bold uppercase tracking-wider text-orange">See it in action</p>
-          <h2 class="mt-2 text-2xl font-extrabold text-ink sm:text-3xl">A few of the tools included</h2>
-          <p class="mt-3 text-muted">
-            Real screens from Concrete Cost Pro, not mockups. A sample of what's covered above.
-          </p>
-        </div>
-        <div class="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-3">
-          {[
-            {
-              img: "/guide/10-rate-health.png",
-              alt: "Rate Health dashboard showing standard concrete rates flagged below target margin, with required price shown for each",
-              caption: "Rate Health flags underpriced standard rates",
-            },
-            {
-              img: "/guide/09-estimate-summary.png",
-              alt: "Branded customer estimate document next to an internal cost, overhead and margin panel",
-              caption: "Branded estimates, cost and margin kept private",
-            },
-            {
-              img: "/guide/04-templates.png",
-              alt: "Saved project templates for standard job types, each showing order quantity, true cost and margin status",
-              caption: "Reusable templates for your standard jobs",
-            },
-          ].map((shot) => (
-            <div class="overflow-hidden rounded-xl border border-border bg-white shadow-sm">
+          <!-- Product mockup: same visual language as the real app (ResultRow/Badge), a labeled
+               example, not a raw screenshot -- see heroExample's comment above for the math. -->
+          <div class="relative">
+            <div class="overflow-hidden rounded-xl border border-border bg-white shadow-2xl">
               <div class="flex items-center gap-1.5 border-b border-border bg-warm-white px-3 py-2.5">
                 <span class="h-2.5 w-2.5 rounded-full bg-red/50" aria-hidden="true"></span>
                 <span class="h-2.5 w-2.5 rounded-full bg-amber/50" aria-hidden="true"></span>
                 <span class="h-2.5 w-2.5 rounded-full bg-green/50" aria-hidden="true"></span>
+                <span class="ml-2 text-xs text-muted">Concrete Cost Pro — Example project</span>
               </div>
-              <img src={shot.img} alt={shot.alt} loading="lazy" class="w-full border-b border-border" />
-              <p class="px-4 py-3 text-sm font-medium text-ink">{shot.caption}</p>
+              <div class="p-5 sm:p-6">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-xs font-bold uppercase tracking-wide text-muted">Example project</p>
+                    <h2 class="text-lg font-bold text-ink">{heroExample.project}</h2>
+                  </div>
+                  <span class="inline-flex items-center rounded-full bg-green-light px-2.5 py-1 text-xs font-semibold text-green">On Target</span>
+                </div>
+                <div class="mt-4 grid grid-cols-2 gap-x-4 divide-y divide-border sm:grid-cols-4 sm:divide-y-0">
+                  <div class="py-3.5 sm:py-0">
+                    <div class="text-sm text-muted">Order quantity</div>
+                    <div class="text-2xl font-bold text-ink">{heroExample.quantityYd3} yd³</div>
+                  </div>
+                  <div class="py-3.5 sm:py-0">
+                    <div class="text-sm text-muted">True job cost</div>
+                    <div class="text-2xl font-bold text-ink">{money(heroExample.trueCost)}</div>
+                  </div>
+                  <div class="py-3.5 sm:py-0">
+                    <div class="text-sm text-muted">Target margin</div>
+                    <div class="text-2xl font-bold text-ink">{heroExample.targetMarginPercent}%</div>
+                  </div>
+                  <div class="py-3.5 sm:py-0">
+                    <div class="text-sm text-muted">Required selling price</div>
+                    <div class="text-3xl font-bold text-green">{money(heroExample.requiredPrice)}</div>
+                  </div>
+                </div>
+                <div class="mt-5 overflow-hidden rounded-lg border border-border">
+                  <img
+                    src="/guide/09-estimate-summary.png"
+                    alt="Branded customer estimate document preview for the Smith Driveway example"
+                    loading="eager"
+                    class="w-full"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="absolute -left-4 -top-4 hidden max-w-[13rem] rounded-lg border border-border bg-white px-3.5 py-2.5 text-xs font-semibold text-ink shadow-lg sm:block">
+              Price from target margin, not guesswork
+            </div>
+            <div class="absolute -bottom-4 -right-4 hidden max-w-[13rem] rounded-lg border border-border bg-white px-3.5 py-2.5 text-xs font-semibold text-ink shadow-lg sm:block">
+              See estimated vs. actual profit
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-10 border-t border-border pt-6">
+          <TrustBadges
+            align="center"
+            items={["One-time payment", "No signup required", "No recurring subscription", "Local-first privacy", "Exportable estimates and backups"]}
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- PROBLEM SECTION -->
+    <section class="border-b border-border bg-warm-white">
+      <div class="mx-auto max-w-5xl px-4 py-14 sm:px-6">
+        <div class="mx-auto max-w-2xl text-center">
+          <h2 class="text-2xl font-extrabold text-ink sm:text-3xl">A Job Can Look Profitable and Still Lose Money</h2>
+          <p class="mt-3 text-muted">
+            Material increases, underestimated labor, equipment charges and forgotten overhead can quietly consume
+            your margin. Concrete Cost Pro brings those costs together before you commit to a price.
+          </p>
+        </div>
+        <div class="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2">
+          <div class="rounded-xl border border-red/20 bg-white p-5">
+            <p class="text-xs font-bold uppercase tracking-wide text-red">Guesswork quote</p>
+            <p class="mt-3 text-sm text-muted">Selling price</p>
+            <p class="text-2xl font-bold text-ink">{money(guesswork.price)}</p>
+            <p class="mt-3 text-sm text-muted">Forgotten overhead</p>
+            <p class="text-lg font-semibold text-ink">{money(guesswork.forgottenOverhead)}</p>
+            <div class="mt-4 rounded-lg border border-red/20 bg-red-light p-3.5">
+              <p class="text-sm font-semibold text-red">Actual margin: {guesswork.actualMarginPercent}%</p>
+              <p class="mt-0.5 text-xs text-red">Margin at risk</p>
+            </div>
+          </div>
+          <div class="rounded-xl border-2 border-green/30 bg-white p-5 shadow-md">
+            <p class="text-xs font-bold uppercase tracking-wide text-green">True-cost quote</p>
+            <p class="mt-3 text-sm text-muted">True cost</p>
+            <p class="text-2xl font-bold text-ink">{money(trueCostCard.trueCost)}</p>
+            <p class="mt-3 text-sm text-muted">Target margin</p>
+            <p class="text-lg font-semibold text-ink">{trueCostCard.targetMarginPercent}%</p>
+            <div class="mt-4 rounded-lg border border-green/20 bg-green-light p-3.5">
+              <p class="text-sm font-semibold text-green">Required price: {money(trueCostCard.requiredPrice)}</p>
+              <p class="mt-0.5 text-xs text-green">On target</p>
+            </div>
+          </div>
+        </div>
+        <p class="mx-auto mt-6 max-w-2xl text-center text-xs text-muted">Example figures, not a real customer's numbers.</p>
+        <p class="mx-auto mt-6 max-w-2xl rounded-lg border border-border bg-white p-4 text-center text-sm text-muted">
+          <strong class="text-ink">Margin vs. markup:</strong> margin is profit as a share of your selling price;
+          markup is profit as a share of your cost. A 30% markup on cost is only a 23% margin on price. Concrete
+          Cost Pro solves for the price that hits your actual target <em>margin</em>, not a markup that quietly
+          falls short of it.
+        </p>
+      </div>
+    </section>
+
+    <!-- WORKFLOW SECTION -->
+    <section class="border-b border-border bg-white">
+      <div class="mx-auto max-w-6xl px-4 py-14 sm:px-6">
+        <h2 class="text-center text-2xl font-extrabold text-ink sm:text-3xl">From Dimensions to a Profitable Quote</h2>
+        <div class="relative mt-10">
+          <div class="absolute left-0 right-0 top-6 hidden h-px bg-border lg:block" aria-hidden="true"></div>
+          <div class="grid grid-cols-1 gap-8 lg:grid-cols-4 lg:gap-6">
+            {workflowSteps.map((step) => (
+              <div class="relative">
+                <div class="relative z-10 mx-auto flex h-12 w-12 items-center justify-center rounded-full border-2 border-orange bg-white text-lg font-bold text-orange lg:mx-0">
+                  {step.n}
+                </div>
+                <h3 class="mt-3 text-center font-semibold text-ink lg:text-left">{step.title}</h3>
+                <p class="mt-1.5 text-center text-sm text-muted lg:text-left">{step.body}</p>
+                <div class="mt-4 overflow-hidden rounded-lg border border-border shadow-sm">
+                  <img src={step.img} alt={step.alt} loading="lazy" class="w-full" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- KILLER FEATURES -->
+    <section class="border-b border-border bg-warm-white">
+      <div class="mx-auto max-w-6xl px-4 py-14 sm:px-6">
+        <h2 class="text-center text-2xl font-extrabold text-ink sm:text-3xl">More Than a Concrete Calculator</h2>
+
+        <!-- Feature 1: Rate Health -->
+        <div class="mt-10 grid grid-cols-1 items-center gap-8 lg:grid-cols-2">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-wide text-orange">Rate Health</p>
+            <h3 class="mt-1.5 text-xl font-bold text-ink">Find Unprofitable Rates Before They Cost You</h3>
+            <p class="mt-2 text-muted">Test your standard per-square-foot rates against your real costs and target margin.</p>
+            <div class="mt-4 overflow-hidden rounded-xl border border-border bg-white">
+              <p class="border-b border-border bg-warm-white px-4 py-2 text-xs font-bold uppercase tracking-wide text-muted">
+                Example templates, target margin 35%
+              </p>
+              <ul class="divide-y divide-border">
+                {rateHealthRows.map((r) => (
+                  <li class="flex items-center justify-between px-4 py-2.5 text-sm">
+                    <span class="font-medium text-ink">{r.name}</span>
+                    <span class="flex items-center gap-2">
+                      <span class={r.status === "healthy" ? "text-green" : "text-red"}>{r.margin}%</span>
+                      <span class={`rounded-full px-2 py-0.5 text-xs font-semibold ${r.status === "healthy" ? "bg-green-light text-green" : "bg-red-light text-red"}`}>
+                        {r.status === "healthy" ? "Healthy" : "Review pricing"}
+                      </span>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+          <div class="overflow-hidden rounded-xl border border-border bg-white shadow-sm">
+            <div class="flex items-center gap-1.5 border-b border-border bg-warm-white px-3 py-2.5">
+              <span class="h-2.5 w-2.5 rounded-full bg-red/50" aria-hidden="true"></span>
+              <span class="h-2.5 w-2.5 rounded-full bg-amber/50" aria-hidden="true"></span>
+              <span class="h-2.5 w-2.5 rounded-full bg-green/50" aria-hidden="true"></span>
+            </div>
+            <img src="/guide/10-rate-health.png" alt="Rate Health dashboard showing standard concrete rates flagged below target margin, with required price shown for each" loading="lazy" class="w-full" />
+          </div>
+        </div>
+
+        <!-- Feature 2: Cost-change scenario -->
+        <div class="mt-14 grid grid-cols-1 items-center gap-8 lg:grid-cols-2">
+          <div class="order-2 lg:order-1 rounded-xl border border-border bg-white p-5 shadow-sm">
+            <p class="text-xs font-bold uppercase tracking-wide text-muted">Example scenario</p>
+            <p class="mt-2 text-sm text-ink">
+              Ready-mix price: <span class="font-semibold">{money(scenario.from)}</span> → <span class="font-semibold text-orange">{money(scenario.to)}</span> per yd³
+            </p>
+            <div class="mt-4 grid grid-cols-2 gap-3">
+              <div class="rounded-lg border border-border bg-warm-white p-3.5">
+                <p class="text-xs font-medium uppercase tracking-wide text-muted">Templates checked</p>
+                <p class="mt-1 text-2xl font-bold text-ink">{scenario.templatesChecked}</p>
+              </div>
+              <div class="rounded-lg border border-red/20 bg-red-light p-3.5">
+                <p class="text-xs font-medium uppercase tracking-wide text-red">Now below target</p>
+                <p class="mt-1 text-2xl font-bold text-red">{scenario.nowBelowTarget}</p>
+              </div>
+            </div>
+          </div>
+          <div class="order-1 lg:order-2">
+            <p class="text-xs font-bold uppercase tracking-wide text-orange">Cost-change scenarios</p>
+            <h3 class="mt-1.5 text-xl font-bold text-ink">See the Impact of a Cost Increase Instantly</h3>
+            <p class="mt-2 text-muted">Change a material, labor or equipment rate once and see which of your saved templates fall below target margin.</p>
+          </div>
+        </div>
+
+        <!-- Feature 3: Estimate vs actual -->
+        <div class="mt-14 grid grid-cols-1 items-center gap-8 lg:grid-cols-2">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-wide text-orange">Estimate vs. actual</p>
+            <h3 class="mt-1.5 text-xl font-bold text-ink">Compare the Estimate With the Actual Job</h3>
+            <p class="mt-2 text-muted">Find recurring quantity and labor overruns so your next estimate is based on better information.</p>
+            <div class="mt-4 grid grid-cols-2 gap-3 rounded-xl border border-border bg-white p-4 text-sm">
+              <div>
+                <p class="text-xs font-bold uppercase tracking-wide text-muted">Estimated</p>
+                <p class="mt-1.5 text-ink">Concrete: {estVsActual.estimated.concreteYd3} yd³</p>
+                <p class="text-ink">Labor: {estVsActual.estimated.laborHours} hours</p>
+                <p class="text-ink">Cost: {money(estVsActual.estimated.cost)}</p>
+                <p class="font-semibold text-green">Margin: {estVsActual.estimated.marginPercent}%</p>
+              </div>
+              <div class="border-l border-border pl-3">
+                <p class="text-xs font-bold uppercase tracking-wide text-muted">Actual</p>
+                <p class="mt-1.5 text-ink">Concrete: {estVsActual.actual.concreteYd3} yd³</p>
+                <p class="text-ink">Labor: {estVsActual.actual.laborHours} hours</p>
+                <p class="text-ink">Cost: {money(estVsActual.actual.cost)}</p>
+                <p class="font-semibold text-red">Margin: {estVsActual.actual.marginPercent}%</p>
+              </div>
+            </div>
+          </div>
+          <div class="overflow-hidden rounded-xl border border-border bg-white shadow-sm">
+            <div class="flex items-center gap-1.5 border-b border-border bg-warm-white px-3 py-2.5">
+              <span class="h-2.5 w-2.5 rounded-full bg-red/50" aria-hidden="true"></span>
+              <span class="h-2.5 w-2.5 rounded-full bg-amber/50" aria-hidden="true"></span>
+              <span class="h-2.5 w-2.5 rounded-full bg-green/50" aria-hidden="true"></span>
+            </div>
+            <img src="/guide/11-actuals.png" alt="Estimate vs. actual comparison showing estimated and actual costs and margin side by side" loading="lazy" class="w-full" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURE GRID -->
+    <section class="border-b border-border bg-white">
+      <div class="mx-auto max-w-6xl px-4 py-14 sm:px-6">
+        <h2 class="text-center text-2xl font-extrabold text-ink sm:text-3xl">Everything You Need to Estimate, Price and Review a Job</h2>
+        <div class="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {featureGrid.map(({ icon: Icon, title, body }) => (
+            <div class="rounded-xl border border-border bg-warm-white p-5">
+              <Icon size={22} strokeWidth={2} className="text-orange" aria-hidden="true" />
+              <h3 class="mt-3 font-semibold text-ink">{title}</h3>
+              <p class="mt-1.5 text-sm text-muted">{body}</p>
             </div>
           ))}
         </div>
       </div>
     </section>
 
-    <!-- 8. Built for / not built for -->
-    <section class="border-t border-border bg-warm-white">
+    <!-- BUILT FOR / NOT BUILT FOR -->
+    <section class="border-b border-border bg-warm-white">
       <div class="mx-auto max-w-4xl px-4 py-14 sm:px-6">
         <div class="mx-auto max-w-xl text-center">
-          <h2 class="text-2xl font-extrabold text-ink sm:text-3xl">Is this a fit?</h2>
+          <h2 class="text-2xl font-extrabold text-ink sm:text-3xl">Is This a Fit?</h2>
         </div>
         <div class="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2">
           <div class="rounded-xl border border-green/25 bg-white p-5">
@@ -309,41 +535,162 @@ const softwareApplicationSchema = {
       </div>
     </section>
 
-    <!-- 9. Product limitations -->
-    <section class="border-t border-border bg-white">
-      <div class="mx-auto max-w-3xl px-4 py-12 text-center sm:px-6">
-        <h2 class="text-2xl font-bold text-ink">The application never guesses your structural specs</h2>
-        <p class="mt-3 text-muted">
-          Slab thickness, footing dimensions, reinforcement, concrete strength, load capacity, foundation design and
-          building-code compliance always come from you, your engineer, or local code, never from this software.
-          Concrete Cost Pro only calculates quantity, cost, labor, overhead, margin and price from the
-          specifications you provide.
-        </p>
-      </div>
-    </section>
-
-    <!-- 10. Data storage and backup -->
-    <section class="border-t border-border bg-warm-white">
-      <div class="mx-auto max-w-3xl px-4 py-12 sm:px-6">
-        <h2 class="text-center text-2xl font-bold text-ink">Where your data lives</h2>
-        <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <div class="rounded-xl border border-border bg-white p-4">
-            <h3 class="text-sm font-semibold text-ink">On this device only</h3>
-            <p class="mt-1.5 text-sm text-muted">Everything lives in this browser's local storage. No account, no cloud sync, nothing uploaded to a server.</p>
+    <!-- CUSTOMER ESTIMATE -->
+    <section id="customer-estimate" class="scroll-mt-20 border-b border-border bg-white">
+      <div class="mx-auto max-w-6xl px-4 py-14 sm:px-6">
+        <div class="grid grid-cols-1 items-center gap-10 lg:grid-cols-2">
+          <div class="overflow-hidden rounded-xl border border-border bg-white shadow-lg">
+            <div class="flex items-center gap-1.5 border-b border-border bg-warm-white px-3 py-2.5">
+              <span class="h-2.5 w-2.5 rounded-full bg-red/50" aria-hidden="true"></span>
+              <span class="h-2.5 w-2.5 rounded-full bg-amber/50" aria-hidden="true"></span>
+              <span class="h-2.5 w-2.5 rounded-full bg-green/50" aria-hidden="true"></span>
+            </div>
+            <img src="/guide/09-estimate-summary.png" alt="Branded customer estimate document next to an internal cost, overhead and margin panel" loading="lazy" class="w-full" />
           </div>
-          <div class="rounded-xl border border-border bg-white p-4">
-            <h3 class="text-sm font-semibold text-ink">Back up with one file</h3>
-            <p class="mt-1.5 text-sm text-muted">Settings → Export business data downloads your profile, catalog, rates and templates as a JSON file you can import elsewhere.</p>
-          </div>
-          <div class="rounded-xl border border-border bg-white p-4">
-            <h3 class="text-sm font-semibold text-ink">Current estimate, separately</h3>
-            <p class="mt-1.5 text-sm text-muted">Your current estimate isn't part of that backup file. Export it as a PDF or CSV first if you want to keep a copy.</p>
+          <div>
+            <p class="text-xs font-bold uppercase tracking-wide text-orange">Customer-ready output</p>
+            <h2 class="mt-1.5 text-2xl font-extrabold text-ink sm:text-3xl">Turn the Calculation Into a Customer-Ready Estimate</h2>
+            <p class="mt-3 text-muted">
+              Create a clear estimate using your company name, logo, contact details, scope, notes and
+              customer-visible pricing. Your internal cost and margin information stays private unless you choose
+              to show it.
+            </p>
+            <a
+              href="/concrete-estimate-template"
+              class="mt-5 inline-flex items-center gap-1.5 font-semibold text-orange hover:underline"
+            >
+              Preview a complete estimate
+              <ArrowRight size={16} aria-hidden="true" />
+            </a>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- 12. FAQ -->
+    <!-- PRIVACY AND SIMPLICITY -->
+    <section class="border-b border-border bg-warm-white">
+      <div class="mx-auto max-w-3xl px-4 py-14 sm:px-6">
+        <h2 class="text-center text-2xl font-extrabold text-ink sm:text-3xl">Your Numbers Stay With You</h2>
+        <p class="mx-auto mt-3 max-w-xl text-center text-muted">
+          Concrete Cost Pro works locally in your browser. There's no account to maintain, and your project data
+          stays on your device. Export a workspace backup whenever you want to move or protect your records.
+        </p>
+        <div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div class="rounded-xl border border-border bg-white p-4">
+            <h3 class="text-sm font-semibold text-ink">No cloud account</h3>
+            <p class="mt-1.5 text-sm text-muted">No sign-up, no password, nothing uploaded to a server.</p>
+          </div>
+          <div class="rounded-xl border border-border bg-white p-4">
+            <h3 class="text-sm font-semibold text-ink">No recurring subscription</h3>
+            <p class="mt-1.5 text-sm text-muted">One payment. Your access doesn't expire or renew.</p>
+          </div>
+          <div class="rounded-xl border border-border bg-white p-4">
+            <h3 class="text-sm font-semibold text-ink">Local browser storage</h3>
+            <p class="mt-1.5 text-sm text-muted">
+              Your data lives on this device only. It isn't automatically backed up anywhere, so export a backup
+              regularly if you want a copy you control.
+            </p>
+          </div>
+          <div class="rounded-xl border border-border bg-white p-4">
+            <h3 class="text-sm font-semibold text-ink">Export and restore</h3>
+            <p class="mt-1.5 text-sm text-muted">Settings → Export business data downloads your profile, catalog, rates and templates as a JSON file.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FREE VS PRO -->
+    <section id="comparison" class="scroll-mt-20 border-b border-border bg-white">
+      <div class="mx-auto max-w-4xl px-4 py-14 sm:px-6">
+        <div class="mx-auto max-w-xl text-center">
+          <h2 class="text-2xl font-extrabold text-ink sm:text-3xl">Free Calculators for Quick Jobs. Pro for Running the Business.</h2>
+        </div>
+        <div class="mt-8 overflow-hidden rounded-xl border border-border bg-white shadow-sm">
+          <div class="overflow-x-auto">
+            <table class="w-full min-w-[560px] text-left text-sm">
+              <thead>
+                <tr class="border-b border-border bg-warm-white text-xs uppercase tracking-wide text-muted">
+                  <th class="px-4 py-3 font-medium">Feature</th>
+                  <th class="px-4 py-3 font-medium">Free calculators</th>
+                  <th class="px-4 py-3 font-bold text-orange">Concrete Cost Pro</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-border">
+                {comparison.map((row) => (
+                  <tr>
+                    <td class="px-4 py-3 text-ink">{row.label}</td>
+                    <td class="px-4 py-3 text-muted">
+                      {typeof row.free === "boolean" ? (
+                        row.free ? <Check size={16} className="text-green" aria-label="Included" /> : <X size={16} className="text-muted/50" aria-label="Not included" />
+                      ) : (
+                        row.free
+                      )}
+                    </td>
+                    <td class="border-l border-orange/15 bg-orange/5 px-4 py-3 font-medium text-ink">
+                      {typeof row.pro === "boolean" ? (
+                        row.pro ? <Check size={16} className="text-green" aria-label="Included" /> : <X size={16} className="text-muted/50" aria-label="Not included" />
+                      ) : (
+                        row.pro
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="mt-6 text-center">
+          <a
+            href="/pricing"
+            data-pricing-cta
+            data-analytics-event="pro_cta_clicked"
+            data-analytics-source="estimating_software_comparison"
+            class="inline-flex items-center gap-2 rounded-lg bg-orange px-6 py-3.5 text-base font-semibold text-white transition hover:bg-orange-dark"
+          >
+            <span data-pricing-cta-label>Get Lifetime Access — $79</span>
+            <ArrowRight size={18} aria-hidden="true" />
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRICING SECTION -->
+    <section id="pricing-card" class="scroll-mt-20 border-b border-border bg-warm-white">
+      <div class="mx-auto max-w-lg px-4 py-14 sm:px-6">
+        <div class="overflow-hidden rounded-2xl border-2 border-orange bg-white shadow-lg">
+          <div class="border-b border-border px-6 py-6 text-center">
+            <p class="text-xs font-bold uppercase tracking-wide text-muted">Concrete Cost Pro</p>
+            <p class="mt-2 inline-flex items-center justify-center gap-2 text-lg font-semibold">
+              <span class="text-muted line-through">$99</span>
+              <span class="text-orange">$79 Lifetime Launch Price</span>
+            </p>
+            <p class="mt-1 text-sm text-muted">One payment. No recurring subscription.</p>
+          </div>
+          <div class="px-6 py-6">
+            <ul class="flex flex-col gap-2.5 text-sm text-ink">
+              {["Complete estimating workflow", "All Pro features listed above", "Local-first project storage", "Instant access after checkout"].map((item) => (
+                <li class="flex items-start gap-2.5">
+                  <CheckCircle2 size={17} strokeWidth={2.25} className="mt-0.5 shrink-0 text-green" aria-hidden="true" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+            <a
+              href="/pricing"
+              data-pricing-cta
+              data-analytics-event="pro_cta_clicked"
+              data-analytics-source="estimating_software_pricing_card"
+              class="mt-6 flex items-center justify-center rounded-lg bg-orange px-6 py-3.5 text-base font-semibold text-white transition hover:bg-orange-dark"
+            >
+              <span data-pricing-cta-label>Get Concrete Cost Pro — $79 Once</span>
+            </a>
+            <p class="mt-3 text-center text-xs text-muted">No account required · Use your own costs and project specifications</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
     <section id="faq" class="mx-auto max-w-3xl px-4 py-14 sm:px-6">
       <FaqAccordion faqs={faqs} />
     </section>
@@ -360,65 +707,67 @@ const softwareApplicationSchema = {
       </div>
     </section>
 
-    <!-- 11 & 13. Pricing, purchase protection, final CTA -->
+    <!-- FINAL CTA -->
     <section class="border-t border-border bg-charcoal">
-      <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-        <div class="grid gap-10 lg:grid-cols-[1.05fr_1fr] lg:items-center">
-          <div>
-            <span class="inline-flex items-center rounded-full bg-orange px-3 py-1 text-xs font-bold uppercase tracking-wide text-white">
-              Launch Price
-            </span>
-            <h2 class="mt-3 text-2xl font-extrabold text-white sm:text-3xl">
-              <span class="text-white/55 line-through">$99</span> $79, once
-            </h2>
-            <p class="mt-3 max-w-xl text-white/70">
-              One payment, lifetime access. No subscription. Buy at $79 now and that's your price for good. The
-              regular price rises to $99 once launch pricing ends.
-            </p>
-            <ul class="mt-6 flex flex-col gap-2.5 text-sm text-white/85">
-              <li class="flex items-start gap-2.5">
-                <CheckCircle2 size={17} strokeWidth={2.25} className="mt-0.5 shrink-0 text-orange-ondark" aria-hidden="true" />
-                Unlocked instantly in your browser after checkout; your license key is also emailed for your records
-              </li>
-              <li class="flex items-start gap-2.5">
-                <CheckCircle2 size={17} strokeWidth={2.25} className="mt-0.5 shrink-0 text-orange-ondark" aria-hidden="true" />
-                Works in any modern web browser, on any device
-              </li>
-              <li class="flex items-start gap-2.5">
-                <CheckCircle2 size={17} strokeWidth={2.25} className="mt-0.5 shrink-0 text-orange-ondark" aria-hidden="true" />
-                Not right for you? Email us within 14 days for a full refund, no questions asked
-              </li>
-            </ul>
-            <div class="mt-7 flex flex-wrap items-center gap-x-5 gap-y-3">
-              <a
-                href="/pricing"
-                data-pricing-cta
-                data-analytics-event="pro_cta_clicked"
-                data-analytics-source="estimating_software_footer"
-                class="inline-flex items-center gap-2 rounded-lg bg-orange px-6 py-3.5 text-base font-semibold text-white transition hover:bg-orange-dark"
-              >
-                <span data-pricing-cta-label>Get Concrete Cost Pro — $79 Once</span>
-                <ArrowRight size={18} aria-hidden="true" />
-              </a>
-              <span class="text-sm text-white/55">No subscription · No account · 14-day refund</span>
-            </div>
-          </div>
-          <div class="overflow-hidden rounded-xl border border-white/10 shadow-2xl">
-            <div class="flex items-center gap-1.5 border-b border-white/10 bg-charcoal-light px-3 py-2.5">
-              <span class="h-2.5 w-2.5 rounded-full bg-red/60" aria-hidden="true"></span>
-              <span class="h-2.5 w-2.5 rounded-full bg-amber/60" aria-hidden="true"></span>
-              <span class="h-2.5 w-2.5 rounded-full bg-green/60" aria-hidden="true"></span>
-            </div>
-            <img
-              src="/guide/01-overview.png"
-              alt="Concrete Cost Pro overview dashboard showing a current estimate at 19% margin, below target, and a Rate Health table"
-              loading="lazy"
-              class="w-full"
-            />
-          </div>
+      <div class="mx-auto max-w-4xl px-4 py-16 text-center sm:px-6">
+        <h2 class="text-2xl font-extrabold text-white sm:text-3xl">Know Your Cost. Protect Your Margin. Quote With Confidence.</h2>
+        <p class="mx-auto mt-3 max-w-xl text-white/70">
+          Replace scattered calculations and fragile spreadsheets with one concrete estimating workflow built
+          around your own business costs.
+        </p>
+        <p class="mt-5 text-lg font-semibold text-white">$79 once</p>
+        <div class="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-3">
+          <a
+            href="/pricing"
+            data-pricing-cta
+            data-analytics-event="pro_cta_clicked"
+            data-analytics-source="estimating_software_final_cta"
+            class="inline-flex items-center gap-2 rounded-lg bg-orange px-6 py-3.5 text-base font-semibold text-white transition hover:bg-orange-dark"
+          >
+            <span data-pricing-cta-label>Get Concrete Cost Pro</span>
+            <ArrowRight size={18} aria-hidden="true" />
+          </a>
+          <span class="text-sm text-white/55">No monthly fee · No account required · Data stays on your device</span>
         </div>
       </div>
     </section>
   </main>
   <PublicFooter />
+
+  <!-- Sticky purchase bar: hidden until the visitor scrolls past the hero, then pinned. -->
+  <div
+    id="sticky-purchase-bar"
+    hidden
+    class="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-white/95 backdrop-blur px-4 py-3 shadow-[0_-4px_12px_rgba(0,0,0,0.08)]"
+  >
+    <div class="mx-auto flex max-w-6xl items-center justify-between gap-3">
+      <div class="min-w-0">
+        <p class="truncate text-sm font-semibold text-ink">Concrete Cost Pro</p>
+        <p class="truncate text-xs text-muted">$79 once · No subscription</p>
+      </div>
+      <a
+        href="/pricing"
+        data-pricing-cta
+        data-analytics-event="pro_cta_clicked"
+        data-analytics-source="estimating_software_sticky_bar"
+        class="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-orange px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-orange-dark"
+      >
+        <span data-pricing-cta-label>Get Pro</span>
+      </a>
+    </div>
+  </div>
+
+  <script>
+    const hero = document.getElementById("hero");
+    const bar = document.getElementById("sticky-purchase-bar");
+    if (hero && bar) {
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          bar.hidden = entry.isIntersecting;
+        },
+        { rootMargin: "-72px 0px 0px 0px" },
+      );
+      observer.observe(hero);
+    }
+  </script>
 </Layout>
