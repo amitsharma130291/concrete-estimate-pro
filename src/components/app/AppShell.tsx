@@ -73,7 +73,7 @@ export default function AppShell({ activeTab }: { activeTab: AppTab }) {
       <div className="flex min-h-screen items-center justify-center bg-warm-white">
         <div className="flex items-center gap-2.5 text-sm text-muted">
           <span className="h-4 w-4 animate-spin rounded-full border-2 border-border border-t-orange" aria-hidden="true" />
-          {access === "checking" ? "Checking access…" : "Redirecting to pricing…"}
+          {access === "checking" ? "Loading…" : "Redirecting to pricing…"}
         </div>
       </div>
     );
