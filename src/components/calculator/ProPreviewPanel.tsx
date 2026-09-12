@@ -39,9 +39,9 @@ export default function ProPreviewPanel({
   if (quiet) {
     return (
       <p className="mt-4 text-center text-sm text-muted">
-        Estimating this for a customer instead?{" "}
+        Estimate jobs for customers?{" "}
         <a href={pricingCta.href} className="font-medium text-orange hover:underline">
-          See how Concrete Cost Pro saves your rates →
+          See the contractor workflow →
         </a>
       </p>
     );

@@ -37,6 +37,14 @@ export interface CalculatorConfig {
   /** Primary CTA label for this project type's Pro preview panel -- page-specific per the
    * funnel plan, not one generic "Get Pro" string reused everywhere. */
   proCtaLabel: string;
+  /** The single Pro capability most relevant to this project type -- drives the page's one
+   * contextual Pro section. Keep to a real, shipped feature; never invent one. */
+  relevantProFeature: string;
+  proHeadline: string;
+  /** At most 3 -- the contextual Pro section shows a short, specific list, not a generic one. */
+  proWhatHappens: string[];
+  proImage: string;
+  proImageAlt: string;
 }
 
 export const CALCULATOR_CONFIGS: Record<string, CalculatorConfig> = {
@@ -66,6 +74,15 @@ export const CALCULATOR_CONFIGS: Record<string, CalculatorConfig> = {
     },
     marketRatePerSqft: 9.5,
     proCtaLabel: "Reuse These Driveway Rates",
+    relevantProFeature: "Multi-section projects",
+    proHeadline: "Price the Driveway, Apron, and Extensions as One Job",
+    proWhatHappens: [
+      "Combine a driveway, apron and extension into one project",
+      "Reuse your saved rates across every section",
+      "Get one required price for the whole job",
+    ],
+    proImage: "/guide/06-wizard-dimensions.png",
+    proImageAlt: "Wizard step showing project dimensions, ready to combine multiple sections into one project",
     faqs: [
       {
         q: "How much concrete do I need for a driveway?",
@@ -137,6 +154,15 @@ export const CALCULATOR_CONFIGS: Record<string, CalculatorConfig> = {
     },
     marketRatePerSqft: 9.0,
     proCtaLabel: "Save This Slab Estimate",
+    relevantProFeature: "Reusable slab templates and standard-rate health",
+    proHeadline: "Know Whether Your Standard Slab Rate Still Reaches Its Target",
+    proWhatHappens: [
+      "Save this as a reusable slab template",
+      "Check it against your target margin any time costs change",
+      "See every standard rate that needs review, in one place",
+    ],
+    proImage: "/guide/10-rate-health.png",
+    proImageAlt: "Rate Health dashboard showing standard concrete rates flagged below target margin, with required price shown for each",
     faqs: [
       {
         q: "How is slab concrete volume calculated?",
@@ -204,6 +230,15 @@ export const CALCULATOR_CONFIGS: Record<string, CalculatorConfig> = {
     },
     marketRatePerSqft: 10.0,
     proCtaLabel: "Turn This Patio Cost Into an Estimate",
+    relevantProFeature: "Project duplication and reusable templates",
+    proHeadline: "Reuse Your Patio Estimate Without Starting Over",
+    proWhatHappens: [
+      "Save this patio setup as a reusable template",
+      "Duplicate it to start the next similar job",
+      "Turn it into a customer-ready estimate",
+    ],
+    proImage: "/guide/04-templates.png",
+    proImageAlt: "Saved project templates for standard job types, each showing order quantity, true cost and margin status",
     faqs: [
       {
         q: "Does this include stamped or decorative finish costs?",
@@ -263,6 +298,15 @@ export const CALCULATOR_CONFIGS: Record<string, CalculatorConfig> = {
     },
     marketRatePerSqft: 0,
     proCtaLabel: "Save These Footing Costs",
+    relevantProFeature: "Multiple user-specified footing sections",
+    proHeadline: "Combine Known Footing Sections in One Estimate",
+    proWhatHappens: [
+      "Combine multiple footing runs into one project",
+      "Save these rates for the next footing job",
+      "Get one required price for the whole job",
+    ],
+    proImage: "/guide/06-wizard-dimensions.png",
+    proImageAlt: "Wizard step showing project dimensions, ready to combine multiple sections into one project",
     safetyNote:
       "This calculator never determines footing size, depth or reinforcement. Enter your planned or design-specified dimensions; those come from your engineer, architect or local code, not from this tool.",
     faqs: [
@@ -324,6 +368,15 @@ export const CALCULATOR_CONFIGS: Record<string, CalculatorConfig> = {
     },
     marketRatePerSqft: 8.5,
     proCtaLabel: "Reuse These Sidewalk Rates",
+    relevantProFeature: "Multi-section projects",
+    proHeadline: "Combine Multiple Sidewalk Sections and Price the Complete Job",
+    proWhatHappens: [
+      "Combine multiple sidewalk runs into one project",
+      "Reuse your saved rates across every section",
+      "Get one required price for the whole job",
+    ],
+    proImage: "/guide/06-wizard-dimensions.png",
+    proImageAlt: "Wizard step showing project dimensions, ready to combine multiple sections into one project",
     faqs: [
       {
         q: "Do municipal sidewalk jobs need different allowances?",
@@ -379,6 +432,15 @@ export const CALCULATOR_CONFIGS: Record<string, CalculatorConfig> = {
     },
     marketRatePerSqft: 9.5,
     proCtaLabel: "Build the Complete Job in Pro",
+    relevantProFeature: "Saved costs and target-margin pricing",
+    proHeadline: "Turn This One-Off Calculation Into a Repeatable Estimate",
+    proWhatHappens: [
+      "Save these rates for every future job",
+      "Combine multiple sections into one project",
+      "Get the price required to hit your target margin, automatically",
+    ],
+    proImage: "/guide/01-overview.png",
+    proImageAlt: "Concrete Cost Pro overview dashboard showing a current estimate and a Rate Health table",
     faqs: [
       {
         q: "What project types can I use this for?",

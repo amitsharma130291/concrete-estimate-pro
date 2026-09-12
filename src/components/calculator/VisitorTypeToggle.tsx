@@ -14,31 +14,41 @@ export default function VisitorTypeToggle() {
     track("visitor_type_selected", { visitor_type: type });
   }
 
+  const caption =
+    visitorType === "property"
+      ? "Estimate the quantity and likely project cost using prices you enter."
+      : visitorType === "customer"
+        ? "Include business overhead and target margin to calculate a potential selling price."
+        : null;
+
   return (
-    <div className="flex flex-wrap items-center gap-2 text-sm">
-      <span className="text-muted">Are you calculating for:</span>
-      <div role="group" aria-label="Who this calculation is for" className="inline-flex overflow-hidden rounded-full border border-border">
-        <button
-          type="button"
-          onClick={() => choose("property")}
-          aria-pressed={visitorType === "property"}
-          className={`px-3 py-1.5 font-medium transition ${
-            visitorType === "property" ? "bg-orange text-white" : "bg-white text-ink hover:bg-warm-white"
-          }`}
-        >
-          My property
-        </button>
-        <button
-          type="button"
-          onClick={() => choose("customer")}
-          aria-pressed={visitorType === "customer"}
-          className={`border-l border-border px-3 py-1.5 font-medium transition ${
-            visitorType === "customer" ? "bg-orange text-white" : "bg-white text-ink hover:bg-warm-white"
-          }`}
-        >
-          A customer job
-        </button>
+    <div className="flex flex-col gap-1.5 text-sm">
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-muted">What are you calculating?</span>
+        <div role="group" aria-label="Who this calculation is for" className="inline-flex overflow-hidden rounded-full border border-border">
+          <button
+            type="button"
+            onClick={() => choose("property")}
+            aria-pressed={visitorType === "property"}
+            className={`px-3 py-1.5 font-medium transition ${
+              visitorType === "property" ? "bg-orange text-white" : "bg-white text-ink hover:bg-warm-white"
+            }`}
+          >
+            My property
+          </button>
+          <button
+            type="button"
+            onClick={() => choose("customer")}
+            aria-pressed={visitorType === "customer"}
+            className={`border-l border-border px-3 py-1.5 font-medium transition ${
+              visitorType === "customer" ? "bg-orange text-white" : "bg-white text-ink hover:bg-warm-white"
+            }`}
+          >
+            A customer job
+          </button>
+        </div>
       </div>
+      {caption && <p className="text-xs text-muted">{caption}</p>}
     </div>
   );
 }

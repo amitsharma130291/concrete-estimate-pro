@@ -155,6 +155,10 @@ export default function JobCostCalculatorIsland() {
             <ResultRow label="Required selling price" value={formatCurrency(requiredSellingPrice)} sub={`At ${targetMarginPercent}% target margin`} tone="green" big />
             {!sellingPriceError && <ResultRow label="Current margin" value={formatPercent(currentMargin, 0)} sub="Based on your selling price" tone={isBelowTarget ? "red" : "green"} big />}
           </div>
+          <p className="mt-2 text-xs text-muted">
+            Target margin is the percentage of the selling price remaining after estimated job costs. It's
+            different from markup.
+          </p>
 
           {sellingPriceError ? null : isBelowTarget ? (
             <div className="mt-4 rounded-lg border border-red/20 bg-red-light p-4">
@@ -178,14 +182,27 @@ export default function JobCostCalculatorIsland() {
 
           {!hasBlockingError && !sellingPriceError && (
             <ProPreviewPanel
-              body="Pro saves your ready-mix, labor, forms, reinforcement, pump and equipment rates, so the next job cost starts pre-filled instead of retyped from scratch."
-              whatHappens={[
-                "Save these cost rates for every future job",
-                "Turn this into a customer-ready estimate",
-                "Keep true cost and margin out of the customer document",
-                "Log the completed job's actual cost and compare it to this estimate",
-              ]}
-              ctaLabel="Save This Estimate and Track the Actual Job"
+              heading={isBelowTarget ? "Want to check every standard rate against your target?" : undefined}
+              body={
+                isBelowTarget
+                  ? "Concrete Cost Pro compares saved service rates with your current costs and shows which ones may need review."
+                  : "Pro saves your ready-mix, labor, forms, reinforcement, pump and equipment rates, so the next job cost starts pre-filled instead of retyped from scratch."
+              }
+              whatHappens={
+                isBelowTarget
+                  ? [
+                      "Compare every standard rate against your target margin",
+                      "See exactly which rates fall short",
+                      "Get the price needed to fix it",
+                    ]
+                  : [
+                      "Save these cost rates for every future job",
+                      "Turn this into a customer-ready estimate",
+                      "Keep true cost and margin out of the customer document",
+                      "Log the completed job's actual cost and compare it to this estimate",
+                    ]
+              }
+              ctaLabel={isBelowTarget ? "See Rate Health in Pro" : "Save This Estimate and Track the Actual Job"}
               source="job-cost-calculator"
             />
           )}

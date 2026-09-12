@@ -297,6 +297,10 @@ export default function ProjectCalculatorIsland({ config }: { config: Calculator
               />
             )}
           </div>
+          <p className="mt-2 text-xs text-muted">
+            Target margin is the percentage of the selling price remaining after estimated job costs. It's
+            different from markup.
+          </p>
 
           {sellingPriceError ? null : result.pricing.isBelowTarget ? (
             <div className="mt-4 rounded-lg border border-red/20 bg-red-light p-4">
@@ -324,14 +328,27 @@ export default function ProjectCalculatorIsland({ config }: { config: Calculator
 
           {!hasBlockingError && !sellingPriceError && (
             <ProPreviewPanel
-              body={`Save your ready-mix, labor, forms, reinforcement and equipment rates so your next ${projectPhrase} starts pre-filled instead of retyped from scratch.`}
-              whatHappens={[
-                "Save these cost rates for every future job",
-                "Add another section for L-shaped or multi-part pours",
-                "Turn this into a customer-ready estimate",
-                "Re-check this rate against your target margin any time costs change",
-              ]}
-              ctaLabel={config.proCtaLabel}
+              heading={result.pricing.isBelowTarget ? "Want to check every standard rate against your target?" : undefined}
+              body={
+                result.pricing.isBelowTarget
+                  ? "Concrete Cost Pro compares saved service rates with your current costs and shows which ones may need review."
+                  : `Save your ready-mix, labor, forms, reinforcement and equipment rates so your next ${projectPhrase} starts pre-filled instead of retyped from scratch.`
+              }
+              whatHappens={
+                result.pricing.isBelowTarget
+                  ? [
+                      "Compare every standard rate against your target margin",
+                      "See exactly which rates fall short",
+                      "Get the price needed to fix it",
+                    ]
+                  : [
+                      "Save these cost rates for every future job",
+                      "Add another section for L-shaped or multi-part pours",
+                      "Turn this into a customer-ready estimate",
+                      "Re-check this rate against your target margin any time costs change",
+                    ]
+              }
+              ctaLabel={result.pricing.isBelowTarget ? "See Rate Health in Pro" : config.proCtaLabel}
               source={config.slug}
             />
           )}
