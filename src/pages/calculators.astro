@@ -4,8 +4,9 @@ import PublicHeader from "../components/PublicHeader.astro";
 import PublicFooter from "../components/PublicFooter.astro";
 import Breadcrumbs from "../components/Breadcrumbs.astro";
 import TrustBadges from "../components/TrustBadges.astro";
+import FaqAccordion from "../components/FaqAccordion.astro";
 import { CALCULATOR_CONFIGS } from "../data/calculatorConfigs";
-import { Calculator, Car, Square, Sun, Layers, Footprints, Receipt, FileText, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Calculator, Car, Square, Sun, Layers, Footprints, Receipt, FileText, ArrowRight, Check, X, Search } from "lucide-react";
 
 const ICONS: Record<string, any> = {
   general: Calculator,
@@ -16,63 +17,141 @@ const ICONS: Record<string, any> = {
   sidewalk: Footprints,
 };
 
-const tools = [
-  ...Object.values(CALCULATOR_CONFIGS)
-    .sort((a, b) => (a.projectType === "general" ? -1 : b.projectType === "general" ? 1 : 0))
-    .map((c) => ({ title: c.h1, desc: c.intro, href: `/${c.slug}`, icon: ICONS[c.projectType] })),
+// Every tool on the page, tagged for the search/filter controls below. Quantity and cost tags
+// both apply to every project calculator -- each one calculates both in a single tool, there's
+// no separate "quantity only" page to point a "Quantity" filter at.
+const projectTools = Object.values(CALCULATOR_CONFIGS)
+  .sort((a, b) => (a.projectType === "general" ? -1 : b.projectType === "general" ? 1 : 0))
+  .map((c) => ({
+    title: c.h1,
+    outcome: c.intro.split(".")[0] + ".",
+    bestFor:
+      c.projectType === "general"
+        ? "Custom or mixed project types"
+        : c.projectType === "footing"
+          ? "Continuous and isolated footings"
+          : `${c.h1.replace("Concrete ", "").replace(" Cost Calculator", "")} pours`,
+    href: `/${c.slug}`,
+    icon: ICONS[c.projectType],
+    tags: ["quantity", "cost"],
+    category: "project",
+  }));
+
+const businessTools = [
   {
     title: "Concrete Job Cost Calculator",
-    desc: "Already know your costs? Enter them directly to see true job cost, current margin and the price you need to charge.",
+    outcome: "Enter your own costs directly to see true job cost, current margin and the price required to hit your target.",
+    bestFor: "Contractors who already know their costs and want the selling price",
     href: "/concrete-job-cost-calculator",
     icon: Receipt,
+    tags: ["pricing"],
+    category: "business",
   },
+];
+
+const estimateTools = [
   {
     title: "Concrete Estimate Template",
-    desc: "An interactive concrete estimate and quote template. Fill it in and print a customer-ready estimate in minutes.",
+    outcome: "An interactive estimate and quote template. Fill it in and print a customer-ready document in minutes.",
+    bestFor: "Anyone who needs a clean, printable estimate right now",
     href: "/concrete-estimate-template",
     icon: FileText,
+    tags: ["estimate"],
+    category: "estimate",
   },
 ];
 
-const proof = [
-  {
-    img: "/guide/10-rate-health.png",
-    alt: "Rate Health dashboard showing standard concrete rates flagged below target margin, with required price shown for each",
-    title: "Catch underpriced rates before you send the quote",
-    body: "Rate Health checks every standard price against your real cost and target margin, and shows exactly which ones need to go up, and by how much.",
-  },
-  {
-    img: "/guide/09-estimate-summary.png",
-    alt: "Branded customer estimate document next to an internal cost, overhead and margin panel",
-    title: "Send a professional estimate, keep your numbers private",
-    body: "A clean, branded document for the customer. Cost, overhead and margin live in a separate internal panel, hidden by default.",
-  },
-  {
-    img: "/guide/04-templates.png",
-    alt: "Saved project templates for standard job types, each showing order quantity, true cost and margin status",
-    title: "Stop rebuilding the same job from scratch",
-    body: "Save a driveway, slab or patio template once. Every future job of that type starts pre-filled with your real numbers.",
-  },
+const allTools = [...projectTools, ...businessTools, ...estimateTools];
+
+const filterChips = [
+  { key: "all", label: "All" },
+  { key: "quantity", label: "Quantity" },
+  { key: "cost", label: "Cost" },
+  { key: "pricing", label: "Contractor Pricing" },
+  { key: "estimate", label: "Estimate Templates" },
 ];
 
-const benefits = [
-  "Saved materials, labor and equipment rates",
-  "Rate Health audit and required-price solver",
-  "Estimate vs. actual, so you know if a job type is chronically underpriced",
-  "Branded PDFs, CSV export, JSON backup",
+const bridgeFree = [
+  "Enter rates for the current calculation",
+  "Calculate one project at a time",
+  "Get quantity and cost results",
+  "Manually repeat the process on the next job",
+];
+const bridgePro = [
+  "Save material, labor, equipment and overhead rates",
+  "Reuse project templates",
+  "Combine multiple project sections",
+  "Calculate a target-margin selling price",
+  "Produce customer-ready estimates",
+  "Compare estimated and actual job performance",
+];
+
+const darkCtaBenefits = [
+  "Saved material, labor and equipment costs",
+  "Multi-section projects",
+  "Target-margin price calculation",
+  "Customer-ready estimates",
+  "Estimate-versus-actual tracking",
+];
+
+const faqs = [
+  {
+    q: "Are the concrete calculators free?",
+    a: "Yes. The calculators are free to use and do not require an account or purchase.",
+  },
+  {
+    q: "Do the calculators provide local concrete prices?",
+    a: "No. Enter the material, labor and equipment prices that apply to your project and location.",
+  },
+  {
+    q: "What is the difference between project cost and selling price?",
+    a: "Project cost is what the job is estimated to cost the business. Selling price includes the amount required to cover those costs and reach the selected target margin.",
+  },
+  {
+    q: "Can I save my rates?",
+    a: "The free calculators are designed for individual calculations. Concrete Cost Pro lets you save business costs and reuse them across projects.",
+  },
+  {
+    q: "Can I combine multiple project sections?",
+    a: "Concrete Cost Pro supports complete projects containing multiple sections. Individual free-calculator capabilities depend on the selected tool.",
+  },
+  {
+    q: "Do these calculators determine slab thickness or reinforcement?",
+    a: "No. The tools do not provide structural engineering or building-code recommendations. Enter dimensions and specifications appropriate for your project and supplied by the responsible contractor, designer, engineer or authority.",
+  },
+  {
+    q: "Where is my data stored?",
+    a: "Calculator inputs and Concrete Cost Pro data are stored locally in your browser, where supported, not on a server or account. Local storage is not an automatic backup: Concrete Cost Pro users should export a workspace backup regularly.",
+  },
 ];
 
 const site = Astro.site ?? new URL("https://concretecostpro.com");
 const itemListSchema = {
   "@context": "https://schema.org",
   "@type": "ItemList",
-  itemListElement: tools.map((t, i) => ({
+  itemListElement: allTools.map((t, i) => ({
     "@type": "ListItem",
     position: i + 1,
     name: t.title,
     url: new URL(t.href, site).toString(),
   })),
 };
+
+// Guided-finder routing: quantity/cost depend on project type (every project calculator
+// computes both together); contractor price and customer estimate always route to the same
+// tool regardless of project type, since neither of those is a per-shape page.
+const projectSlugs: Record<string, string> = Object.fromEntries(
+  Object.values(CALCULATOR_CONFIGS).map((c) => [c.projectType, `/${c.slug}`]),
+);
+const finderRouting = {
+  quantity: projectSlugs,
+  cost: projectSlugs,
+  price: { slab: "/concrete-job-cost-calculator", driveway: "/concrete-job-cost-calculator", patio: "/concrete-job-cost-calculator", footing: "/concrete-job-cost-calculator", sidewalk: "/concrete-job-cost-calculator", general: "/concrete-job-cost-calculator" },
+  estimate: { slab: "/concrete-estimate-template", driveway: "/concrete-estimate-template", patio: "/concrete-estimate-template", footing: "/concrete-estimate-template", sidewalk: "/concrete-estimate-template", general: "/concrete-estimate-template" },
+};
+const finderNames: Record<string, string> = Object.fromEntries(
+  [...Object.values(CALCULATOR_CONFIGS).map((c) => [c.slug, c.h1] as const), ["concrete-job-cost-calculator", "Concrete Job Cost Calculator"], ["concrete-estimate-template", "Concrete Estimate Template"]],
+);
 ---
 
 <Layout
@@ -86,121 +165,658 @@ const itemListSchema = {
   <main>
     <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Calculators", href: "/calculators" }]} />
 
-    <section class="relative overflow-hidden border-b border-border bg-white">
-      <div
-        class="pointer-events-none absolute left-1/2 top-0 h-72 w-[36rem] -translate-x-1/2 -translate-y-1/3 rounded-full bg-orange/10 blur-3xl"
-        aria-hidden="true"
-      >
-      </div>
-      <div class="relative mx-auto max-w-4xl px-4 py-14 text-center sm:px-6 sm:py-16">
-        <p class="text-xs font-bold uppercase tracking-wider text-orange">8 free tools, no sign-up</p>
-        <h1 class="mt-2 text-4xl font-extrabold tracking-tight text-ink sm:text-5xl">Free Concrete Calculators</h1>
-        <p class="mx-auto mt-3 max-w-2xl text-lg text-muted">
-          Pick a project type below. Every calculator gets you concrete quantity and total cost in seconds, and with
-          Contractor Pricing, the exact price required to hit your target margin.
-        </p>
-        <TrustBadges class="mt-7" />
-      </div>
-    </section>
-
-    <section class="mx-auto max-w-6xl px-4 py-14 sm:px-6">
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {tools.map((t) => (
-          <a
-            href={t.href}
-            class="group flex flex-col rounded-xl border border-border bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-orange hover:shadow-md"
-          >
-            <span class="flex h-10 w-10 items-center justify-center rounded-lg bg-orange/10 text-orange transition group-hover:bg-orange group-hover:text-white">
-              {t.icon && <t.icon size={20} strokeWidth={2.25} aria-hidden="true" />}
-            </span>
-            <h2 class="mt-3.5 font-semibold text-ink group-hover:text-orange">{t.title}</h2>
-            <p class="mt-1.5 flex-1 text-sm text-muted">{t.desc}</p>
-            <span class="mt-3.5 inline-flex items-center gap-1 text-sm font-medium text-orange">
-              Open calculator
-              <ArrowRight size={14} strokeWidth={2.5} aria-hidden="true" className="transition group-hover:translate-x-0.5" />
-            </span>
-          </a>
-        ))}
-      </div>
-    </section>
-
-    <section class="border-t border-border bg-warm-white">
-      <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-        <div class="mx-auto max-w-2xl text-center">
-          <p class="text-xs font-bold uppercase tracking-wider text-orange">Beyond the free calculators</p>
-          <h2 class="mt-2 text-2xl font-extrabold text-ink sm:text-3xl">This is what running the numbers actually looks like</h2>
-          <p class="mt-3 text-muted">
-            Real screens from Concrete Cost Pro, the $79 lifetime upgrade for contractors who price jobs every week.
-          </p>
-        </div>
-        <div class="mt-10 grid grid-cols-1 gap-6 lg:grid-cols-3">
-          {proof.map((p) => (
-            <div class="flex flex-col overflow-hidden rounded-xl border border-border bg-white shadow-sm">
-              <div class="flex items-center gap-1.5 border-b border-border bg-warm-white px-3 py-2.5">
-                <span class="h-2.5 w-2.5 rounded-full bg-red/50" aria-hidden="true"></span>
-                <span class="h-2.5 w-2.5 rounded-full bg-amber/50" aria-hidden="true"></span>
-                <span class="h-2.5 w-2.5 rounded-full bg-green/50" aria-hidden="true"></span>
-              </div>
-              <img src={p.img} alt={p.alt} loading="lazy" class="w-full border-b border-border" />
-              <div class="flex flex-1 flex-col p-5">
-                <h3 class="font-semibold text-ink">{p.title}</h3>
-                <p class="mt-1.5 text-sm text-muted">{p.body}</p>
-              </div>
+    <!-- 2. HERO -->
+    <section id="hero" class="border-b border-border bg-white">
+      <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-14">
+        <div class="grid grid-cols-1 items-start gap-10 lg:grid-cols-[1fr_1.1fr] lg:gap-14">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-wider text-orange">Free concrete cost & quantity tools</p>
+            <h1 class="mt-3 text-3xl font-extrabold tracking-tight text-ink sm:text-5xl">Find the Right Concrete Calculator for Your Project</h1>
+            <p class="mt-4 max-w-lg text-lg text-muted">
+              Calculate concrete quantity, material cost, labor, total job cost or contractor pricing. Choose a
+              project below and get an instant result using your own dimensions and rates.
+            </p>
+            <div class="mt-6 flex flex-wrap items-center gap-3">
+              <a href="#finder" class="inline-flex items-center justify-center rounded-lg bg-orange px-6 py-3.5 text-base font-semibold text-white transition hover:bg-orange-dark">
+                Choose a Calculator
+              </a>
             </div>
+            <p class="mt-3 text-sm">
+              <a href="/concrete-estimating-software" class="font-medium text-orange hover:underline">Pricing a complete job? See Concrete Cost Pro &rarr;</a>
+            </p>
+            <div class="mt-6">
+              <TrustBadges items={["Free to use", "No signup", "No purchase required", "Data stays on your device"]} align="left" />
+            </div>
+          </div>
+
+          <!-- Guided calculator finder -->
+          <div id="finder" class="scroll-mt-20 rounded-2xl border border-border bg-warm-white p-5 sm:p-6" data-finder>
+            <p class="text-xs font-bold uppercase tracking-wide text-muted">What are you calculating?</p>
+            <div role="group" aria-label="What are you calculating?" class="mt-2.5 flex flex-wrap gap-2">
+              {[
+                { key: "quantity", label: "Concrete quantity" },
+                { key: "cost", label: "Project cost" },
+                { key: "price", label: "Contractor selling price" },
+                { key: "estimate", label: "Customer estimate" },
+              ].map((opt, i) => (
+                <button
+                  type="button"
+                  data-finder-calc={opt.key}
+                  aria-pressed={i === 0 ? "true" : "false"}
+                  class="finder-btn rounded-full border border-border bg-white px-3.5 py-2 text-sm font-medium text-ink transition aria-pressed:border-orange aria-pressed:bg-orange aria-pressed:text-white"
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+
+            <p class="mt-5 text-xs font-bold uppercase tracking-wide text-muted">What type of project?</p>
+            <div role="group" aria-label="What type of project?" class="mt-2.5 flex flex-wrap gap-2">
+              {[
+                { key: "slab", label: "Slab" },
+                { key: "driveway", label: "Driveway" },
+                { key: "patio", label: "Patio" },
+                { key: "footing", label: "Footing" },
+                { key: "sidewalk", label: "Sidewalk" },
+                { key: "general", label: "Custom" },
+              ].map((opt, i) => (
+                <button
+                  type="button"
+                  data-finder-project={opt.key}
+                  aria-pressed={i === 1 ? "true" : "false"}
+                  class="finder-btn rounded-full border border-border bg-white px-3.5 py-2 text-sm font-medium text-ink transition aria-pressed:border-orange aria-pressed:bg-orange aria-pressed:text-white"
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+
+            <div class="mt-6 rounded-xl border border-orange/25 bg-white p-4">
+              <p class="text-xs font-bold uppercase tracking-wide text-muted">Recommended tool</p>
+              <p data-finder-result class="mt-1 text-lg font-bold text-ink">Concrete Driveway Cost Calculator</p>
+              <a
+                data-finder-link
+                href="/concrete-driveway-cost-calculator"
+                data-analytics-event="calculator_finder_used"
+                class="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-orange px-5 py-3 text-sm font-semibold text-white transition hover:bg-orange-dark"
+              >
+                Open This Calculator
+                <ArrowRight size={16} aria-hidden="true" />
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. QUICK INTENT SELECTOR -->
+    <section class="border-b border-border bg-warm-white">
+      <div class="mx-auto max-w-6xl px-4 py-14 sm:px-6">
+        <h2 class="text-center text-2xl font-extrabold text-ink sm:text-3xl">What Do You Need to Calculate?</h2>
+        <div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            { tag: "Quantity", q: "How much concrete should I order?", cta: "Calculate Concrete Quantity", href: "/concrete-cost-calculator" },
+            { tag: "Project cost", q: "What will this slab, driveway or patio cost?", cta: "Calculate Project Cost", href: "/concrete-cost-calculator" },
+            { tag: "Contractor price", q: "What should I charge to reach my target margin?", cta: "Calculate Selling Price", href: "/concrete-job-cost-calculator" },
+            { tag: "Customer estimate", q: "How can I create a printable concrete estimate?", cta: "Create an Estimate", href: "/concrete-estimate-template" },
+          ].map((card) => (
+            <a
+              href={card.href}
+              data-analytics-event="calculator_card_clicked"
+              data-analytics-source={`intent_${card.tag.toLowerCase().replace(/\s+/g, "_")}`}
+              class="group flex min-h-[44px] flex-col rounded-xl border border-border bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-orange hover:shadow-md"
+            >
+              <p class="text-xs font-bold uppercase tracking-wide text-orange">{card.tag}</p>
+              <p class="mt-2 flex-1 font-semibold text-ink">{card.q}</p>
+              <span class="mt-3.5 inline-flex items-center gap-1 text-sm font-medium text-orange">
+                {card.cta}
+                <ArrowRight size={14} strokeWidth={2.5} aria-hidden="true" className="transition group-hover:translate-x-0.5" />
+              </span>
+            </a>
           ))}
         </div>
       </div>
     </section>
 
-    <section class="border-t border-border bg-charcoal">
-      <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-        <div class="grid gap-10 lg:grid-cols-[1.05fr_1fr] lg:items-center">
-          <div>
-            <p class="text-xs font-bold uppercase tracking-wider text-orange-ondark">For contractors running the business</p>
-            <h2 class="mt-2 text-2xl font-extrabold text-white sm:text-3xl">Stop guessing. Start pricing every job with confidence.</h2>
-            <p class="mt-3 max-w-xl text-white/70">
-              Concrete Cost Pro saves your real rates, prices full jobs in minutes, and flags underpriced work before
-              you send the quote.
-            </p>
-            <ul class="mt-6 flex flex-col gap-2.5 text-sm text-white/85">
-              {benefits.map((item) => (
-                <li class="flex items-start gap-2.5">
-                  <CheckCircle2 size={17} strokeWidth={2.25} className="mt-0.5 shrink-0 text-orange-ondark" aria-hidden="true" />
-                  {item}
-                </li>
-              ))}
-            </ul>
-            <div class="mt-7 flex flex-wrap items-center gap-x-5 gap-y-3">
-              <a
-                href="/pricing"
-                data-pricing-cta
-                class="inline-flex items-center gap-2 rounded-lg bg-orange px-6 py-3.5 text-base font-semibold text-white transition hover:bg-orange-dark"
-              >
-                <span data-pricing-cta-label>Get Concrete Cost Pro</span>
-                <ArrowRight size={18} aria-hidden="true" />
-              </a>
-              <span class="text-sm text-white/55">$79 one-time purchase · No subscription · 14-day refund</span>
-            </div>
-            <a href="/concrete-estimating-software" class="mt-4 inline-block text-sm font-medium text-orange-ondark hover:underline">
-              See everything Concrete Cost Pro includes &rarr;
+    <!-- 4. FEATURED CALCULATORS -->
+    <section class="border-b border-border bg-white">
+      <div class="mx-auto max-w-6xl px-4 py-14 sm:px-6">
+        <h2 class="text-center text-2xl font-extrabold text-ink sm:text-3xl">Most Popular Concrete Calculators</h2>
+        <p class="mx-auto mt-2 max-w-lg text-center text-muted">Start with one of the most common project types.</p>
+        <div class="mt-8 grid grid-cols-1 gap-5 lg:grid-cols-3">
+          {[
+            {
+              title: "Concrete Slab Cost Calculator",
+              desc: "Estimate concrete quantity, ready-mix cost, labor, reinforcement, formwork, equipment and total slab cost.",
+              bestFor: "Garage slabs, shop floors, pads and other rectangular slabs",
+              cta: "Calculate Slab Cost",
+              href: "/concrete-slab-cost-calculator",
+              shape: "slab",
+            },
+            {
+              title: "Concrete Driveway Cost Calculator",
+              desc: "Calculate concrete quantity and project cost for a driveway using your own dimensions, material prices and labor costs.",
+              bestFor: "Driveways, extensions, aprons and replacement projects",
+              cta: "Calculate Driveway Cost",
+              href: "/concrete-driveway-cost-calculator",
+              shape: "driveway",
+            },
+            {
+              title: "Concrete Cost Calculator",
+              desc: "Build a quick cost estimate for a slab, driveway, patio, sidewalk, footing or custom rectangular pour.",
+              bestFor: "Comparing quantity, cost and contractor-pricing scenarios",
+              cta: "Open General Calculator",
+              href: "/concrete-cost-calculator",
+              shape: "general",
+            },
+          ].map((card) => (
+            <a
+              href={card.href}
+              data-analytics-event="calculator_card_clicked"
+              data-analytics-source={`featured_${card.shape}`}
+              class="group flex flex-col overflow-hidden rounded-xl border border-border bg-warm-white shadow-sm transition hover:-translate-y-0.5 hover:border-orange hover:shadow-md"
+            >
+              <div class="flex h-28 items-center justify-center border-b border-border bg-white">
+                {card.shape === "slab" && (
+                  <svg width="120" height="80" viewBox="0 0 120 80" fill="none" aria-hidden="true">
+                    <rect x="20" y="16" width="80" height="48" rx="2" class="fill-orange/10 stroke-orange" stroke-width="2" />
+                    <path d="M20 10v6M100 10v6M14 16h6M14 64h6" class="stroke-muted" stroke-width="1.5" />
+                    <path d="M20 8h80" class="stroke-muted" stroke-width="1" stroke-dasharray="3 2" />
+                  </svg>
+                )}
+                {card.shape === "driveway" && (
+                  <svg width="120" height="80" viewBox="0 0 120 80" fill="none" aria-hidden="true">
+                    <rect x="34" y="6" width="52" height="68" rx="2" class="fill-orange/10 stroke-orange" stroke-width="2" />
+                    <path d="M34 4v-4M86 4v-4M28 6h6M28 74h6" class="stroke-muted" stroke-width="1.5" />
+                    <path d="M34 2h52" class="stroke-muted" stroke-width="1" stroke-dasharray="3 2" />
+                  </svg>
+                )}
+                {card.shape === "general" && (
+                  <svg width="120" height="80" viewBox="0 0 120 80" fill="none" aria-hidden="true">
+                    <rect x="14" y="14" width="46" height="34" rx="2" class="fill-orange/10 stroke-orange" stroke-width="2" />
+                    <rect x="60" y="34" width="46" height="34" rx="2" class="fill-orange/15 stroke-orange" stroke-width="2" />
+                  </svg>
+                )}
+              </div>
+              <div class="flex flex-1 flex-col p-5">
+                <h3 class="font-semibold text-ink group-hover:text-orange">{card.title}</h3>
+                <p class="mt-1.5 text-sm text-muted">{card.desc}</p>
+                <p class="mt-2 text-xs font-medium text-muted">Useful for: {card.bestFor}</p>
+                <span class="mt-3.5 inline-flex items-center gap-1 text-sm font-medium text-orange">
+                  {card.cta}
+                  <ArrowRight size={14} strokeWidth={2.5} aria-hidden="true" className="transition group-hover:translate-x-0.5" />
+                </span>
+              </div>
             </a>
-          </div>
-          <div class="overflow-hidden rounded-xl border border-white/10 shadow-2xl">
-            <div class="flex items-center gap-1.5 border-b border-white/10 bg-charcoal-light px-3 py-2.5">
-              <span class="h-2.5 w-2.5 rounded-full bg-red/60" aria-hidden="true"></span>
-              <span class="h-2.5 w-2.5 rounded-full bg-amber/60" aria-hidden="true"></span>
-              <span class="h-2.5 w-2.5 rounded-full bg-green/60" aria-hidden="true"></span>
-            </div>
-            <img
-              src="/guide/01-overview.png"
-              alt="Concrete Cost Pro overview dashboard showing a current estimate at 19% margin, below target, and a Rate Health table"
-              loading="lazy"
-              class="w-full"
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. ALL CALCULATORS -->
+    <section id="all-calculators" class="scroll-mt-20 border-b border-border bg-warm-white">
+      <div class="mx-auto max-w-6xl px-4 py-14 sm:px-6">
+        <h2 class="text-center text-2xl font-extrabold text-ink sm:text-3xl">All Free Concrete Calculators</h2>
+
+        <div class="mx-auto mt-6 max-w-xl">
+          <div class="relative">
+            <Search size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-muted" aria-hidden="true" />
+            <input
+              type="search"
+              id="tool-search"
+              placeholder="Search calculators..."
+              aria-label="Search calculators"
+              class="w-full rounded-lg border border-border bg-white py-2.5 pl-10 pr-4 text-sm text-ink placeholder:text-muted focus-visible:outline-2 focus-visible:outline-orange"
             />
+          </div>
+          <div class="mt-3 flex gap-2 overflow-x-auto pb-1" role="group" aria-label="Filter calculators">
+            {filterChips.map((chip, i) => (
+              <button
+                type="button"
+                data-filter-chip={chip.key}
+                aria-pressed={i === 0 ? "true" : "false"}
+                class="filter-chip shrink-0 rounded-full border border-border bg-white px-3.5 py-2 text-sm font-medium text-ink transition aria-pressed:border-orange aria-pressed:bg-orange aria-pressed:text-white"
+              >
+                {chip.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <p id="no-results" hidden class="mt-8 text-center text-sm text-muted">No calculators match that search.</p>
+
+        <div class="mt-10" data-tool-category>
+          <h3 class="text-sm font-bold uppercase tracking-wide text-muted">Project calculators</h3>
+          <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" data-tool-grid>
+            {projectTools.map((t) => (
+              <a
+                href={t.href}
+                data-tool-card
+                data-tool-name={t.title.toLowerCase()}
+                data-tool-tags={t.tags.join(" ")}
+                data-analytics-event="calculator_card_clicked"
+                data-analytics-source={`directory_${t.href.replace("/", "")}`}
+                class="group flex min-h-[44px] flex-col rounded-xl border border-border bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-orange hover:shadow-md"
+              >
+                <span class="flex h-10 w-10 items-center justify-center rounded-lg bg-orange/10 text-orange transition group-hover:bg-orange group-hover:text-white">
+                  {t.icon && <t.icon size={20} strokeWidth={2.25} aria-hidden="true" />}
+                </span>
+                <h4 class="mt-3.5 font-semibold text-ink group-hover:text-orange">{t.title}</h4>
+                <p class="mt-1.5 text-sm text-muted">{t.outcome}</p>
+                <p class="mt-2 text-xs font-medium text-muted">Best for: {t.bestFor}</p>
+                <span class="mt-3.5 inline-flex items-center gap-1 text-sm font-medium text-orange">
+                  Open calculator
+                  <ArrowRight size={14} strokeWidth={2.5} aria-hidden="true" className="transition group-hover:translate-x-0.5" />
+                </span>
+              </a>
+            ))}
+          </div>
+        </div>
+
+        <div class="mt-10" data-tool-category>
+          <h3 class="text-sm font-bold uppercase tracking-wide text-muted">Business calculators</h3>
+          <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" data-tool-grid>
+            {businessTools.map((t) => (
+              <a
+                href={t.href}
+                data-tool-card
+                data-tool-name={t.title.toLowerCase()}
+                data-tool-tags={t.tags.join(" ")}
+                data-analytics-event="calculator_card_clicked"
+                data-analytics-source={`directory_${t.href.replace("/", "")}`}
+                class="group flex min-h-[44px] flex-col rounded-xl border border-border bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-orange hover:shadow-md"
+              >
+                <span class="flex h-10 w-10 items-center justify-center rounded-lg bg-orange/10 text-orange transition group-hover:bg-orange group-hover:text-white">
+                  {t.icon && <t.icon size={20} strokeWidth={2.25} aria-hidden="true" />}
+                </span>
+                <h4 class="mt-3.5 font-semibold text-ink group-hover:text-orange">{t.title}</h4>
+                <p class="mt-1.5 text-sm text-muted">{t.outcome}</p>
+                <p class="mt-2 text-xs font-medium text-muted">Best for: {t.bestFor}</p>
+                <span class="mt-3.5 inline-flex items-center gap-1 text-sm font-medium text-orange">
+                  Open calculator
+                  <ArrowRight size={14} strokeWidth={2.5} aria-hidden="true" className="transition group-hover:translate-x-0.5" />
+                </span>
+              </a>
+            ))}
+          </div>
+        </div>
+
+        <div class="mt-10" data-tool-category>
+          <h3 class="text-sm font-bold uppercase tracking-wide text-muted">Estimate tools</h3>
+          <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" data-tool-grid>
+            {estimateTools.map((t) => (
+              <a
+                href={t.href}
+                data-tool-card
+                data-tool-name={t.title.toLowerCase()}
+                data-tool-tags={t.tags.join(" ")}
+                data-analytics-event="calculator_card_clicked"
+                data-analytics-source={`directory_${t.href.replace("/", "")}`}
+                class="group flex min-h-[44px] flex-col rounded-xl border border-border bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-orange hover:shadow-md"
+              >
+                <span class="flex h-10 w-10 items-center justify-center rounded-lg bg-orange/10 text-orange transition group-hover:bg-orange group-hover:text-white">
+                  {t.icon && <t.icon size={20} strokeWidth={2.25} aria-hidden="true" />}
+                </span>
+                <h4 class="mt-3.5 font-semibold text-ink group-hover:text-orange">{t.title}</h4>
+                <p class="mt-1.5 text-sm text-muted">{t.outcome}</p>
+                <p class="mt-2 text-xs font-medium text-muted">Best for: {t.bestFor}</p>
+                <span class="mt-3.5 inline-flex items-center gap-1 text-sm font-medium text-orange">
+                  Open calculator
+                  <ArrowRight size={14} strokeWidth={2.5} aria-hidden="true" className="transition group-hover:translate-x-0.5" />
+                </span>
+              </a>
+            ))}
           </div>
         </div>
       </div>
     </section>
+
+    <!-- 6. NATURAL FREE-TO-PRO BRIDGE -->
+    <section class="border-b border-border bg-white">
+      <div class="mx-auto max-w-4xl px-4 py-14 sm:px-6">
+        <h2 class="text-center text-2xl font-extrabold text-ink sm:text-3xl">A Free Calculator Prices One Project. Pro Builds a Repeatable Estimating System.</h2>
+        <div class="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2">
+          <div class="rounded-xl border border-border bg-warm-white p-5">
+            <p class="text-xs font-bold uppercase tracking-wide text-muted">Free calculator</p>
+            <ul class="mt-3 flex flex-col gap-2">
+              {bridgeFree.map((item) => (
+                <li class="flex items-start gap-2 text-sm text-ink/80">
+                  <X size={15} className="mt-0.5 shrink-0 text-muted" aria-hidden="true" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div class="rounded-xl border border-orange/25 bg-orange/5 p-5">
+            <p class="text-xs font-bold uppercase tracking-wide text-orange">Concrete Cost Pro</p>
+            <ul class="mt-3 flex flex-col gap-2">
+              {bridgePro.map((item) => (
+                <li class="flex items-start gap-2 text-sm text-ink">
+                  <Check size={15} className="mt-0.5 shrink-0 text-green" aria-hidden="true" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+        <p class="mx-auto mt-6 max-w-2xl text-center text-sm text-muted">
+          Use the free calculators whenever you need a quick answer. When you're pricing concrete work repeatedly,
+          Concrete Cost Pro keeps your costs, templates, estimates and job results together.
+        </p>
+        <div class="mt-6 text-center">
+          <a href="/concrete-estimating-software" class="inline-flex items-center gap-2 rounded-lg border border-border bg-white px-6 py-3.5 text-base font-semibold text-ink transition hover:bg-warm-white">
+            See How Concrete Cost Pro Works
+            <ArrowRight size={18} aria-hidden="true" />
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. COMPACT PRODUCT PREVIEW -->
+    <section class="border-b border-border bg-warm-white">
+      <div class="mx-auto max-w-4xl px-4 py-14 sm:px-6">
+        <h2 class="text-center text-2xl font-extrabold text-ink sm:text-3xl">See What Changes When You Move From a Calculation to a Complete Estimate</h2>
+
+        <div class="mt-8" data-pro-tour>
+          <div role="tablist" aria-label="Pro preview" class="flex flex-wrap justify-center gap-2">
+            {[
+              { n: 1, label: "Price the job" },
+              { n: 2, label: "Check the margin" },
+              { n: 3, label: "Create the estimate" },
+            ].map((tab) => (
+              <button
+                type="button"
+                role="tab"
+                data-tour-button={tab.n}
+                aria-selected={tab.n === 1 ? "true" : "false"}
+                class="tour-btn rounded-full border border-border bg-white px-4 py-2 text-sm font-semibold text-ink transition aria-selected:border-orange aria-selected:bg-orange aria-selected:text-white"
+              >
+                {tab.n}. {tab.label}
+              </button>
+            ))}
+          </div>
+
+          <div class="mt-6 overflow-hidden rounded-xl border border-border bg-white shadow-md">
+            <div class="flex items-center gap-1.5 border-b border-border bg-warm-white px-3 py-2.5">
+              <span class="h-2.5 w-2.5 rounded-full bg-red/50" aria-hidden="true"></span>
+              <span class="h-2.5 w-2.5 rounded-full bg-amber/50" aria-hidden="true"></span>
+              <span class="h-2.5 w-2.5 rounded-full bg-green/50" aria-hidden="true"></span>
+            </div>
+
+            <div data-tour-panel="1" class="p-6">
+              <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <div class="rounded-lg border border-border bg-warm-white p-4">
+                  <p class="text-xs font-bold uppercase tracking-wide text-muted">True job cost</p>
+                  <p class="mt-1 text-2xl font-bold text-ink">$8,729</p>
+                </div>
+                <div class="rounded-lg border border-border bg-warm-white p-4">
+                  <p class="text-xs font-bold uppercase tracking-wide text-muted">Target margin</p>
+                  <p class="mt-1 text-2xl font-bold text-ink">30%</p>
+                </div>
+                <div class="rounded-lg border border-green/25 bg-green-light p-4">
+                  <p class="text-xs font-bold uppercase tracking-wide text-green">Required selling price</p>
+                  <p class="mt-1 text-2xl font-bold text-green">$12,470</p>
+                </div>
+              </div>
+              <p class="mt-4 text-center text-sm text-muted">Apply your saved labor, material, equipment, overhead and margin assumptions.</p>
+            </div>
+
+            <div data-tour-panel="2" hidden>
+              <img src="/guide/10-rate-health.png" alt="Rate Health dashboard showing standard concrete rates flagged below target margin, with required price shown for each" loading="lazy" width="1116" height="567" class="w-full" />
+              <p class="p-4 text-center text-sm text-muted">See which standard rates still reach your target and which may need attention.</p>
+            </div>
+
+            <div data-tour-panel="3" hidden>
+              <img src="/guide/09-estimate-summary.png" alt="Branded customer estimate document next to an internal cost, overhead and margin panel" loading="lazy" width="1116" height="603" class="w-full" />
+              <p class="p-4 text-center text-sm text-muted">Send a professional estimate while keeping internal costs and margins private.</p>
+            </div>
+          </div>
+
+          <div class="mt-6 text-center">
+            <a
+              href="/concrete-estimating-software"
+              data-analytics-event="pro_cta_clicked"
+              data-analytics-source="calculators_preview_tour"
+              class="inline-flex items-center gap-2 rounded-lg bg-orange px-6 py-3.5 text-base font-semibold text-white transition hover:bg-orange-dark"
+            >
+              Explore Concrete Cost Pro
+              <ArrowRight size={18} aria-hidden="true" />
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. COMPACT DARK CTA -->
+    <section class="border-b border-border bg-charcoal">
+      <div class="mx-auto max-w-4xl px-4 py-14 sm:px-6">
+        <div class="mx-auto max-w-2xl text-center">
+          <p class="text-xs font-bold uppercase tracking-wider text-orange-ondark">For contractors pricing concrete work</p>
+          <h2 class="mt-2 text-2xl font-extrabold text-white sm:text-3xl">Stop Re-entering Costs. Start Pricing Every Job From the Same Numbers.</h2>
+          <p class="mt-3 text-white/70">
+            Save your rates, build reusable project templates, calculate true job cost, and see the price required
+            to reach your target margin.
+          </p>
+        </div>
+        <ul class="mx-auto mt-6 grid max-w-xl grid-cols-1 gap-2.5 text-sm text-white/85 sm:grid-cols-2">
+          {darkCtaBenefits.map((item) => (
+            <li class="flex items-start gap-2.5">
+              <Check size={16} strokeWidth={2.25} className="mt-0.5 shrink-0 text-orange-ondark" aria-hidden="true" />
+              {item}
+            </li>
+          ))}
+        </ul>
+        <div class="mx-auto mt-7 flex max-w-xl flex-col items-center gap-3 text-center">
+          <p class="inline-flex items-center gap-2 text-lg font-semibold">
+            <span class="text-white/50 line-through">$99</span>
+            <span class="text-orange-ondark">$79 Lifetime Launch Price</span>
+          </p>
+          <a
+            href="/pricing"
+            data-pricing-cta
+            data-analytics-event="pro_cta_clicked"
+            data-analytics-source="calculators_dark_cta"
+            class="inline-flex items-center gap-2 rounded-lg bg-orange px-6 py-3.5 text-base font-semibold text-white transition hover:bg-orange-dark"
+          >
+            <span data-pricing-cta-label>Get Concrete Cost Pro — $79 Once</span>
+            <ArrowRight size={18} aria-hidden="true" />
+          </a>
+          <a href="/concrete-estimating-software" class="text-sm font-medium text-orange-ondark hover:underline">View All Pro Features</a>
+          <p class="text-sm text-white/55">One payment · No subscription · No account required · Local-first storage</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10. SEO AND EDUCATIONAL CONTENT -->
+    <section class="border-b border-border bg-white">
+      <div class="mx-auto max-w-3xl px-4 py-14 sm:px-6">
+        <h2 class="text-2xl font-bold text-ink">How to Choose a Concrete Calculator</h2>
+        <div class="mt-6 flex flex-col gap-6">
+          <div>
+            <h3 class="font-semibold text-ink">How much concrete do I need?</h3>
+            <p class="mt-1.5 text-sm text-muted">Use a quantity calculator when you know the project dimensions and need volume or purchase quantity.</p>
+          </div>
+          <div>
+            <h3 class="font-semibold text-ink">What will the project cost?</h3>
+            <p class="mt-1.5 text-sm text-muted">Use a cost calculator when you want to combine concrete, labor, reinforcement, forms, equipment and other charges.</p>
+          </div>
+          <div>
+            <h3 class="font-semibold text-ink">What should I charge?</h3>
+            <p class="mt-1.5 text-sm text-muted">
+              Contractors should account for direct costs, overhead and target margin. A markup percentage and a
+              profit-margin percentage are not the same calculation: margin is profit as a share of your selling
+              price, while markup is profit as a share of your cost.
+            </p>
+          </div>
+          <div>
+            <h3 class="font-semibold text-ink">Which project calculator should I use?</h3>
+            <ul class="mt-2 flex flex-col gap-1.5 text-sm text-muted">
+              <li>Slab calculator for rectangular slabs and pads</li>
+              <li>Driveway calculator for driveway-specific costing</li>
+              <li>Patio calculator for concrete patios</li>
+              <li>Footing calculator for user-supplied footing dimensions</li>
+              <li>Sidewalk calculator for narrow rectangular pours</li>
+              <li>General cost calculator for custom projects</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 11. FAQ -->
+    <section class="mx-auto max-w-3xl px-4 py-14 sm:px-6">
+      <FaqAccordion faqs={faqs} title="Calculator FAQ" />
+    </section>
   </main>
   <PublicFooter />
+
+  <!-- Dismissible sticky bar: hidden until the visitor scrolls past the calculator directory. -->
+  <div
+    id="sticky-purchase-bar"
+    hidden
+    class="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-white/95 backdrop-blur px-4 py-3 shadow-[0_-4px_12px_rgba(0,0,0,0.08)]"
+  >
+    <div class="mx-auto flex max-w-6xl items-center justify-between gap-3">
+      <div class="min-w-0">
+        <p class="truncate text-sm font-semibold text-ink">Concrete Cost Pro · $79 once</p>
+      </div>
+      <div class="flex shrink-0 items-center gap-2">
+        <a
+          href="/pricing"
+          data-pricing-cta
+          data-analytics-event="pro_cta_clicked"
+          data-analytics-source="calculators_sticky_bar"
+          class="inline-flex items-center gap-1.5 rounded-lg bg-orange px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-orange-dark"
+        >
+          <span data-pricing-cta-label>See Pro</span>
+        </a>
+        <button type="button" id="sticky-bar-dismiss" aria-label="Dismiss" class="rounded-lg p-2 text-muted transition hover:bg-warm-white hover:text-ink">
+          <X size={18} aria-hidden="true" />
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script define:vars={{ finderRouting, finderNames }}>
+    // Guided calculator finder: two button groups pick a live recommendation + link.
+    const finder = document.querySelector("[data-finder]");
+    if (finder) {
+      const calcButtons = finder.querySelectorAll("[data-finder-calc]");
+      const projectButtons = finder.querySelectorAll("[data-finder-project]");
+      const resultEl = finder.querySelector("[data-finder-result]");
+      const linkEl = finder.querySelector("[data-finder-link]");
+
+      function currentSelection() {
+        const calc = finder.querySelector('[data-finder-calc][aria-pressed="true"]')?.dataset.finderCalc;
+        const project = finder.querySelector('[data-finder-project][aria-pressed="true"]')?.dataset.finderProject;
+        return { calc, project };
+      }
+
+      function updateRecommendation() {
+        const { calc, project } = currentSelection();
+        const href = finderRouting[calc]?.[project];
+        if (!href) return;
+        const slug = href.replace(/^\//, "").replace(/\/$/, "");
+        resultEl.textContent = finderNames[slug] || finderNames[href.replace(/^\//, "")] || href;
+        linkEl.href = href;
+        linkEl.dataset.analyticsCalc = calc;
+        linkEl.dataset.analyticsProject = project;
+      }
+
+      calcButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          calcButtons.forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
+          updateRecommendation();
+        });
+      });
+      projectButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          projectButtons.forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
+          updateRecommendation();
+        });
+      });
+      updateRecommendation();
+    }
+
+    // Search + filter for the "All calculators" directory.
+    const searchInput = document.getElementById("tool-search");
+    const chips = document.querySelectorAll("[data-filter-chip]");
+    const cards = document.querySelectorAll("[data-tool-card]");
+    const noResults = document.getElementById("no-results");
+
+    function applyFilter() {
+      const query = (searchInput?.value || "").trim().toLowerCase();
+      const activeChip = document.querySelector('[data-filter-chip][aria-pressed="true"]')?.dataset.filterChip || "all";
+      let visibleCount = 0;
+      cards.forEach((card) => {
+        const name = card.dataset.toolName || "";
+        const tags = (card.dataset.toolTags || "").split(" ");
+        const matchesQuery = !query || name.includes(query);
+        const matchesChip = activeChip === "all" || tags.includes(activeChip);
+        const visible = matchesQuery && matchesChip;
+        card.hidden = !visible;
+        if (visible) visibleCount++;
+      });
+      document.querySelectorAll("[data-tool-category]").forEach((category) => {
+        const anyVisible = [...category.querySelectorAll("[data-tool-card]")].some((c) => !c.hidden);
+        category.hidden = !anyVisible;
+      });
+      noResults.hidden = visibleCount !== 0;
+    }
+    searchInput?.addEventListener("input", applyFilter);
+    chips.forEach((chip) => {
+      chip.addEventListener("click", () => {
+        chips.forEach((c) => c.setAttribute("aria-pressed", String(c === chip)));
+        applyFilter();
+      });
+    });
+
+    // Compact interactive Pro preview: one visible panel at a time.
+    const tour = document.querySelector("[data-pro-tour]");
+    if (tour) {
+      const tourButtons = tour.querySelectorAll("[data-tour-button]");
+      tourButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const step = btn.dataset.tourButton;
+          tourButtons.forEach((b) => b.setAttribute("aria-selected", String(b === btn)));
+          tour.querySelectorAll("[data-tour-panel]").forEach((panel) => {
+            panel.hidden = panel.dataset.tourPanel !== step;
+          });
+        });
+      });
+    }
+
+    // Dismissible sticky bar: shown only after scrolling past the calculator directory, and
+    // only if the visitor hasn't already dismissed it this session.
+    const directoryEnd = document.getElementById("all-calculators");
+    const bar = document.getElementById("sticky-purchase-bar");
+    const dismissBtn = document.getElementById("sticky-bar-dismiss");
+    const DISMISS_KEY = "ccp.calculatorsStickyDismissed";
+    let dismissed = false;
+    try {
+      dismissed = sessionStorage.getItem(DISMISS_KEY) === "1";
+    } catch {}
+
+    if (directoryEnd && bar && !dismissed) {
+      // isIntersecting alone can't distinguish "not scrolled there yet" (false, the section is
+      // still below the viewport) from "scrolled past it" (also false, the section is now
+      // above the viewport) -- both read as not-intersecting. boundingClientRect.bottom
+      // disambiguates: only negative once the section's own bottom edge has scrolled above the
+      // viewport top, i.e. the whole directory (not just its top) has been passed.
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (!dismissed) bar.hidden = entry.boundingClientRect.bottom >= 0;
+        },
+        { threshold: [0, 1] },
+      );
+      observer.observe(directoryEnd);
+    }
+    dismissBtn?.addEventListener("click", () => {
+      dismissed = true;
+      bar.hidden = true;
+      try {
+        sessionStorage.setItem(DISMISS_KEY, "1");
+      } catch {}
+    });
+  </script>
 </Layout>
