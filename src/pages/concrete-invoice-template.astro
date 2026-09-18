@@ -1,0 +1,6 @@
+---
+import SupplyToolLayout from "../layouts/SupplyToolLayout.astro";
+import InvoiceTool from "../components/calculator/InvoiceTool";
+import { SUPPLY_TOOL_PAGES } from "../data/supplyToolPages";
+---
+<SupplyToolLayout page={SUPPLY_TOOL_PAGES.invoice}><InvoiceTool client:load /></SupplyToolLayout>

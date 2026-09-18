@@ -4,6 +4,7 @@ import PublicHeader from "../components/PublicHeader.astro";
 import PublicFooter from "../components/PublicFooter.astro";
 import FaqAccordion from "../components/FaqAccordion.astro";
 import TrustBadges from "../components/TrustBadges.astro";
+import SupplyToolLinks from "../components/SupplyToolLinks.astro";
 
 const calculators = [
   { title: "Driveway Cost Calculator", desc: "Length, width, thickness → cost and pricing.", href: "/concrete-driveway-cost-calculator" },
@@ -260,8 +261,8 @@ const faqs = [
                 <path d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4z" stroke-linecap="round" stroke-linejoin="round" />
               </svg>
               <p class="text-sm text-white/90">
-                <strong class="text-white">One underpriced job costs more than $79.</strong> Fix your pricing once,
-                keep the difference on every job after.
+                <strong class="text-white">Check costs before agreeing to a price.</strong> Pro makes saved rates,
+                overhead and your target margin part of the estimating workflow.
               </p>
             </div>
 
@@ -332,6 +333,7 @@ const faqs = [
     <section class="mx-auto max-w-3xl px-4 py-14 sm:px-6">
       <FaqAccordion faqs={faqs} title="Common questions" />
     </section>
+    <SupplyToolLinks title="Plan purchases, compare supplier quotes and invoice completed work" />
   </main>
   <PublicFooter />
 </Layout>

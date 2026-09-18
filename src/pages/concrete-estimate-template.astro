@@ -5,6 +5,7 @@ import PublicFooter from "../components/PublicFooter.astro";
 import FaqAccordion from "../components/FaqAccordion.astro";
 import Breadcrumbs from "../components/Breadcrumbs.astro";
 import TrustBadges from "../components/TrustBadges.astro";
+import SupplyToolLinks from "../components/SupplyToolLinks.astro";
 import EstimateTemplateIsland from "../components/calculator/EstimateTemplateIsland";
 import { CALCULATOR_CONFIGS } from "../data/calculatorConfigs";
 import { CheckCircle2, ArrowRight } from "lucide-react";
@@ -18,8 +19,8 @@ const proBenefits = [
 
 const faqs = [
   {
-    q: "Is this an estimate template, a quote template or an invoice template?",
-    a: "It works as all three. The same line-item builder produces an estimate, a quote or, once the job is complete and you change the heading, an invoice. Fill in the fields once and print or save whichever document you need.",
+    q: "Is this an estimate template or a quote template?",
+    a: "Use this builder to describe proposed work, line-item charges and the customer total before approval. For completed-work billing with invoice numbers, due dates, tax and deposits, use the separate Concrete Invoice Template linked below.",
   },
   {
     q: "Can I print or save this as a PDF?",
@@ -27,7 +28,7 @@ const faqs = [
   },
   {
     q: "Does this save my estimate?",
-    a: "This free template doesn't save data between visits. Concrete Cost Pro saves every estimate, lets you duplicate past projects, and generates line items automatically from your saved rates and dimensions.",
+    a: "This free template doesn't save data between visits. Concrete Cost Pro autosaves one current estimate on this device and lets you start from that estimate or reusable templates. Export a PDF or CSV before replacing the current estimate; the app does not keep an archive of past jobs.",
   },
   {
     q: "Can I use this for other trades?",
@@ -35,7 +36,7 @@ const faqs = [
   },
   {
     q: "What's the difference between Customer view and Internal view?",
-    a: "Customer view is exactly what prints: scope, line items and the total. Internal view adds an overhead and target-margin panel so you can check your true cost and required price against the total, but that panel is marked no-print and never appears in the PDF, matching how Concrete Cost Pro keeps cost and margin off the customer document by default.",
+    a: "Customer view is what prints: scope, selling charges and the total. Internal view treats the entered amounts as a hypothetical direct-cost scenario to calculate overhead and required price. Actual job costs can differ from customer charges; check those separately in the Job Cost Calculator. The internal panel is never printed.",
   },
 ];
 
@@ -70,13 +71,13 @@ const webApplicationSchema = {
   applicationCategory: "BusinessApplication",
   operatingSystem: "Any (web browser)",
   offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
-  description: "Free interactive concrete estimate, quote and invoice template. Fill in your project and line items and print a customer-ready document in minutes.",
+  description: "Free interactive concrete estimate and quote template. Fill in proposed work and customer charges, then print a customer-ready estimate.",
 };
 ---
 
 <Layout
   title="Concrete Estimate Template | Concrete Cost Pro"
-  description="Free interactive concrete estimate template that also works as a concrete quote template or invoice template. Fill in your project and line items and print a customer-ready document in minutes."
+  description="Create a free concrete estimate or quote with project scope, customer charges and notes. Print a customer-ready PDF without signup."
 >
   <Fragment slot="head">
     <script type="application/ld+json" is:inline set:html={JSON.stringify(webApplicationSchema)} />
@@ -95,9 +96,9 @@ const webApplicationSchema = {
       <div class="mx-auto max-w-7xl px-4 pb-3 pt-4 sm:px-6 sm:pb-4 sm:pt-5">
         <h1 class="text-2xl font-extrabold tracking-tight text-ink sm:text-3xl">Concrete Estimate Template</h1>
         <p class="mt-1.5 max-w-2xl text-sm text-muted sm:text-base">
-          An interactive concrete estimate template that doubles as a quote template or invoice template. Fill in
+          An interactive concrete estimate and quote template. Fill in
           your project details and line items on the left; a customer-ready document builds itself on the right.
-          Switch to Internal view to add overhead and target margin, kept out of the printed document.
+          For completed-work billing, use the <a href="/concrete-invoice-template" class="font-semibold text-orange hover:underline">concrete invoice template</a> with due dates, tax and payments received.
         </p>
       </div>
     </section>
@@ -162,7 +163,7 @@ const webApplicationSchema = {
             <h2 class="mt-2 text-2xl font-extrabold text-white sm:text-3xl">Stop re-entering the same business costs for every quote</h2>
             <p class="mt-3 max-w-xl text-white/70">
               Concrete Cost Pro creates this same customer document automatically from your project dimensions and
-              saved materials, labor and equipment rates, and keeps every estimate for next time.
+              saved materials, labor and equipment rates. It autosaves one current estimate; export it before starting the next job.
             </p>
             <ul class="mt-6 flex flex-col gap-2.5 text-sm text-white/85">
               {proBenefits.map((item) => (
@@ -197,6 +198,8 @@ const webApplicationSchema = {
             </div>
             <img
               src="/guide/04-templates.png"
+              width="1116"
+              height="642"
               alt="Saved project templates for standard job types, each showing order quantity, true cost and margin status"
               loading="lazy"
               class="w-full"
@@ -205,6 +208,7 @@ const webApplicationSchema = {
         </div>
       </div>
     </section>
+    <SupplyToolLinks keys={["invoice", "material", "readyMix"]} title="Move from purchase planning to completed-work billing" />
   </main>
   <PublicFooter />
 </Layout>

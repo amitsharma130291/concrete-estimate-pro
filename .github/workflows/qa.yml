@@ -31,6 +31,8 @@ jobs:
           cache: "npm"
       - run: npm ci
       - run: npm run build
+      - run: npm run validate:schema
+      - run: npm run audit:seo
       - uses: actions/upload-artifact@v4
         with:
           name: dist

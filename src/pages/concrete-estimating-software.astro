@@ -5,6 +5,7 @@ import PublicFooter from "../components/PublicFooter.astro";
 import FaqAccordion from "../components/FaqAccordion.astro";
 import Breadcrumbs from "../components/Breadcrumbs.astro";
 import TrustBadges from "../components/TrustBadges.astro";
+import SupplyToolLinks from "../components/SupplyToolLinks.astro";
 import { CheckCircle2, ArrowRight, Check, X } from "lucide-react";
 
 // Hero + problem-section numbers -- a coded recreation of the real app's estimate panel (same
@@ -105,7 +106,7 @@ const comparison = [
   { label: "One-off quantity and project costing", free: true, pro: true },
   { label: "Saved materials, labor and equipment", free: false, pro: true },
   { label: "Saved overhead and margin targets", free: false, pro: true },
-  { label: "Multi-section projects", free: false, pro: true },
+  { label: "Multi-section projects", free: "Quantity only in the pour tool", pro: "Quantity, cost and customer price" },
   { label: "Reusable templates", free: false, pro: true },
   { label: "Required-price calculation", free: "One project at a time", pro: "Saved as your default, every job" },
   { label: "Rate-health dashboard", free: false, pro: true },
@@ -113,7 +114,7 @@ const comparison = [
   { label: "Branded estimates", free: "Basic estimate", pro: true },
   { label: "Estimated-versus-actual results", free: false, pro: true },
   { label: "CSV export", free: false, pro: true },
-  { label: "Workspace backup and restore", free: false, pro: true },
+  { label: "Reusable business data backup and restore", free: false, pro: true },
 ];
 
 const pricingIncludes = [
@@ -126,7 +127,7 @@ const pricingIncludes = [
   "Customer-ready estimates",
   "Estimated-versus-actual tracking",
   "CSV export",
-  "Workspace backup and restore",
+  "Reusable business data backup and restore",
 ];
 
 const faqs = [
@@ -156,7 +157,7 @@ const faqs = [
   },
   {
     q: "Where is my data stored?",
-    a: "Your project data is stored locally in your browser. No account is required. Because local storage is not an automatic backup, regularly export your workspace backup.",
+    a: "Your data stays in this browser. No account is required. Export reusable business settings, catalog and templates as a JSON backup. Export the one current estimate as PDF or CSV before replacing it or clearing site data; those estimate exports are records, not re-importable backups.",
   },
   {
     q: "Does it replace an engineer or determine structural requirements?",
@@ -170,7 +171,7 @@ const softwareApplicationSchema = {
   name: "Concrete Cost Pro",
   applicationCategory: "BusinessApplication",
   operatingSystem: "Any (web browser)",
-  url: "https://concretecostpro.com/concrete-estimating-software/",
+  url: "https://concretecostpro.com/concrete-estimating-software",
   offers: { "@type": "Offer", price: "79", priceCurrency: "USD", availability: "https://schema.org/InStock" },
   description:
     "Concrete estimating and job-profitability software: quantities, true job costs, target-margin pricing, rate health and estimate-vs-actual reporting for concrete contractors. $79 launch price (regularly $99), no subscription.",
@@ -716,6 +717,7 @@ function money(n: number): string {
         </div>
       </div>
     </section>
+    <SupplyToolLinks title="Try a focused free tool before building the full estimate" />
   </main>
   <PublicFooter />
 

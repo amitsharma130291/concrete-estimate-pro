@@ -1,0 +1,13 @@
+---
+import { SUPPLY_TOOL_PAGES } from "../data/supplyToolPages";
+interface Props { keys?: string[]; title?: string }
+const { keys = ["pour", "readyMix", "pricePerYard", "material", "invoice"], title = "Quantity, supplier costs and billing tools" } = Astro.props;
+const summaries: Record<string, string> = {
+  pour: "Split a pour into non-overlapping sections and calculate one final concrete order.",
+  readyMix: "Price one supplier order with delivery, short-load fees, pumping and tax.",
+  pricePerYard: "Compare two equivalent supplier quotes by total and delivered cost per yard.",
+  material: "Turn specified takeoff quantities into purchases rounded to stock increments.",
+  invoice: "Bill completed work with taxable lines, payments received and balance due.",
+};
+---
+<section class="border-t border-border bg-white no-print"><div class="mx-auto max-w-5xl px-4 py-10 sm:px-6"><h2 class="text-xl font-bold">{title}</h2><div class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{keys.map((key) => { const page = SUPPLY_TOOL_PAGES[key]; return <div class="rounded-xl border border-border bg-warm-white p-4"><a href={`/${page.slug}`} class="font-semibold text-orange hover:underline">{page.title}</a><p class="mt-2 text-sm leading-relaxed text-muted">{summaries[key]}</p></div>; })}</div></div></section>

@@ -1,0 +1,1524 @@
+{
+  "generatedAt": "2026-09-18T01:17:19.491Z",
+  "scope": "All prerendered indexable HTML; redirects and licensed noindex app pages checked separately. Word counts and similarity are review signals, not Google thresholds. Editorial similarity excludes interactive astro-island interface content, retaining all static page copy.",
+  "publicPages": 22,
+  "excluded": [
+    {
+      "path": "/app/actuals",
+      "reason": "noindex"
+    },
+    {
+      "path": "/app/catalog",
+      "reason": "noindex"
+    },
+    {
+      "path": "/app/estimates",
+      "reason": "noindex"
+    },
+    {
+      "path": "/app",
+      "reason": "noindex"
+    },
+    {
+      "path": "/app/projects",
+      "reason": "redirect"
+    },
+    {
+      "path": "/app/rate-health",
+      "reason": "noindex"
+    },
+    {
+      "path": "/app/settings",
+      "reason": "noindex"
+    },
+    {
+      "path": "/app/templates",
+      "reason": "noindex"
+    }
+  ],
+  "errors": [],
+  "review": [],
+  "newPages": [
+    {
+      "path": "/concrete-invoice-template",
+      "wordCount": 1033,
+      "bodyInbound": [
+        "/calculators",
+        "/concrete-cost-calculator",
+        "/concrete-driveway-cost-calculator",
+        "/concrete-estimate-template",
+        "/concrete-estimating-software",
+        "/concrete-job-cost-calculator",
+        "/concrete-material-calculator",
+        "/concrete-patio-cost-calculator",
+        "/concrete-price-per-yard-calculator",
+        "/concrete-sidewalk-cost-calculator",
+        "/"
+      ],
+      "inbound": [
+        "/calculators",
+        "/concrete-cost-calculator",
+        "/concrete-driveway-cost-calculator",
+        "/concrete-estimate-template",
+        "/concrete-estimating-software",
+        "/concrete-footing-cost-calculator",
+        "/concrete-job-cost-calculator",
+        "/concrete-material-calculator",
+        "/concrete-patio-cost-calculator",
+        "/concrete-pour-calculator",
+        "/concrete-price-per-yard-calculator",
+        "/concrete-sidewalk-cost-calculator",
+        "/concrete-slab-cost-calculator",
+        "/contact",
+        "/how-to-use",
+        "/",
+        "/pricing",
+        "/privacy",
+        "/ready-mix-concrete-cost-calculator",
+        "/refund",
+        "/terms"
+      ],
+      "bodyOutbound": [
+        "/",
+        "/calculators",
+        "/concrete-estimate-template",
+        "/concrete-job-cost-calculator",
+        "/concrete-price-per-yard-calculator",
+        "/pricing",
+        "/concrete-estimating-software"
+      ],
+      "schemaTypes": [
+        "WebSite",
+        "Organization",
+        "WebApplication",
+        "BreadcrumbList",
+        "FAQPage"
+      ]
+    },
+    {
+      "path": "/ready-mix-concrete-cost-calculator",
+      "wordCount": 994,
+      "bodyInbound": [
+        "/calculators",
+        "/concrete-estimate-template",
+        "/concrete-estimating-software",
+        "/concrete-footing-cost-calculator",
+        "/concrete-job-cost-calculator",
+        "/concrete-material-calculator",
+        "/concrete-patio-cost-calculator",
+        "/concrete-pour-calculator",
+        "/concrete-price-per-yard-calculator",
+        "/concrete-slab-cost-calculator",
+        "/"
+      ],
+      "inbound": [
+        "/calculators",
+        "/concrete-estimate-template",
+        "/concrete-estimating-software",
+        "/concrete-footing-cost-calculator",
+        "/concrete-job-cost-calculator",
+        "/concrete-material-calculator",
+        "/concrete-patio-cost-calculator",
+        "/concrete-pour-calculator",
+        "/concrete-price-per-yard-calculator",
+        "/concrete-slab-cost-calculator",
+        "/"
+      ],
+      "bodyOutbound": [
+        "/",
+        "/calculators",
+        "/concrete-pour-calculator",
+        "/concrete-price-per-yard-calculator",
+        "/concrete-material-calculator",
+        "/concrete-job-cost-calculator",
+        "/pricing",
+        "/concrete-estimating-software"
+      ],
+      "schemaTypes": [
+        "WebSite",
+        "Organization",
+        "WebApplication",
+        "BreadcrumbList",
+        "FAQPage"
+      ]
+    },
+    {
+      "path": "/concrete-pour-calculator",
+      "wordCount": 961,
+      "bodyInbound": [
+        "/calculators",
+        "/concrete-cost-calculator",
+        "/concrete-driveway-cost-calculator",
+        "/concrete-estimating-software",
+        "/concrete-footing-cost-calculator",
+        "/concrete-material-calculator",
+        "/concrete-patio-cost-calculator",
+        "/concrete-price-per-yard-calculator",
+        "/concrete-sidewalk-cost-calculator",
+        "/concrete-slab-cost-calculator",
+        "/",
+        "/ready-mix-concrete-cost-calculator"
+      ],
+      "inbound": [
+        "/calculators",
+        "/concrete-cost-calculator",
+        "/concrete-driveway-cost-calculator",
+        "/concrete-estimating-software",
+        "/concrete-footing-cost-calculator",
+        "/concrete-material-calculator",
+        "/concrete-patio-cost-calculator",
+        "/concrete-price-per-yard-calculator",
+        "/concrete-sidewalk-cost-calculator",
+        "/concrete-slab-cost-calculator",
+        "/",
+        "/ready-mix-concrete-cost-calculator"
+      ],
+      "bodyOutbound": [
+        "/",
+        "/calculators",
+        "/ready-mix-concrete-cost-calculator",
+        "/concrete-material-calculator",
+        "/concrete-slab-cost-calculator",
+        "/concrete-footing-cost-calculator",
+        "/pricing",
+        "/concrete-estimating-software"
+      ],
+      "schemaTypes": [
+        "WebSite",
+        "Organization",
+        "WebApplication",
+        "BreadcrumbList",
+        "FAQPage"
+      ]
+    },
+    {
+      "path": "/concrete-material-calculator",
+      "wordCount": 1022,
+      "bodyInbound": [
+        "/calculators",
+        "/concrete-cost-calculator",
+        "/concrete-estimate-template",
+        "/concrete-estimating-software",
+        "/concrete-footing-cost-calculator",
+        "/concrete-job-cost-calculator",
+        "/concrete-pour-calculator",
+        "/concrete-sidewalk-cost-calculator",
+        "/concrete-slab-cost-calculator",
+        "/",
+        "/ready-mix-concrete-cost-calculator"
+      ],
+      "inbound": [
+        "/calculators",
+        "/concrete-cost-calculator",
+        "/concrete-estimate-template",
+        "/concrete-estimating-software",
+        "/concrete-footing-cost-calculator",
+        "/concrete-job-cost-calculator",
+        "/concrete-pour-calculator",
+        "/concrete-sidewalk-cost-calculator",
+        "/concrete-slab-cost-calculator",
+        "/",
+        "/ready-mix-concrete-cost-calculator"
+      ],
+      "bodyOutbound": [
+        "/",
+        "/calculators",
+        "/concrete-pour-calculator",
+        "/ready-mix-concrete-cost-calculator",
+        "/concrete-job-cost-calculator",
+        "/concrete-invoice-template",
+        "/pricing",
+        "/concrete-estimating-software"
+      ],
+      "schemaTypes": [
+        "WebSite",
+        "Organization",
+        "WebApplication",
+        "BreadcrumbList",
+        "FAQPage"
+      ]
+    },
+    {
+      "path": "/concrete-price-per-yard-calculator",
+      "wordCount": 1051,
+      "bodyInbound": [
+        "/calculators",
+        "/concrete-cost-calculator",
+        "/concrete-driveway-cost-calculator",
+        "/concrete-estimating-software",
+        "/concrete-invoice-template",
+        "/concrete-job-cost-calculator",
+        "/",
+        "/ready-mix-concrete-cost-calculator"
+      ],
+      "inbound": [
+        "/calculators",
+        "/concrete-cost-calculator",
+        "/concrete-driveway-cost-calculator",
+        "/concrete-estimating-software",
+        "/concrete-invoice-template",
+        "/concrete-job-cost-calculator",
+        "/",
+        "/ready-mix-concrete-cost-calculator"
+      ],
+      "bodyOutbound": [
+        "/",
+        "/calculators",
+        "/ready-mix-concrete-cost-calculator",
+        "/concrete-pour-calculator",
+        "/concrete-cost-calculator",
+        "/concrete-invoice-template",
+        "/pricing",
+        "/concrete-estimating-software"
+      ],
+      "schemaTypes": [
+        "WebSite",
+        "Organization",
+        "WebApplication",
+        "BreadcrumbList",
+        "FAQPage"
+      ]
+    }
+  ],
+  "similarity": [
+    {
+      "pages": [
+        "/concrete-patio-cost-calculator",
+        "/concrete-sidewalk-cost-calculator"
+      ],
+      "smallerPageShingleOverlap": 0.455
+    },
+    {
+      "pages": [
+        "/concrete-driveway-cost-calculator",
+        "/concrete-sidewalk-cost-calculator"
+      ],
+      "smallerPageShingleOverlap": 0.415
+    },
+    {
+      "pages": [
+        "/concrete-sidewalk-cost-calculator",
+        "/concrete-slab-cost-calculator"
+      ],
+      "smallerPageShingleOverlap": 0.411
+    },
+    {
+      "pages": [
+        "/concrete-footing-cost-calculator",
+        "/concrete-sidewalk-cost-calculator"
+      ],
+      "smallerPageShingleOverlap": 0.4
+    },
+    {
+      "pages": [
+        "/concrete-cost-calculator",
+        "/concrete-sidewalk-cost-calculator"
+      ],
+      "smallerPageShingleOverlap": 0.399
+    },
+    {
+      "pages": [
+        "/concrete-patio-cost-calculator",
+        "/concrete-slab-cost-calculator"
+      ],
+      "smallerPageShingleOverlap": 0.383
+    },
+    {
+      "pages": [
+        "/concrete-driveway-cost-calculator",
+        "/concrete-patio-cost-calculator"
+      ],
+      "smallerPageShingleOverlap": 0.382
+    },
+    {
+      "pages": [
+        "/concrete-cost-calculator",
+        "/concrete-patio-cost-calculator"
+      ],
+      "smallerPageShingleOverlap": 0.377
+    },
+    {
+      "pages": [
+        "/concrete-driveway-cost-calculator",
+        "/concrete-slab-cost-calculator"
+      ],
+      "smallerPageShingleOverlap": 0.374
+    },
+    {
+      "pages": [
+        "/concrete-footing-cost-calculator",
+        "/concrete-patio-cost-calculator"
+      ],
+      "smallerPageShingleOverlap": 0.373
+    },
+    {
+      "pages": [
+        "/concrete-cost-calculator",
+        "/concrete-slab-cost-calculator"
+      ],
+      "smallerPageShingleOverlap": 0.36
+    }
+  ],
+  "editorialSimilarity": [],
+  "repeatedParagraphs": [
+    {
+      "text": "Free to use · No signup · Uses your own prices · Results update instantly",
+      "pages": [
+        "/concrete-cost-calculator",
+        "/concrete-driveway-cost-calculator",
+        "/concrete-footing-cost-calculator",
+        "/concrete-job-cost-calculator",
+        "/concrete-patio-cost-calculator",
+        "/concrete-sidewalk-cost-calculator",
+        "/concrete-slab-cost-calculator"
+      ]
+    },
+    {
+      "text": "Target margin is the percentage of the selling price remaining after estimated job costs. It's different from markup.",
+      "pages": [
+        "/concrete-cost-calculator",
+        "/concrete-driveway-cost-calculator",
+        "/concrete-footing-cost-calculator",
+        "/concrete-job-cost-calculator",
+        "/concrete-patio-cost-calculator",
+        "/concrete-sidewalk-cost-calculator",
+        "/concrete-slab-cost-calculator"
+      ]
+    },
+    {
+      "text": "Concrete Cost Pro compares saved service rates with your current costs and shows which ones may need review.",
+      "pages": [
+        "/concrete-cost-calculator",
+        "/concrete-driveway-cost-calculator",
+        "/concrete-footing-cost-calculator",
+        "/concrete-job-cost-calculator",
+        "/concrete-patio-cost-calculator",
+        "/concrete-sidewalk-cost-calculator",
+        "/concrete-slab-cost-calculator"
+      ]
+    },
+    {
+      "text": "The calculator above gives you a real number from your own inputs. Here's what typically drives those numbers up or down, so you know what to look for on your specific job.",
+      "pages": [
+        "/concrete-cost-calculator",
+        "/concrete-driveway-cost-calculator",
+        "/concrete-footing-cost-calculator",
+        "/concrete-patio-cost-calculator",
+        "/concrete-sidewalk-cost-calculator",
+        "/concrete-slab-cost-calculator"
+      ]
+    },
+    {
+      "text": "This calculator estimates quantities and costs from user-entered dimensions, specifications, allowances and prices. It does not provide structural design, engineering or building-code recommendations.",
+      "pages": [
+        "/concrete-cost-calculator",
+        "/concrete-driveway-cost-calculator",
+        "/concrete-footing-cost-calculator",
+        "/concrete-job-cost-calculator",
+        "/concrete-patio-cost-calculator",
+        "/concrete-sidewalk-cost-calculator",
+        "/concrete-slab-cost-calculator"
+      ]
+    },
+    {
+      "text": "Material amount excludes delivery, tax, installation and contractor margin. Sample dimensions and prices are not design or local-price guidance.",
+      "pages": [
+        "/concrete-cost-calculator",
+        "/concrete-driveway-cost-calculator",
+        "/concrete-footing-cost-calculator",
+        "/concrete-patio-cost-calculator",
+        "/concrete-sidewalk-cost-calculator",
+        "/concrete-slab-cost-calculator"
+      ]
+    },
+    {
+      "text": "Enable JavaScript to edit the interactive tool. The instructions, formulas and worked example below remain available without it.",
+      "pages": [
+        "/concrete-invoice-template",
+        "/concrete-material-calculator",
+        "/concrete-pour-calculator",
+        "/concrete-price-per-yard-calculator",
+        "/ready-mix-concrete-cost-calculator"
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "path": "/calculators",
+      "title": "Free Concrete Calculators | Concrete Cost Pro",
+      "description": "Find free concrete cost, pour, material and supplier-price calculators, plus printable estimate and invoice tools. Choose the right tool for your job.",
+      "canonical": "https://concretecostpro.com/calculators",
+      "h1": [
+        "Find the Right Concrete Calculator for Your Project"
+      ],
+      "wordCount": 1295,
+      "editorialWords": 1295,
+      "jsonLdTypes": [
+        "WebSite",
+        "Organization",
+        "ItemList",
+        "BreadcrumbList",
+        "FAQPage"
+      ],
+      "inbound": [
+        "/concrete-cost-calculator",
+        "/concrete-driveway-cost-calculator",
+        "/concrete-estimate-template",
+        "/concrete-estimating-software",
+        "/concrete-footing-cost-calculator",
+        "/concrete-invoice-template",
+        "/concrete-job-cost-calculator",
+        "/concrete-material-calculator",
+        "/concrete-patio-cost-calculator",
+        "/concrete-pour-calculator",
+        "/concrete-price-per-yard-calculator",
+        "/concrete-sidewalk-cost-calculator",
+        "/concrete-slab-cost-calculator",
+        "/contact",
+        "/how-to-use",
+        "/",
+        "/pricing",
+        "/privacy",
+        "/ready-mix-concrete-cost-calculator",
+        "/refund",
+        "/terms"
+      ],
+      "bodyInbound": [
+        "/concrete-cost-calculator",
+        "/concrete-driveway-cost-calculator",
+        "/concrete-estimate-template",
+        "/concrete-estimating-software",
+        "/concrete-footing-cost-calculator",
+        "/concrete-invoice-template",
+        "/concrete-job-cost-calculator",
+        "/concrete-material-calculator",
+        "/concrete-patio-cost-calculator",
+        "/concrete-pour-calculator",
+        "/concrete-price-per-yard-calculator",
+        "/concrete-sidewalk-cost-calculator",
+        "/concrete-slab-cost-calculator",
+        "/",
+        "/ready-mix-concrete-cost-calculator"
+      ]
+    },
+    {
+      "path": "/concrete-cost-calculator",
+      "title": "Concrete Cost Calculator | Concrete Cost Pro",
+      "description": "Calculate concrete quantity, installed project cost and target-margin selling price using your own dimensions, ready-mix rate, labor and equipment costs.",
+      "canonical": "https://concretecostpro.com/concrete-cost-calculator",
+      "h1": [
+        "Concrete Cost Calculator"
+      ],
+      "wordCount": 1252,
+      "editorialWords": 978,
+      "jsonLdTypes": [
+        "WebSite",
+        "Organization",
+        "WebApplication",
+        "BreadcrumbList",
+        "FAQPage"
+      ],
+      "inbound": [
+        "/calculators",
+        "/concrete-driveway-cost-calculator",
+        "/concrete-estimate-template",
+        "/concrete-estimating-software",
+        "/concrete-footing-cost-calculator",
+        "/concrete-invoice-template",
+        "/concrete-job-cost-calculator",
+        "/concrete-material-calculator",
+        "/concrete-patio-cost-calculator",
+        "/concrete-pour-calculator",
+        "/concrete-price-per-yard-calculator",
+        "/concrete-sidewalk-cost-calculator",
+        "/concrete-slab-cost-calculator",
+        "/contact",
+        "/how-to-use",
+        "/",
+        "/pricing",
+        "/privacy",
+        "/ready-mix-concrete-cost-calculator",
+        "/refund",
+        "/terms"
+      ],
+      "bodyInbound": [
+        "/calculators",
+        "/concrete-driveway-cost-calculator",
+        "/concrete-estimate-template",
+        "/concrete-footing-cost-calculator",
+        "/concrete-patio-cost-calculator",
+        "/concrete-price-per-yard-calculator",
+        "/concrete-sidewalk-cost-calculator",
+        "/concrete-slab-cost-calculator",
+        "/"
+      ]
+    },
+    {
+      "path": "/concrete-driveway-cost-calculator",
+      "title": "Concrete Driveway Cost Calculator | Concrete Cost Pro",
+      "description": "Free concrete driveway cost calculator. Enter length, width and thickness to get order quantity, project cost and a target-margin selling price instantly.",
+      "canonical": "https://concretecostpro.com/concrete-driveway-cost-calculator",
+      "h1": [
+        "Concrete Driveway Cost Calculator"
+      ],
+      "wordCount": 1317,
+      "editorialWords": 1036,
+      "jsonLdTypes": [
+        "WebSite",
+        "Organization",
+        "WebApplication",
+        "BreadcrumbList",
+        "FAQPage"
+      ],
+      "inbound": [
+        "/calculators",
+        "/concrete-cost-calculator",
+        "/concrete-estimate-template",
+        "/concrete-estimating-software",
+        "/concrete-footing-cost-calculator",
+        "/concrete-invoice-template",
+        "/concrete-job-cost-calculator",
+        "/concrete-material-calculator",
+        "/concrete-patio-cost-calculator",
+        "/concrete-pour-calculator",
+        "/concrete-price-per-yard-calculator",
+        "/concrete-sidewalk-cost-calculator",
+        "/concrete-slab-cost-calculator",
+        "/contact",
+        "/how-to-use",
+        "/",
+        "/pricing",
+        "/privacy",
+        "/ready-mix-concrete-cost-calculator",
+        "/refund",
+        "/terms"
+      ],
+      "bodyInbound": [
+        "/calculators",
+        "/concrete-cost-calculator",
+        "/concrete-estimate-template",
+        "/concrete-estimating-software",
+        "/concrete-footing-cost-calculator",
+        "/concrete-job-cost-calculator",
+        "/concrete-patio-cost-calculator",
+        "/concrete-sidewalk-cost-calculator",
+        "/concrete-slab-cost-calculator",
+        "/"
+      ]
+    },
+    {
+      "path": "/concrete-estimate-template",
+      "title": "Concrete Estimate Template | Concrete Cost Pro",
+      "description": "Create a free concrete estimate or quote with project scope, customer charges and notes. Print a customer-ready PDF without signup.",
+      "canonical": "https://concretecostpro.com/concrete-estimate-template",
+      "h1": [
+        "Concrete Estimate Template"
+      ],
+      "wordCount": 826,
+      "editorialWords": 672,
+      "jsonLdTypes": [
+        "WebSite",
+        "Organization",
+        "WebApplication",
+        "BreadcrumbList",
+        "FAQPage"
+      ],
+      "inbound": [
+        "/calculators",
+        "/concrete-cost-calculator",
+        "/concrete-driveway-cost-calculator",
+        "/concrete-estimating-software",
+        "/concrete-footing-cost-calculator",
+        "/concrete-invoice-template",
+        "/concrete-job-cost-calculator",
+        "/concrete-material-calculator",
+        "/concrete-patio-cost-calculator",
+        "/concrete-pour-calculator",
+        "/concrete-price-per-yard-calculator",
+        "/concrete-sidewalk-cost-calculator",
+        "/concrete-slab-cost-calculator",
+        "/contact",
+        "/how-to-use",
+        "/",
+        "/pricing",
+        "/privacy",
+        "/ready-mix-concrete-cost-calculator",
+        "/refund",
+        "/terms"
+      ],
+      "bodyInbound": [
+        "/calculators",
+        "/concrete-estimating-software",
+        "/concrete-invoice-template",
+        "/concrete-job-cost-calculator"
+      ]
+    },
+    {
+      "path": "/concrete-estimating-software",
+      "title": "Concrete Estimating Software | Concrete Cost Pro",
+      "description": "Know your true job cost before you quote. Concrete Cost Pro calculates true cost, target-margin pricing and customer-ready estimates from your own rates. $79 once, no subscription.",
+      "canonical": "https://concretecostpro.com/concrete-estimating-software",
+      "h1": [
+        "Know What Every Concrete Job Really Costs Before You Quote It"
+      ],
+      "wordCount": 1251,
+      "editorialWords": 1251,
+      "jsonLdTypes": [
+        "WebSite",
+        "Organization",
+        "SoftwareApplication",
+        "BreadcrumbList",
+        "FAQPage"
+      ],
+      "inbound": [
+        "/calculators",
+        "/concrete-cost-calculator",
+        "/concrete-driveway-cost-calculator",
+        "/concrete-estimate-template",
+        "/concrete-footing-cost-calculator",
+        "/concrete-invoice-template",
+        "/concrete-job-cost-calculator",
+        "/concrete-material-calculator",
+        "/concrete-patio-cost-calculator",
+        "/concrete-pour-calculator",
+        "/concrete-price-per-yard-calculator",
+        "/concrete-sidewalk-cost-calculator",
+        "/concrete-slab-cost-calculator",
+        "/contact",
+        "/how-to-use",
+        "/",
+        "/pricing",
+        "/privacy",
+        "/ready-mix-concrete-cost-calculator",
+        "/refund",
+        "/terms"
+      ],
+      "bodyInbound": [
+        "/calculators",
+        "/concrete-estimate-template",
+        "/concrete-invoice-template",
+        "/concrete-job-cost-calculator",
+        "/concrete-material-calculator",
+        "/concrete-pour-calculator",
+        "/concrete-price-per-yard-calculator",
+        "/how-to-use",
+        "/",
+        "/pricing",
+        "/ready-mix-concrete-cost-calculator"
+      ]
+    },
+    {
+      "path": "/concrete-footing-cost-calculator",
+      "title": "Concrete Footing Cost Calculator | Concrete Cost Pro",
+      "description": "Free concrete footing cost calculator. Enter your specified footing length, width and depth to get order quantity, cost and required selling price.",
+      "canonical": "https://concretecostpro.com/concrete-footing-cost-calculator",
+      "h1": [
+        "Concrete Footing Cost Calculator"
+      ],
+      "wordCount": 1190,
+      "editorialWords": 874,
+      "jsonLdTypes": [
+        "WebSite",
+        "Organization",
+        "WebApplication",
+        "BreadcrumbList",
+        "FAQPage"
+      ],
+      "inbound": [
+        "/calculators",
+        "/concrete-cost-calculator",
+        "/concrete-driveway-cost-calculator",
+        "/concrete-estimate-template",
+        "/concrete-estimating-software",
+        "/concrete-invoice-template",
+        "/concrete-job-cost-calculator",
+        "/concrete-material-calculator",
+        "/concrete-patio-cost-calculator",
+        "/concrete-pour-calculator",
+        "/concrete-price-per-yard-calculator",
+        "/concrete-sidewalk-cost-calculator",
+        "/concrete-slab-cost-calculator",
+        "/contact",
+        "/how-to-use",
+        "/",
+        "/pricing",
+        "/privacy",
+        "/ready-mix-concrete-cost-calculator",
+        "/refund",
+        "/terms"
+      ],
+      "bodyInbound": [
+        "/calculators",
+        "/concrete-estimate-template",
+        "/concrete-pour-calculator",
+        "/"
+      ]
+    },
+    {
+      "path": "/concrete-invoice-template",
+      "title": "Concrete Invoice Template | Concrete Cost Pro",
+      "description": "Create a free concrete invoice with quantities, rates, tax, deposits and balance due. Print or save a customer-ready PDF without signup.",
+      "canonical": "https://concretecostpro.com/concrete-invoice-template",
+      "h1": [
+        "Concrete Invoice Template"
+      ],
+      "wordCount": 1033,
+      "editorialWords": 878,
+      "jsonLdTypes": [
+        "WebSite",
+        "Organization",
+        "WebApplication",
+        "BreadcrumbList",
+        "FAQPage"
+      ],
+      "inbound": [
+        "/calculators",
+        "/concrete-cost-calculator",
+        "/concrete-driveway-cost-calculator",
+        "/concrete-estimate-template",
+        "/concrete-estimating-software",
+        "/concrete-footing-cost-calculator",
+        "/concrete-job-cost-calculator",
+        "/concrete-material-calculator",
+        "/concrete-patio-cost-calculator",
+        "/concrete-pour-calculator",
+        "/concrete-price-per-yard-calculator",
+        "/concrete-sidewalk-cost-calculator",
+        "/concrete-slab-cost-calculator",
+        "/contact",
+        "/how-to-use",
+        "/",
+        "/pricing",
+        "/privacy",
+        "/ready-mix-concrete-cost-calculator",
+        "/refund",
+        "/terms"
+      ],
+      "bodyInbound": [
+        "/calculators",
+        "/concrete-cost-calculator",
+        "/concrete-driveway-cost-calculator",
+        "/concrete-estimate-template",
+        "/concrete-estimating-software",
+        "/concrete-job-cost-calculator",
+        "/concrete-material-calculator",
+        "/concrete-patio-cost-calculator",
+        "/concrete-price-per-yard-calculator",
+        "/concrete-sidewalk-cost-calculator",
+        "/"
+      ]
+    },
+    {
+      "path": "/concrete-job-cost-calculator",
+      "title": "Concrete Job Cost Calculator | Concrete Cost Pro",
+      "description": "Enter your known concrete job costs, including as a standalone concrete labor cost calculator, to calculate true cost, overhead, target-margin pricing and required selling price.",
+      "canonical": "https://concretecostpro.com/concrete-job-cost-calculator",
+      "h1": [
+        "Concrete Job Cost Calculator"
+      ],
+      "wordCount": 1156,
+      "editorialWords": 852,
+      "jsonLdTypes": [
+        "WebSite",
+        "Organization",
+        "WebApplication",
+        "BreadcrumbList",
+        "FAQPage"
+      ],
+      "inbound": [
+        "/calculators",
+        "/concrete-cost-calculator",
+        "/concrete-driveway-cost-calculator",
+        "/concrete-estimate-template",
+        "/concrete-estimating-software",
+        "/concrete-footing-cost-calculator",
+        "/concrete-invoice-template",
+        "/concrete-material-calculator",
+        "/concrete-patio-cost-calculator",
+        "/concrete-pour-calculator",
+        "/concrete-price-per-yard-calculator",
+        "/concrete-sidewalk-cost-calculator",
+        "/concrete-slab-cost-calculator",
+        "/contact",
+        "/how-to-use",
+        "/",
+        "/pricing",
+        "/privacy",
+        "/ready-mix-concrete-cost-calculator",
+        "/refund",
+        "/terms"
+      ],
+      "bodyInbound": [
+        "/calculators",
+        "/concrete-cost-calculator",
+        "/concrete-driveway-cost-calculator",
+        "/concrete-estimate-template",
+        "/concrete-estimating-software",
+        "/concrete-footing-cost-calculator",
+        "/concrete-invoice-template",
+        "/concrete-material-calculator",
+        "/concrete-patio-cost-calculator",
+        "/concrete-sidewalk-cost-calculator",
+        "/concrete-slab-cost-calculator",
+        "/ready-mix-concrete-cost-calculator"
+      ]
+    },
+    {
+      "path": "/concrete-material-calculator",
+      "title": "Concrete Material Calculator | Concrete Cost Pro",
+      "description": "Build a concrete material purchase schedule from your specified quantities. Add waste, round to purchase increments and calculate material costs.",
+      "canonical": "https://concretecostpro.com/concrete-material-calculator",
+      "h1": [
+        "Concrete Material Calculator"
+      ],
+      "wordCount": 1022,
+      "editorialWords": 895,
+      "jsonLdTypes": [
+        "WebSite",
+        "Organization",
+        "WebApplication",
+        "BreadcrumbList",
+        "FAQPage"
+      ],
+      "inbound": [
+        "/calculators",
+        "/concrete-cost-calculator",
+        "/concrete-estimate-template",
+        "/concrete-estimating-software",
+        "/concrete-footing-cost-calculator",
+        "/concrete-job-cost-calculator",
+        "/concrete-pour-calculator",
+        "/concrete-sidewalk-cost-calculator",
+        "/concrete-slab-cost-calculator",
+        "/",
+        "/ready-mix-concrete-cost-calculator"
+      ],
+      "bodyInbound": [
+        "/calculators",
+        "/concrete-cost-calculator",
+        "/concrete-estimate-template",
+        "/concrete-estimating-software",
+        "/concrete-footing-cost-calculator",
+        "/concrete-job-cost-calculator",
+        "/concrete-pour-calculator",
+        "/concrete-sidewalk-cost-calculator",
+        "/concrete-slab-cost-calculator",
+        "/",
+        "/ready-mix-concrete-cost-calculator"
+      ]
+    },
+    {
+      "path": "/concrete-patio-cost-calculator",
+      "title": "Concrete Patio Cost Calculator | Concrete Cost Pro",
+      "description": "Free concrete patio cost calculator. Enter dimensions and costs to get order quantity, total project cost and a target-margin selling price.",
+      "canonical": "https://concretecostpro.com/concrete-patio-cost-calculator",
+      "h1": [
+        "Concrete Patio Cost Calculator"
+      ],
+      "wordCount": 1127,
+      "editorialWords": 852,
+      "jsonLdTypes": [
+        "WebSite",
+        "Organization",
+        "WebApplication",
+        "BreadcrumbList",
+        "FAQPage"
+      ],
+      "inbound": [
+        "/calculators",
+        "/concrete-cost-calculator",
+        "/concrete-driveway-cost-calculator",
+        "/concrete-estimate-template",
+        "/concrete-estimating-software",
+        "/concrete-footing-cost-calculator",
+        "/concrete-invoice-template",
+        "/concrete-job-cost-calculator",
+        "/concrete-material-calculator",
+        "/concrete-pour-calculator",
+        "/concrete-price-per-yard-calculator",
+        "/concrete-sidewalk-cost-calculator",
+        "/concrete-slab-cost-calculator",
+        "/contact",
+        "/how-to-use",
+        "/",
+        "/pricing",
+        "/privacy",
+        "/ready-mix-concrete-cost-calculator",
+        "/refund",
+        "/terms"
+      ],
+      "bodyInbound": [
+        "/calculators",
+        "/concrete-cost-calculator",
+        "/concrete-driveway-cost-calculator",
+        "/concrete-estimate-template",
+        "/concrete-slab-cost-calculator",
+        "/"
+      ]
+    },
+    {
+      "path": "/concrete-pour-calculator",
+      "title": "Concrete Pour Calculator | Concrete Cost Pro",
+      "description": "Calculate concrete pour volume for multiple rectangular sections. See net cubic yards, allowance and the final order rounded to your chosen increment.",
+      "canonical": "https://concretecostpro.com/concrete-pour-calculator",
+      "h1": [
+        "Concrete Pour Calculator"
+      ],
+      "wordCount": 961,
+      "editorialWords": 874,
+      "jsonLdTypes": [
+        "WebSite",
+        "Organization",
+        "WebApplication",
+        "BreadcrumbList",
+        "FAQPage"
+      ],
+      "inbound": [
+        "/calculators",
+        "/concrete-cost-calculator",
+        "/concrete-driveway-cost-calculator",
+        "/concrete-estimating-software",
+        "/concrete-footing-cost-calculator",
+        "/concrete-material-calculator",
+        "/concrete-patio-cost-calculator",
+        "/concrete-price-per-yard-calculator",
+        "/concrete-sidewalk-cost-calculator",
+        "/concrete-slab-cost-calculator",
+        "/",
+        "/ready-mix-concrete-cost-calculator"
+      ],
+      "bodyInbound": [
+        "/calculators",
+        "/concrete-cost-calculator",
+        "/concrete-driveway-cost-calculator",
+        "/concrete-estimating-software",
+        "/concrete-footing-cost-calculator",
+        "/concrete-material-calculator",
+        "/concrete-patio-cost-calculator",
+        "/concrete-price-per-yard-calculator",
+        "/concrete-sidewalk-cost-calculator",
+        "/concrete-slab-cost-calculator",
+        "/",
+        "/ready-mix-concrete-cost-calculator"
+      ]
+    },
+    {
+      "path": "/concrete-price-per-yard-calculator",
+      "title": "Concrete Price Per Yard Calculator | Concrete Cost Pro",
+      "description": "Compare two concrete supplier quotes by effective delivered price per yard. Include delivery, short-load charges, pumping and tax for the same order.",
+      "canonical": "https://concretecostpro.com/concrete-price-per-yard-calculator",
+      "h1": [
+        "Concrete Price Per Yard Calculator"
+      ],
+      "wordCount": 1051,
+      "editorialWords": 891,
+      "jsonLdTypes": [
+        "WebSite",
+        "Organization",
+        "WebApplication",
+        "BreadcrumbList",
+        "FAQPage"
+      ],
+      "inbound": [
+        "/calculators",
+        "/concrete-cost-calculator",
+        "/concrete-driveway-cost-calculator",
+        "/concrete-estimating-software",
+        "/concrete-invoice-template",
+        "/concrete-job-cost-calculator",
+        "/",
+        "/ready-mix-concrete-cost-calculator"
+      ],
+      "bodyInbound": [
+        "/calculators",
+        "/concrete-cost-calculator",
+        "/concrete-driveway-cost-calculator",
+        "/concrete-estimating-software",
+        "/concrete-invoice-template",
+        "/concrete-job-cost-calculator",
+        "/",
+        "/ready-mix-concrete-cost-calculator"
+      ]
+    },
+    {
+      "path": "/concrete-sidewalk-cost-calculator",
+      "title": "Concrete Sidewalk Cost Calculator | Concrete Cost Pro",
+      "description": "Free concrete sidewalk cost calculator. Enter length, width and thickness to get order quantity, total cost and a target-margin selling price.",
+      "canonical": "https://concretecostpro.com/concrete-sidewalk-cost-calculator",
+      "h1": [
+        "Concrete Sidewalk Cost Calculator"
+      ],
+      "wordCount": 1057,
+      "editorialWords": 782,
+      "jsonLdTypes": [
+        "WebSite",
+        "Organization",
+        "WebApplication",
+        "BreadcrumbList",
+        "FAQPage"
+      ],
+      "inbound": [
+        "/calculators",
+        "/concrete-cost-calculator",
+        "/concrete-driveway-cost-calculator",
+        "/concrete-estimate-template",
+        "/concrete-estimating-software",
+        "/concrete-footing-cost-calculator",
+        "/concrete-invoice-template",
+        "/concrete-job-cost-calculator",
+        "/concrete-material-calculator",
+        "/concrete-patio-cost-calculator",
+        "/concrete-pour-calculator",
+        "/concrete-price-per-yard-calculator",
+        "/concrete-slab-cost-calculator",
+        "/contact",
+        "/how-to-use",
+        "/",
+        "/pricing",
+        "/privacy",
+        "/ready-mix-concrete-cost-calculator",
+        "/refund",
+        "/terms"
+      ],
+      "bodyInbound": [
+        "/calculators",
+        "/concrete-estimate-template",
+        "/"
+      ]
+    },
+    {
+      "path": "/concrete-slab-cost-calculator",
+      "title": "Concrete Slab Cost Calculator | Concrete Cost Pro",
+      "description": "Free concrete slab cost calculator. Get concrete volume, order quantity, total project cost and a target-margin selling price for any slab pour.",
+      "canonical": "https://concretecostpro.com/concrete-slab-cost-calculator",
+      "h1": [
+        "Concrete Slab Cost Calculator"
+      ],
+      "wordCount": 1227,
+      "editorialWords": 953,
+      "jsonLdTypes": [
+        "WebSite",
+        "Organization",
+        "WebApplication",
+        "BreadcrumbList",
+        "FAQPage"
+      ],
+      "inbound": [
+        "/calculators",
+        "/concrete-cost-calculator",
+        "/concrete-driveway-cost-calculator",
+        "/concrete-estimate-template",
+        "/concrete-estimating-software",
+        "/concrete-footing-cost-calculator",
+        "/concrete-invoice-template",
+        "/concrete-job-cost-calculator",
+        "/concrete-material-calculator",
+        "/concrete-patio-cost-calculator",
+        "/concrete-pour-calculator",
+        "/concrete-price-per-yard-calculator",
+        "/concrete-sidewalk-cost-calculator",
+        "/contact",
+        "/how-to-use",
+        "/",
+        "/pricing",
+        "/privacy",
+        "/ready-mix-concrete-cost-calculator",
+        "/refund",
+        "/terms"
+      ],
+      "bodyInbound": [
+        "/calculators",
+        "/concrete-cost-calculator",
+        "/concrete-driveway-cost-calculator",
+        "/concrete-estimate-template",
+        "/concrete-estimating-software",
+        "/concrete-footing-cost-calculator",
+        "/concrete-job-cost-calculator",
+        "/concrete-patio-cost-calculator",
+        "/concrete-pour-calculator",
+        "/concrete-sidewalk-cost-calculator",
+        "/"
+      ]
+    },
+    {
+      "path": "/contact",
+      "title": "Contact Us | Concrete Cost Pro",
+      "description": "Questions about Concrete Cost Pro, a calculator, or an existing purchase? Send us a message.",
+      "canonical": "https://concretecostpro.com/contact",
+      "h1": [
+        "Contact Us"
+      ],
+      "wordCount": 32,
+      "editorialWords": 26,
+      "jsonLdTypes": [
+        "WebSite",
+        "Organization",
+        "BreadcrumbList"
+      ],
+      "inbound": [
+        "/calculators",
+        "/concrete-cost-calculator",
+        "/concrete-driveway-cost-calculator",
+        "/concrete-estimate-template",
+        "/concrete-estimating-software",
+        "/concrete-footing-cost-calculator",
+        "/concrete-invoice-template",
+        "/concrete-job-cost-calculator",
+        "/concrete-material-calculator",
+        "/concrete-patio-cost-calculator",
+        "/concrete-pour-calculator",
+        "/concrete-price-per-yard-calculator",
+        "/concrete-sidewalk-cost-calculator",
+        "/concrete-slab-cost-calculator",
+        "/how-to-use",
+        "/",
+        "/pricing",
+        "/privacy",
+        "/ready-mix-concrete-cost-calculator",
+        "/refund",
+        "/terms"
+      ],
+      "bodyInbound": [
+        "/how-to-use",
+        "/privacy",
+        "/refund",
+        "/terms"
+      ]
+    },
+    {
+      "path": "/how-to-use",
+      "title": "How to Use Concrete Cost Pro | Step-by-Step Guide",
+      "description": "A step-by-step visual guide to Concrete Cost Pro: setup, building an estimate, Rate Health, exporting, tracking actuals, and a troubleshooting FAQ.",
+      "canonical": "https://concretecostpro.com/how-to-use",
+      "h1": [
+        "How to Use Concrete Cost Pro"
+      ],
+      "wordCount": 1499,
+      "editorialWords": 1499,
+      "jsonLdTypes": [
+        "WebSite",
+        "Organization",
+        "BreadcrumbList"
+      ],
+      "inbound": [
+        "/calculators",
+        "/concrete-cost-calculator",
+        "/concrete-driveway-cost-calculator",
+        "/concrete-estimate-template",
+        "/concrete-estimating-software",
+        "/concrete-footing-cost-calculator",
+        "/concrete-invoice-template",
+        "/concrete-job-cost-calculator",
+        "/concrete-material-calculator",
+        "/concrete-patio-cost-calculator",
+        "/concrete-pour-calculator",
+        "/concrete-price-per-yard-calculator",
+        "/concrete-sidewalk-cost-calculator",
+        "/concrete-slab-cost-calculator",
+        "/contact",
+        "/",
+        "/pricing",
+        "/privacy",
+        "/ready-mix-concrete-cost-calculator",
+        "/refund",
+        "/terms"
+      ],
+      "bodyInbound": []
+    },
+    {
+      "path": "/",
+      "title": "Concrete Cost & Estimating Calculators | Concrete Cost Pro",
+      "description": "Free concrete cost and quantity calculators for driveways, slabs, patios, footings and sidewalks, plus Concrete Cost Pro, contractor estimating software at a $79 launch price (regularly $99).",
+      "canonical": "https://concretecostpro.com/",
+      "h1": [
+        "Calculate Concrete Costs—or Price Customer Jobs With Confidence"
+      ],
+      "wordCount": 642,
+      "editorialWords": 642,
+      "jsonLdTypes": [
+        "WebSite",
+        "Organization",
+        "FAQPage"
+      ],
+      "inbound": [
+        "/calculators",
+        "/concrete-cost-calculator",
+        "/concrete-driveway-cost-calculator",
+        "/concrete-estimate-template",
+        "/concrete-estimating-software",
+        "/concrete-footing-cost-calculator",
+        "/concrete-invoice-template",
+        "/concrete-job-cost-calculator",
+        "/concrete-material-calculator",
+        "/concrete-patio-cost-calculator",
+        "/concrete-pour-calculator",
+        "/concrete-price-per-yard-calculator",
+        "/concrete-sidewalk-cost-calculator",
+        "/concrete-slab-cost-calculator",
+        "/contact",
+        "/how-to-use",
+        "/pricing",
+        "/privacy",
+        "/ready-mix-concrete-cost-calculator",
+        "/refund",
+        "/terms"
+      ],
+      "bodyInbound": [
+        "/calculators",
+        "/concrete-cost-calculator",
+        "/concrete-driveway-cost-calculator",
+        "/concrete-estimate-template",
+        "/concrete-estimating-software",
+        "/concrete-footing-cost-calculator",
+        "/concrete-invoice-template",
+        "/concrete-job-cost-calculator",
+        "/concrete-material-calculator",
+        "/concrete-patio-cost-calculator",
+        "/concrete-pour-calculator",
+        "/concrete-price-per-yard-calculator",
+        "/concrete-sidewalk-cost-calculator",
+        "/concrete-slab-cost-calculator",
+        "/contact",
+        "/how-to-use",
+        "/pricing",
+        "/privacy",
+        "/ready-mix-concrete-cost-calculator",
+        "/refund",
+        "/terms"
+      ]
+    },
+    {
+      "path": "/pricing",
+      "title": "Pricing | Concrete Cost Pro",
+      "description": "Concrete Cost Pro: $79 launch price (regularly $99), one-time payment for lifetime access. Saved rates, job costing, rate-health tracking, branded estimates and estimate-vs-actual reporting. No subscription.",
+      "canonical": "https://concretecostpro.com/pricing",
+      "h1": [
+        "One price. Every job, priced right."
+      ],
+      "wordCount": 871,
+      "editorialWords": 861,
+      "jsonLdTypes": [
+        "WebSite",
+        "Organization",
+        [
+          "Product",
+          "SoftwareApplication"
+        ],
+        "BreadcrumbList",
+        "FAQPage"
+      ],
+      "inbound": [
+        "/calculators",
+        "/concrete-cost-calculator",
+        "/concrete-driveway-cost-calculator",
+        "/concrete-estimate-template",
+        "/concrete-estimating-software",
+        "/concrete-footing-cost-calculator",
+        "/concrete-invoice-template",
+        "/concrete-job-cost-calculator",
+        "/concrete-material-calculator",
+        "/concrete-patio-cost-calculator",
+        "/concrete-pour-calculator",
+        "/concrete-price-per-yard-calculator",
+        "/concrete-sidewalk-cost-calculator",
+        "/concrete-slab-cost-calculator",
+        "/contact",
+        "/how-to-use",
+        "/",
+        "/privacy",
+        "/ready-mix-concrete-cost-calculator",
+        "/refund",
+        "/terms"
+      ],
+      "bodyInbound": [
+        "/calculators",
+        "/concrete-cost-calculator",
+        "/concrete-driveway-cost-calculator",
+        "/concrete-estimate-template",
+        "/concrete-estimating-software",
+        "/concrete-footing-cost-calculator",
+        "/concrete-invoice-template",
+        "/concrete-job-cost-calculator",
+        "/concrete-material-calculator",
+        "/concrete-patio-cost-calculator",
+        "/concrete-pour-calculator",
+        "/concrete-price-per-yard-calculator",
+        "/concrete-sidewalk-cost-calculator",
+        "/concrete-slab-cost-calculator",
+        "/how-to-use",
+        "/",
+        "/ready-mix-concrete-cost-calculator",
+        "/terms"
+      ]
+    },
+    {
+      "path": "/privacy",
+      "title": "Privacy Policy | Concrete Cost Pro",
+      "description": "How Concrete Cost Pro handles data: local-first storage, minimal site analytics, and no account requirement.",
+      "canonical": "https://concretecostpro.com/privacy",
+      "h1": [
+        "Privacy Policy"
+      ],
+      "wordCount": 566,
+      "editorialWords": 566,
+      "jsonLdTypes": [
+        "WebSite",
+        "Organization",
+        "BreadcrumbList"
+      ],
+      "inbound": [
+        "/calculators",
+        "/concrete-cost-calculator",
+        "/concrete-driveway-cost-calculator",
+        "/concrete-estimate-template",
+        "/concrete-estimating-software",
+        "/concrete-footing-cost-calculator",
+        "/concrete-invoice-template",
+        "/concrete-job-cost-calculator",
+        "/concrete-material-calculator",
+        "/concrete-patio-cost-calculator",
+        "/concrete-pour-calculator",
+        "/concrete-price-per-yard-calculator",
+        "/concrete-sidewalk-cost-calculator",
+        "/concrete-slab-cost-calculator",
+        "/contact",
+        "/how-to-use",
+        "/",
+        "/pricing",
+        "/ready-mix-concrete-cost-calculator",
+        "/refund",
+        "/terms"
+      ],
+      "bodyInbound": []
+    },
+    {
+      "path": "/ready-mix-concrete-cost-calculator",
+      "title": "Ready-Mix Concrete Cost Calculator | Concrete Cost Pro",
+      "description": "Calculate ready-mix order cost from cubic yards and your supplier rate, including delivery, short-load fees, pumping, other charges and tax.",
+      "canonical": "https://concretecostpro.com/ready-mix-concrete-cost-calculator",
+      "h1": [
+        "Ready-Mix Concrete Cost Calculator"
+      ],
+      "wordCount": 994,
+      "editorialWords": 881,
+      "jsonLdTypes": [
+        "WebSite",
+        "Organization",
+        "WebApplication",
+        "BreadcrumbList",
+        "FAQPage"
+      ],
+      "inbound": [
+        "/calculators",
+        "/concrete-estimate-template",
+        "/concrete-estimating-software",
+        "/concrete-footing-cost-calculator",
+        "/concrete-job-cost-calculator",
+        "/concrete-material-calculator",
+        "/concrete-patio-cost-calculator",
+        "/concrete-pour-calculator",
+        "/concrete-price-per-yard-calculator",
+        "/concrete-slab-cost-calculator",
+        "/"
+      ],
+      "bodyInbound": [
+        "/calculators",
+        "/concrete-estimate-template",
+        "/concrete-estimating-software",
+        "/concrete-footing-cost-calculator",
+        "/concrete-job-cost-calculator",
+        "/concrete-material-calculator",
+        "/concrete-patio-cost-calculator",
+        "/concrete-pour-calculator",
+        "/concrete-price-per-yard-calculator",
+        "/concrete-slab-cost-calculator",
+        "/"
+      ]
+    },
+    {
+      "path": "/refund",
+      "title": "Refund Policy | Concrete Cost Pro",
+      "description": "Refund policy for the Concrete Cost Pro one-time lifetime purchase.",
+      "canonical": "https://concretecostpro.com/refund",
+      "h1": [
+        "Refund Policy"
+      ],
+      "wordCount": 296,
+      "editorialWords": 296,
+      "jsonLdTypes": [
+        "WebSite",
+        "Organization",
+        "BreadcrumbList"
+      ],
+      "inbound": [
+        "/calculators",
+        "/concrete-cost-calculator",
+        "/concrete-driveway-cost-calculator",
+        "/concrete-estimate-template",
+        "/concrete-estimating-software",
+        "/concrete-footing-cost-calculator",
+        "/concrete-invoice-template",
+        "/concrete-job-cost-calculator",
+        "/concrete-material-calculator",
+        "/concrete-patio-cost-calculator",
+        "/concrete-pour-calculator",
+        "/concrete-price-per-yard-calculator",
+        "/concrete-sidewalk-cost-calculator",
+        "/concrete-slab-cost-calculator",
+        "/contact",
+        "/how-to-use",
+        "/",
+        "/pricing",
+        "/privacy",
+        "/ready-mix-concrete-cost-calculator",
+        "/terms"
+      ],
+      "bodyInbound": [
+        "/pricing",
+        "/terms"
+      ]
+    },
+    {
+      "path": "/terms",
+      "title": "Terms of Service | Concrete Cost Pro",
+      "description": "Terms of Service for Concrete Cost Pro's free calculators and the Concrete Cost Pro lifetime software license.",
+      "canonical": "https://concretecostpro.com/terms",
+      "h1": [
+        "Terms of Service"
+      ],
+      "wordCount": 701,
+      "editorialWords": 701,
+      "jsonLdTypes": [
+        "WebSite",
+        "Organization",
+        "BreadcrumbList"
+      ],
+      "inbound": [
+        "/calculators",
+        "/concrete-cost-calculator",
+        "/concrete-driveway-cost-calculator",
+        "/concrete-estimate-template",
+        "/concrete-estimating-software",
+        "/concrete-footing-cost-calculator",
+        "/concrete-invoice-template",
+        "/concrete-job-cost-calculator",
+        "/concrete-material-calculator",
+        "/concrete-patio-cost-calculator",
+        "/concrete-pour-calculator",
+        "/concrete-price-per-yard-calculator",
+        "/concrete-sidewalk-cost-calculator",
+        "/concrete-slab-cost-calculator",
+        "/contact",
+        "/how-to-use",
+        "/",
+        "/pricing",
+        "/privacy",
+        "/ready-mix-concrete-cost-calculator",
+        "/refund"
+      ],
+      "bodyInbound": [
+        "/pricing"
+      ]
+    }
+  ]
+}
