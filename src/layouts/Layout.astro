@@ -19,18 +19,14 @@ const { title, description, noIndex = false, softNav = false } = Astro.props;
 // plenty of scroll-triggered fixed elements (calculator sticky bars, contextual CTAs).
 const showBackToTop = Astro.url.pathname === "/app" || Astro.url.pathname.startsWith("/app/");
 const site = Astro.site ?? new URL("https://concretecostpro.com");
-const canonicalURL = new URL(Astro.url.pathname, site);
+const canonicalPath = Astro.url.pathname === "/" ? "/" : Astro.url.pathname.replace(/\/+$/, "");
+const canonicalURL = new URL(canonicalPath, site);
 
 const websiteSchema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   name: "Concrete Cost Pro",
   url: site.toString(),
-  potentialAction: {
-    "@type": "SearchAction",
-    target: `${site.toString().replace(/\/$/, "")}/?q={search_term_string}`,
-    "query-input": "required name=search_term_string",
-  },
 };
 
 const absoluteUrl = (path: string) => new URL(path, site).toString();
@@ -44,7 +40,7 @@ const organizationSchema = {
   logo: absoluteUrl("/icon-512.png"),
   hasMerchantReturnPolicy: {
     "@type": "MerchantReturnPolicy",
-    merchantReturnLink: absoluteUrl("/refund/"),
+    merchantReturnLink: absoluteUrl("/refund"),
   },
 };
 

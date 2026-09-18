@@ -1,0 +1,6 @@
+---
+import SupplyToolLayout from "../layouts/SupplyToolLayout.astro";
+import { PourTool } from "../components/calculator/SupplyTools";
+import { SUPPLY_TOOL_PAGES } from "../data/supplyToolPages";
+---
+<SupplyToolLayout page={SUPPLY_TOOL_PAGES.pour}><PourTool client:load /></SupplyToolLayout>

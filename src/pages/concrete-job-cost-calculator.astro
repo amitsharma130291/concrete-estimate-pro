@@ -6,6 +6,7 @@ import FaqAccordion from "../components/FaqAccordion.astro";
 import Breadcrumbs from "../components/Breadcrumbs.astro";
 import TrustBadges from "../components/TrustBadges.astro";
 import JobCostCalculatorIsland from "../components/calculator/JobCostCalculatorIsland";
+import SupplyToolLinks from "../components/SupplyToolLinks.astro";
 import { CheckCircle2, ArrowRight, Check, X } from "lucide-react";
 
 const proBenefits = [
@@ -326,6 +327,7 @@ const webApplicationSchema = {
         </div>
       </div>
     </section>
+    <SupplyToolLinks keys={["readyMix", "pricePerYard", "material", "invoice"]} title="Check your purchase costs before setting the customer price" />
   </main>
   <PublicFooter />
 </Layout>

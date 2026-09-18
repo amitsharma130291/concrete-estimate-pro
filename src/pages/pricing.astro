@@ -103,11 +103,11 @@ const productImages = [
 const productSchema = {
   "@context": "https://schema.org",
   "@type": ["Product", "SoftwareApplication"],
-  "@id": "https://concretecostpro.com/pricing/#product",
+  "@id": "https://concretecostpro.com/pricing#product",
   name: "Concrete Cost Pro",
   description:
     "Concrete estimating and job-profitability software: quantities, true job costs, target-margin pricing, rate health and estimate-vs-actual reporting for concrete contractors.",
-  url: "https://concretecostpro.com/pricing/",
+  url: "https://concretecostpro.com/pricing",
   image: productImages,
   brand: { "@type": "Brand", name: "Concrete Cost Pro" },
   sku: "CONCRETE-COST-PRO",
@@ -115,7 +115,7 @@ const productSchema = {
   operatingSystem: "Modern web browser",
   offers: {
     "@type": "Offer",
-    url: "https://concretecostpro.com/pricing/",
+    url: "https://concretecostpro.com/pricing",
     price: "79.00",
     priceCurrency: "USD",
     availability: "https://schema.org/InStock",
@@ -128,7 +128,7 @@ const productSchema = {
     },
     hasMerchantReturnPolicy: {
       "@type": "MerchantReturnPolicy",
-      merchantReturnLink: "https://concretecostpro.com/refund/",
+      merchantReturnLink: "https://concretecostpro.com/refund",
     },
   },
 };
@@ -210,8 +210,8 @@ const productSchema = {
               <path d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4z" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
             <p class="text-sm text-ink">
-              <strong>One underpriced job costs more than $79.</strong> Fix your pricing once, keep the difference on
-              every job after.
+              <strong>One payment for the estimating workflow.</strong> Save business rates, check your target price
+              and export the current estimate for your records.
             </p>
           </div>
 
@@ -271,7 +271,7 @@ const productSchema = {
                 </tr>
                 <tr>
                   <td class="px-4 py-3 align-top text-muted">One project at a time, nothing saved</td>
-                  <td class="px-4 py-3 align-top text-ink">Reusable templates, saved estimates, one-click duplication</td>
+                  <td class="px-4 py-3 align-top text-ink">Reusable templates, one autosaved current estimate, duplication to start the next job</td>
                 </tr>
                 <tr>
                   <td class="px-4 py-3 align-top text-muted">No audit of your existing standard rates</td>

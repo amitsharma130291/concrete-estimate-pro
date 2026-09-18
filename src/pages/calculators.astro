@@ -6,6 +6,7 @@ import Breadcrumbs from "../components/Breadcrumbs.astro";
 import TrustBadges from "../components/TrustBadges.astro";
 import FaqAccordion from "../components/FaqAccordion.astro";
 import { CALCULATOR_CONFIGS } from "../data/calculatorConfigs";
+import { SUPPLY_TOOL_PAGES } from "../data/supplyToolPages";
 import { Calculator, Car, Square, Sun, Layers, Footprints, Receipt, FileText, ArrowRight, Check, X, Search } from "lucide-react";
 
 const ICONS: Record<string, any> = {
@@ -17,14 +18,12 @@ const ICONS: Record<string, any> = {
   sidewalk: Footprints,
 };
 
-// Every tool on the page, tagged for the search/filter controls below. Quantity and cost tags
-// both apply to every project calculator -- each one calculates both in a single tool, there's
-// no separate "quantity only" page to point a "Quantity" filter at.
+// Project tools calculate both quantity and cost; focused supply tools have separate tags.
 const projectTools = Object.values(CALCULATOR_CONFIGS)
   .sort((a, b) => (a.projectType === "general" ? -1 : b.projectType === "general" ? 1 : 0))
   .map((c) => ({
     title: c.h1,
-    outcome: c.intro.split(".")[0] + ".",
+    outcome: `Enter ${c.projectType === "footing" ? "specified footing dimensions" : "dimensions"}, then include your rates to calculate quantity, installed cost and contractor price.`,
     bestFor:
       c.projectType === "general"
         ? "Custom or mixed project types"
@@ -47,6 +46,15 @@ const businessTools = [
     tags: ["pricing"],
     category: "business",
   },
+  ...[SUPPLY_TOOL_PAGES.readyMix, SUPPLY_TOOL_PAGES.pricePerYard, SUPPLY_TOOL_PAGES.pour, SUPPLY_TOOL_PAGES.material].map((page) => ({
+    title: page.title,
+    outcome: page.description,
+    bestFor: page.slug.includes("price-per") ? "Comparing two matching supplier quotes" : page.slug.includes("pour") ? "Multiple rectangular pour sections" : page.slug.includes("material") ? "Known material takeoff quantities" : "Pricing one concrete supply order",
+    href: `/${page.slug}`,
+    icon: Calculator,
+    tags: page.slug.includes("pour") ? ["quantity"] : page.slug.includes("material") ? ["quantity", "cost"] : ["cost"],
+    category: "business",
+  })),
 ];
 
 const estimateTools = [
@@ -55,6 +63,15 @@ const estimateTools = [
     outcome: "An interactive estimate and quote template. Fill it in and print a customer-ready document in minutes.",
     bestFor: "Anyone who needs a clean, printable estimate right now",
     href: "/concrete-estimate-template",
+    icon: FileText,
+    tags: ["estimate"],
+    category: "estimate",
+  },
+  {
+    title: SUPPLY_TOOL_PAGES.invoice.title,
+    outcome: "Bill completed work with taxable lines, deposits and balance due, then print a clean invoice PDF.",
+    bestFor: "Contractors billing completed work",
+    href: `/${SUPPLY_TOOL_PAGES.invoice.slug}`,
     icon: FileText,
     tags: ["estimate"],
     category: "estimate",
@@ -68,7 +85,7 @@ const filterChips = [
   { key: "quantity", label: "Quantity" },
   { key: "cost", label: "Cost" },
   { key: "pricing", label: "Contractor Pricing" },
-  { key: "estimate", label: "Estimate Templates" },
+  { key: "estimate", label: "Estimates & Invoices" },
 ];
 
 const bridgeFree = [
@@ -121,7 +138,7 @@ const faqs = [
   },
   {
     q: "Where is my data stored?",
-    a: "Calculator inputs and Concrete Cost Pro data are stored locally in your browser, where supported, not on a server or account. Local storage is not an automatic backup: Concrete Cost Pro users should export a workspace backup regularly.",
+    a: "Your calculator inputs stay in this browser. Some free tools keep them only for the current visit. Concrete Cost Pro autosaves one current estimate and reusable business settings locally. Export business data as JSON and the current estimate as PDF or CSV; local storage is not a cloud backup.",
   },
 ];
 
@@ -156,7 +173,7 @@ const finderNames: Record<string, string> = Object.fromEntries(
 
 <Layout
   title="Free Concrete Calculators | Concrete Cost Pro"
-  description="Every free concrete calculator in one place: cost, quantity and job-cost calculators for driveways, slabs, patios, footings and sidewalks, plus an interactive estimate template."
+  description="Find free concrete cost, pour, material and supplier-price calculators, plus printable estimate and invoice tools. Choose the right tool for your job."
 >
   <Fragment slot="head">
     <script type="application/ld+json" is:inline set:html={JSON.stringify(itemListSchema)} />
@@ -414,7 +431,7 @@ const finderNames: Record<string, string> = Object.fromEntries(
         </div>
 
         <div class="mt-10" data-tool-category>
-          <h3 class="text-sm font-bold uppercase tracking-wide text-muted">Business calculators</h3>
+          <h3 class="text-sm font-bold uppercase tracking-wide text-muted">Quantity, supplier and job-cost tools</h3>
           <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" data-tool-grid>
             {businessTools.map((t) => (
               <a
@@ -442,7 +459,7 @@ const finderNames: Record<string, string> = Object.fromEntries(
         </div>
 
         <div class="mt-10" data-tool-category>
-          <h3 class="text-sm font-bold uppercase tracking-wide text-muted">Estimate tools</h3>
+          <h3 class="text-sm font-bold uppercase tracking-wide text-muted">Estimate and invoice tools</h3>
           <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" data-tool-grid>
             {estimateTools.map((t) => (
               <a
@@ -501,7 +518,7 @@ const finderNames: Record<string, string> = Object.fromEntries(
         </div>
         <p class="mx-auto mt-6 max-w-2xl text-center text-sm text-muted">
           Use the free calculators whenever you need a quick answer. When you're pricing concrete work repeatedly,
-          Concrete Cost Pro keeps your costs, templates, estimates and job results together.
+          Concrete Cost Pro keeps reusable costs and templates alongside one current estimate and its logged actual result.
         </p>
         <div class="mt-6 text-center">
           <a href="/concrete-estimating-software" class="inline-flex items-center gap-2 rounded-lg border border-border bg-white px-6 py-3.5 text-base font-semibold text-ink transition hover:bg-warm-white">
@@ -697,7 +714,7 @@ const finderNames: Record<string, string> = Object.fromEntries(
     </div>
   </div>
 
-  <script define:vars={{ finderRouting, finderNames }}>
+  <script is:inline define:vars={{ finderRouting, finderNames }}>
     // Guided calculator finder: two button groups pick a live recommendation + link.
     const finder = document.querySelector("[data-finder]");
     if (finder) {

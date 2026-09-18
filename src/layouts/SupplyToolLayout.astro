@@ -1,0 +1,34 @@
+---
+import Layout from "./Layout.astro";
+import PublicHeader from "../components/PublicHeader.astro";
+import PublicFooter from "../components/PublicFooter.astro";
+import Breadcrumbs from "../components/Breadcrumbs.astro";
+import FaqAccordion from "../components/FaqAccordion.astro";
+import type { ToolPage } from "../data/supplyToolPages";
+interface Props { page: ToolPage }
+const { page } = Astro.props;
+const previewHeights: Record<string, number> = { "/guide/09-estimate-summary.png": 603, "/guide/03-catalog.png": 420, "/guide/06-wizard-dimensions.png": 580, "/guide/04-templates.png": 642, "/guide/10-rate-health.png": 567 };
+const schema = { "@context": "https://schema.org", "@type": "WebApplication", name: page.title, url: new URL(`/${page.slug}`, Astro.site).toString(), applicationCategory: "BusinessApplication", operatingSystem: "Any (web browser)", offers: { "@type": "Offer", price: "0", priceCurrency: "USD" }, description: page.description };
+---
+<Layout title={`${page.title} | Concrete Cost Pro`} description={page.description}>
+  <Fragment slot="head"><script type="application/ld+json" is:inline set:html={JSON.stringify(schema)} /></Fragment>
+  <PublicHeader />
+  <main>
+    <div class="no-print"><Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Calculators", href: "/calculators" }, { label: page.title, href: `/${page.slug}` }]} /></div>
+    <section class="border-b border-border bg-white no-print"><div class="mx-auto max-w-7xl px-4 py-6 sm:px-6"><p class="text-xs font-bold uppercase tracking-wide text-orange">Free contractor tool</p><h1 class="mt-2 text-2xl font-extrabold sm:text-3xl">{page.title}</h1><p class="mt-3 max-w-3xl text-muted">{page.intro}</p><p class="mt-3 text-xs text-muted">No signup · Uses your own inputs · No automatic cloud storage</p></div></section>
+    <section id="tool" class="mx-auto max-w-7xl px-4 py-6 sm:px-6"><slot /><noscript><p class="mt-4 rounded-lg border border-border p-4">Enable JavaScript to edit the interactive tool. The instructions, formulas and worked example below remain available without it.</p></noscript></section>
+    <div class="no-print">
+      <section class="border-y border-border bg-white"><div class="mx-auto max-w-4xl px-4 py-10 sm:px-6"><h2 class="text-xl font-bold">How to use this {page.slug.includes("invoice") ? "invoice template" : "calculator"}</h2><ol class="mt-5 list-decimal space-y-3 pl-5 text-sm leading-relaxed text-muted">{page.steps.map((step) => <li>{step}</li>)}</ol></div></section>
+      <section class="mx-auto max-w-4xl px-4 py-10 sm:px-6"><h2 class="text-xl font-bold">{page.example.title}</h2><p class="mt-3 text-sm leading-relaxed text-muted">{page.example.intro}</p><div class="mt-5 overflow-x-auto rounded-xl border border-border bg-white"><table class="w-full text-left text-sm"><caption class="sr-only">Worked example for {page.title}</caption><thead><tr class="bg-warm-white"><th scope="col" class="px-4 py-3">Calculation or charge</th><th scope="col" class="px-4 py-3">Result</th></tr></thead><tbody>{page.example.rows.map(([label, value]) => <tr class="border-t border-border"><th scope="row" class="px-4 py-3 font-medium">{label}</th><td class="px-4 py-3">{value}</td></tr>)}</tbody></table></div><p class="mt-4 text-sm leading-relaxed text-muted">{page.example.takeaway}</p></section>
+      <section class="border-y border-border bg-white"><div class="mx-auto max-w-4xl space-y-8 px-4 py-10 sm:px-6">{page.sections.map((section) => <div><h2 class="text-xl font-bold">{section.title}</h2>{section.paragraphs.map((paragraph) => <p class="mt-3 text-sm leading-relaxed text-muted">{paragraph}</p>)}</div>)}</div></section>
+      <section class="mx-auto max-w-4xl px-4 py-10 sm:px-6"><h2 class="text-xl font-bold">Continue your concrete workflow</h2><div class="mt-5 grid gap-4 sm:grid-cols-2">{page.links.map((link) => <div class="rounded-xl border border-border bg-white p-5"><a href={link.href} class="font-semibold text-orange hover:underline">{link.label}</a><p class="mt-2 text-sm leading-relaxed text-muted">{link.why}</p></div>)}</div><a href="/calculators" class="mt-5 inline-block text-sm font-semibold text-orange hover:underline">Browse all free concrete tools</a></section>
+      <section class="border-y border-border bg-charcoal"><div class="mx-auto grid max-w-6xl items-center gap-8 px-4 py-12 sm:px-6 lg:grid-cols-2"><div><p class="text-xs font-bold uppercase tracking-wide text-orange-ondark">Concrete Cost Pro · One-time purchase</p><h2 class="mt-3 text-2xl font-bold text-white">{page.pro.title}</h2><p class="mt-4 text-sm leading-relaxed text-white/80">{page.pro.body}</p><a href="/pricing" data-pricing-cta data-analytics-event="pro_cta_clicked" data-analytics-source={`${page.slug}_contextual`} class="mt-6 inline-flex rounded-lg bg-orange px-5 py-3 font-semibold text-white hover:bg-orange-dark"><span data-pricing-cta-label>{page.pro.cta}</span></a><p class="mt-3 text-sm text-white/75">$79 lifetime launch price · Regularly $99 · No monthly subscription</p><a href="/concrete-estimating-software" class="mt-4 inline-block text-sm font-semibold text-orange-ondark hover:underline">See Concrete Cost Pro features</a></div><img src={page.pro.image} alt={page.pro.alt} width="1116" height={previewHeights[page.pro.image]} loading="lazy" class="w-full rounded-xl border border-white/20" /></div></section>
+      <section class="mx-auto max-w-5xl px-4 py-10 sm:px-6"><FaqAccordion faqs={page.faqs} title={`${page.title} questions`} /></section>
+    </div>
+  </main>
+  <div class="no-print"><PublicFooter /></div>
+</Layout>
+<style is:global>
+  @media print { .invoice-document { border: 0; box-shadow: none; padding: 0; } #tool { padding: 0; max-width: none; } .invoice-tool { display: block !important; } .invoice-document table { font-size: 10pt; } .invoice-document tr { break-inside: avoid; } }
+</style>
+

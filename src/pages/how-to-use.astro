@@ -18,7 +18,7 @@ const steps = [
     n: 1,
     title: "Unlock your license",
     body: "After purchase, you land back on the site already unlocked, and a welcome email arrives with your license key. That key is your only \"account\": no password, no login. Save the email, since it's how you get back in on a new device or after clearing your browser.",
-    why: "One payment, not a monthly bill. Every job you price after this one goes straight to your margin. Nothing recurring comes out of it.",
+    why: "There is no recurring software subscription. Your job margin still depends on the agreed selling price and the actual costs of the work.",
   },
   {
     n: 2,
@@ -92,7 +92,7 @@ const steps = [
 const faqs = [
   {
     q: "I cleared my browser (or switched computers) and my estimate is gone. Can I get it back?",
-    a: "No. Your current estimate lives only in this browser, on this device, with no cloud backup. This is by design (nothing about your business ever leaves your device). Before clearing browser data or switching machines, export the estimate as a PDF or CSV from Current Estimate first. Your license key, business profile, catalog, rates and templates are separate from the current estimate and are recoverable; see \"Lost access?\" below.",
+    a: "No. Your current estimate lives only in this browser, on this device, with no cloud backup. This is by design (nothing about your business ever leaves your device). Before clearing browser data or switching machines, export the estimate as a PDF or CSV from Current Estimate first. You can recover your license key through Pricing. Your profile, catalog, rates and templates can be restored only if you exported a business-data backup beforehand. See \"Lost access?\" below.",
   },
   {
     q: "My total shows $0, or a field has a red outline.",
@@ -112,7 +112,7 @@ const faqs = [
   },
   {
     q: "How do I restore my data on a new device, or after clearing my browser?",
-    a: "In Settings, use \"Import business data\" and pick the file \"Export business data\" saved earlier. It restores your business profile, catalog, rates and templates exactly as they were. This only works with a file this app exported itself; it's not a general-purpose import. Your current estimate isn't part of that file (see above), so restore it separately by starting a new estimate from your data, or referencing the PDF/CSV you exported.",
+    a: "In Settings, use \"Import business data\" and select an exported business-data JSON file to restore your profile, catalog, rates and templates. It does not restore the current estimate or its actual result. PDF and CSV estimate exports cannot be re-imported; use them as records when manually rebuilding a job if needed.",
   },
   {
     q: "Where is my data actually stored? Is it sent anywhere?",

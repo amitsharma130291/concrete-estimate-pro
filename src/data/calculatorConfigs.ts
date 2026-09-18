@@ -116,7 +116,7 @@ export const CALCULATOR_CONFIGS: Record<string, CalculatorConfig> = {
       },
       {
         title: "Reinforcement",
-        body: "Wire mesh is the common baseline; rebar grids cost more in material and placement time but hold up better under heavier loads or unstable soil.",
+        body: "Use the reinforcement in the responsible specification. Different bar schedules, mesh sheets and placement requirements change material and crew costs; this calculator does not determine which system is appropriate.",
       },
       {
         title: "Site access",
@@ -264,7 +264,7 @@ export const CALCULATOR_CONFIGS: Record<string, CalculatorConfig> = {
       },
       {
         title: "Reinforcement",
-        body: "Wire mesh is common for standard patios; thicker or larger patios may call for rebar.",
+        body: "Price the reinforcement shown in the project specification, including its material quantity and placement work. The calculator does not choose mesh, bar sizes or spacing.",
       },
       {
         title: "Site access",
@@ -411,9 +411,9 @@ export const CALCULATOR_CONFIGS: Record<string, CalculatorConfig> = {
     slug: "concrete-cost-calculator",
     h1: "Concrete Cost Calculator",
     intro:
-      "A flexible concrete cost calculator, estimate calculator and pricing calculator for any rectangular pour, including slabs, driveways, patios, sidewalks or custom flatwork. Enter your dimensions and your ready-mix price per yard to get quantity, total cost and required selling price.",
+      "Calculate volume, installed project cost and optional contractor pricing for one rectangular concrete pour. Enter dimensions and your own material, labor and equipment rates.",
     metaDescription:
-      "Free concrete cost calculator, estimate calculator and pricing calculator for any project type. Enter dimensions and your ready-mix cost per yard to get concrete quantity, total project cost and a target-margin price.",
+      "Calculate concrete quantity, installed project cost and target-margin selling price using your own dimensions, ready-mix rate, labor and equipment costs.",
     length: { label: "Length", hint: "Project length", defaultUnit: "ft", allowUnitToggle: false },
     width: { label: "Width", hint: "Project width", defaultUnit: "ft", allowUnitToggle: false },
     thickness: { label: "Thickness", hint: "Concrete thickness", defaultUnit: "in", allowUnitToggle: false },
@@ -444,11 +444,11 @@ export const CALCULATOR_CONFIGS: Record<string, CalculatorConfig> = {
     faqs: [
       {
         q: "What project types can I use this for?",
-        a: "Any rectangular concrete pour: slabs, driveways, patios, sidewalks, pads or custom flatwork. For multi-section projects (like an L-shaped driveway), Concrete Cost Pro lets you add multiple sections to one project.",
+        a: "Any rectangular concrete pour: slabs, driveways, patios, sidewalks, pads or custom flatwork. For multi-section quantity, use the free Concrete Pour Calculator. Concrete Cost Pro carries multiple sections through full costing and customer estimates.",
       },
       {
         q: "How much does ready-mix concrete cost per yard?",
-        a: "Ready-mix pricing varies by region, mix strength and delivery distance, commonly somewhere in the $130–$200 per cubic yard range in the US, though local suppliers may quote higher or lower. Enter your own supplier's price per yard in the calculator above; this tool never assumes a national average for your estimate.",
+        a: "Request a current supplier quote for your specified mix, quantity and delivery location. Enter its material price per yard here and include delivery or short-load fees once in your other costs. The sample rate is illustrative; the tool does not fetch live prices.",
       },
       {
         q: "Is this a concrete estimate calculator, a pricing calculator, or just a quantity calculator?",

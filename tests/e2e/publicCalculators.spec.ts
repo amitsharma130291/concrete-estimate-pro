@@ -25,7 +25,7 @@ for (const route of CALCULATOR_ROUTES) {
     await page.fill("#f-width", "20");
     await page.fill("#f-thick", "4");
 
-    const orderQtyLabel = page.locator(".text-sm.text-muted", { hasText: "Order quantity" }).first();
+    const orderQtyLabel = page.getByText("Order quantity", { exact: true }).first();
     const orderQtyValue = orderQtyLabel.locator("xpath=following-sibling::div[1]");
     await expect(orderQtyValue).toHaveText(/^\d[\d,]*\.\d\d\s*yd/);
     await expect(page.locator("body")).not.toContainText("NaN");
@@ -94,7 +94,7 @@ test("/: homepage loads with pricing CTA and no console errors", async ({ page }
 
 test("/calculators: hub page lists calculator links", async ({ page }) => {
   await page.goto("/calculators");
-  const links = page.locator('a[href^="/concrete-"]');
+  const links = page.locator('a[data-tool-card][href^="/concrete-"]');
   await expect(links.first()).toBeVisible();
 });
 
